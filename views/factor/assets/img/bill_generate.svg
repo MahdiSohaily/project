@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg width="800px" height="800px" viewBox="0 0 64 64"
+    xmlns="http://www.w3.org/2000/svg">
+
+    <defs>
+
+        <style>.cls-1{fill:#231f20;}.cls-2{fill:#414042;}.cls-3{fill:#fff200;}</style>
+
+    </defs>
+
+    <title/>
+
+    <g id="cart">
+
+        <path class="cls-1" d="M61.54,12.73A2,2,0,0,0,60,12H11.25A7.82,7.82,0,0,0,4,7a2,2,0,0,0,0,4,3.79,3.79,0,0,1,3.73,3.27L13,47.32A2,2,0,0,0,15,49h2.5a6.5,6.5,0,1,0,12,0h10a6.5,6.5,0,1,0,12,0H54a2,2,0,0,0,0-4H16.71l-.49-3H55a2,2,0,0,0,2-1.62l5-26A2,2,0,0,0,61.54,12.73Z"/>
+
+        <path class="cls-2" d="M62,14.38l-5,26A2,2,0,0,1,55,42H16.22l-5-30H60a2,2,0,0,1,1.54.73A2,2,0,0,1,62,14.38Z"/>
+
+        <path class="cls-3" d="M29.17,33.5A2,2,0,0,0,32,33.33l8-9a2,2,0,0,0-3-2.66l-8,9A2,2,0,0,0,29.17,33.5Z"/>
+
+        <circle class="cls-3" cx="39" cy="31.5" r="2.5"/>
+
+        <circle class="cls-3" cx="29.5" cy="23.5" r="2.5"/>
+
+        <circle class="cls-2" cx="23.5" cy="51.5" r="6.5"/>
+
+        <circle class="cls-2" cx="45.5" cy="51.5" r="6.5"/>
+
+    </g>
+
+</svg>

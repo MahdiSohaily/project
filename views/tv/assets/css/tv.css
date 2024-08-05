@@ -1,0 +1,155 @@
+/* Box sizing rules */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Remove default margin */
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "iran_sans";
+}
+
+/* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
+ul,
+ol {
+  list-style: none;
+}
+
+/* Set core root defaults */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Set core body defaults */
+body {
+  min-height: 100vh;
+  text-rendering: optimizeSpeed;
+  line-height: 1.5;
+}
+
+/* A elements that don't have a class get default styles */
+a:not([class]) {
+  text-decoration-skip-ink: auto;
+}
+
+/* Make images easier to work with */
+img,
+picture {
+  max-width: 100%;
+  display: block;
+}
+
+/* Inherit fonts for inputs and buttons */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Remove all animations, transitions and smooth scroll for people that prefer not to see them */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* custom styles */
+* {
+  direction: rtl;
+}
+
+#fullPage {
+  width: 854px !important;
+  margin-inline: auto;
+  font-size: 8px;
+  background-color: white;
+}
+
+.user-img {
+  width: 15px !important;
+  height: 15px;
+  border: none;
+  border-radius: 50%;
+  margin: 3px;
+}
+
+.d-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 1fr;
+  grid-column-gap: 3px;
+  grid-row-gap: 3px;
+}
+
+.section_heading {
+  font-size: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  background-color: blueviolet;
+  padding-block: 5px;
+  color: white;
+}
+
+td {
+  padding: 5px;
+}
+
+td.pic {
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+tr:nth-child(even) {
+  background-color: rgb(179, 221, 241);
+}
+
+tr:nth-child(odd) {
+  background-color: rgb(215, 237, 212);
+}
+
+.strong_content {
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.handler {
+  font-size: 12px;
+  cursor: pointer;
+}
+
+tr.pin:nth-child(even) {
+  background-color: rgb(255 237 213);
+}
+
+tr.pin:nth-child(odd) {
+  background-color: rgb(253 186 116);
+}
+
+.user-imgs {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: block;
+  margin-inline: auto;
+}

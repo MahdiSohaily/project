@@ -1,0 +1,22 @@
+<svg version="1.1" id="Layer_1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 460 460" xml:space="preserve" width="64px" height="64px" fill="#000000">
+    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+    <g id="SVGRepo_iconCarrier">
+        <g>
+            <path style="fill:#2e943f;" d="M230.332,0.001C103.307,0.001,0,102.975,0,230.001c0,98.934,62.667,183.279,150.4,215.746 l294.785-297.249C412.376,61.702,328.659,0.001,230.332,0.001z"></path>
+            <path style="fill:#4a9816;" d="M445.168,148.502l-66.835-66.835l-296,296l68.071,68.071c24.91,9.218,51.837,14.262,79.928,14.262 C357.358,460,460,357.026,460,230.001C460,201.301,454.745,173.836,445.168,148.502z"></path>
+            <polygon style="fill:#ffffff;" points="378.333,81.668 378.333,377.667 230.333,377.667 200.333,229.668 230.333,81.668 "></polygon>
+            <rect x="82.333" y="81.668" style="fill:#FFFFFF;" width="148" height="296"></rect>
+            <path style="fill:#366796;" d="M220.333,219.668h-118v-118h118V219.668z M122.333,199.668h78v-78h-78 C122.333,121.668,122.333,199.668,122.333,199.668z"></path>
+            <rect x="142.333" y="141.668" style="fill:#366796;" width="38" height="38"></rect>
+            <path style="fill:#121149;" d="M358.333,219.668h-118v-118h118V219.668z M260.333,199.668h78v-78h-78V199.668z"></path>
+            <rect x="280.333" y="141.668" style="fill:#121149;" width="38" height="38"></rect>
+            <path style="fill:#366796;" d="M220.333,357.667h-118v-118h118V357.667z M122.333,337.667h78v-78h-78 C122.333,259.667,122.333,337.667,122.333,337.667z"></path>
+            <rect x="142.333" y="279.667" style="fill:#366796;" width="38" height="38"></rect>
+            <path style="fill:#121149;" d="M358.333,357.667h-118v-118h118V357.667z M260.333,337.667h78v-78h-78V337.667z"></path>
+            <rect x="280.333" y="279.667" style="fill:#121149;" width="38" height="38"></rect>
+        </g>
+    </g>
+</svg>

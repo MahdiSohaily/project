@@ -1,0 +1,31 @@
+<svg height="64px" width="64px" version="1.1" id="Layer_1"
+	xmlns="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 297 297" xml:space="preserve" fill="#000000">
+	<g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+	<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+	<g id="SVGRepo_iconCarrier">
+		<g>
+			<g>
+				<circle style="fill:#B8C9F1;" cx="148.5" cy="148.5" r="148.5"></circle>
+			</g>
+			<g>
+				<path style="fill:#A4B7DD;" d="M289.45,195.351L177.212,83.112L80.021,257.854l35.455,35.455 C126.097,295.721,137.149,297,148.5,297C214.142,297,269.83,254.406,289.45,195.351z"></path>
+			</g>
+			<g>
+				<path style="fill:#5065A1;" d="M99,135h82.5V90.667c0-4.51-3.656-8.167-8.167-8.167H99V135z"></path>
+			</g>
+			<g>
+				<polygon style="fill:#0EA6CB;" points="99,231 99,33 74.759,33 74.759,49.5 82.5,49.5 82.5,231 82.5,247.5 99,247.5 231,247.5 231,231 "></polygon>
+			</g>
+			<g>
+				<path style="fill:#394C81;" d="M99,231h115.5v-88.75c0-5.661-4.589-10.25-10.25-10.25H99V231z"></path>
+			</g>
+			<g>
+				<path style="fill:#314B5A;" d="M131.932,228.856c1.258,19.916-15.16,36.334-35.076,35.076 c-16.424-1.038-29.751-14.365-30.789-30.789c-1.258-19.916,15.16-36.334,35.076-35.076 C117.568,199.106,130.894,212.432,131.932,228.856z"></path>
+			</g>
+			<g>
+				<circle style="fill:#8FA6B4;" cx="99" cy="231" r="16.5"></circle>
+			</g>
+		</g>
+	</g>
+</svg>

@@ -1,0 +1,16 @@
+<svg version="1.1" id="Layer_1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" width="64px" height="64px" fill="#000000">
+    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+    <g id="SVGRepo_iconCarrier">
+        <circle style="fill:#FD8469;" cx="256" cy="256" r="256"></circle>
+        <path style="fill:#FC6F58;" d="M277.814,511.066c118.179-9.975,213.502-100.214,231.226-216.017l-93.579-93.579 c0,0-9.335,11.974-18.125,23.249L278.411,105.793c0,0-14.693,108.918-25.505,189.061l-78.215-78.215l-78.152,16.724l118.524,118.522 l-62.792,33.637L277.814,511.066z"></path>
+        <polygon style="fill:#E6F3FF;" points="359.731,385.52 152.269,385.52 100.404,212.637 411.596,212.637 "></polygon>
+        <polygon style="fill:#CFDBE6;" points="411.596,212.637 256,212.637 256,385.52 359.731,385.52 "></polygon>
+        <rect x="96.539" y="201.473" style="fill:#324A5E;" width="318.923" height="31.892"></rect>
+        <rect x="256" y="201.473" style="fill:#2B3B4E;" width="159.461" height="31.892"></rect>
+        <rect x="233.589" y="105.796" style="fill:#734B46;" width="44.822" height="159.461"></rect>
+        <rect x="256" y="105.796" style="fill:#593633;" width="22.411" height="159.461"></rect>
+    </g>
+</svg>

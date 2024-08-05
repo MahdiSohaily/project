@@ -1,0 +1,22 @@
+.tab-op {
+    background-color: transparent !important;
+    border: none !important;
+    width: 100% !important;
+}
+
+.tab-op-number {
+    text-align: center !important;
+}
+
+.tab-op:focus {
+    outline: 2px solid lightgray !important;
+}
+
+.hidden-action {
+    display: none;
+    background-color: white;
+}
+
+.add-column:hover .hidden-action {
+    display: flex !important;
+}

@@ -1,0 +1,31 @@
+<svg version="1.1" id="Layer_1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 297 297" xml:space="preserve" width="20px" height="20px" fill="#000000">
+    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+    <g id="SVGRepo_iconCarrier">
+        <g>
+            <g>
+                <circle style="fill:#68b4ee;" cx="148.5" cy="148.5" r="148.5"></circle>
+            </g>
+            <g>
+                <path style="fill:#55b7d8;" d="M297,148.5c0-6.05-0.371-12.012-1.074-17.872L214.5,49.5L82.5,264l23.997,26.965 c13.32,3.921,27.414,6.035,42.003,6.035C230.514,297,297,230.514,297,148.5z"></path>
+            </g>
+            <g>
+                <path style="fill:#FFFFFF;" d="M197.029,49.5c0,6.7-5.432,12.132-12.132,12.132c-6.701,0-12.132-5.432-12.132-12.132h-12.132 c0,6.7-5.432,12.132-12.132,12.132S136.368,56.2,136.368,49.5h-12.132c0,6.7-5.432,12.132-12.132,12.132 c-6.701,0-12.132-5.432-12.132-12.132H82.5V264h17.496c0.264-6.467,5.575-11.632,12.107-11.632 c6.532,0,11.843,5.166,12.107,11.632h12.183c0.264-6.467,5.575-11.632,12.107-11.632s11.843,5.166,12.107,11.632h12.183 c0.264-6.467,5.575-11.632,12.107-11.632s11.843,5.166,12.107,11.632H214.5V49.5H197.029z"></path>
+            </g>
+            <g>
+                <rect x="98" y="85.75" style="fill:#C0C0B8;" width="101" height="10"></rect>
+            </g>
+            <g>
+                <rect x="98" y="115.5" style="fill:#C0C0B8;" width="101" height="10"></rect>
+            </g>
+            <g>
+                <rect x="98" y="148.5" style="fill:#C0C0B8;" width="101" height="10"></rect>
+            </g>
+            <g>
+                <rect x="165" y="204.5" style="fill:#C0C0B8;" width="34" height="10"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

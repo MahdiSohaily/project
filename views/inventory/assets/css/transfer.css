@@ -1,0 +1,418 @@
+.action_bar {
+  position: fixed;
+  height: 60px;
+  bottom: 0 !important;
+  right: 0;
+  left: 0;
+  background-color: #dae5eb;
+  display: flex;
+  align-items: center;
+}
+
+.print-btn {
+  padding-inline: 20px;
+  background-color: seagreen;
+}
+
+#print_modal {
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.8);
+  inset: 0;
+  z-index: 100000;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+#print_container {
+  background-color: white;
+  width: 70vw;
+  border-radius: 10px;
+  position: relative;
+}
+
+.signature {
+  /* position: absolute; */
+  bottom: 0;
+  padding: 10px;
+}
+
+.text {
+  font-size: 12px !important;
+}
+
+@media print {
+  #page_header {
+    display: none;
+  }
+
+  @page :footer {
+    display: none !important;
+  }
+
+  @page :header {
+    display: none !important;
+  }
+
+  @page {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  #print_container {
+    width: 100vw !important;
+    height: 100vh !important;
+  }
+  #print_modal {
+    background-color: white;
+  }
+}
+
+/* factor custom styles */
+
+@import url(https://fonts.googleapis.com/css?family=Roboto:100,300,400,900,700,500,300,100);
+
+* {
+  margin: 0;
+  box-sizing: border-box;
+  -webkit-print-color-adjust: exact;
+}
+
+body {
+  background: #e0e0e0;
+  font-family: "Roboto", sans-serif;
+}
+
+::selection {
+  background: #f31544;
+  color: #fff;
+}
+
+::moz-selection {
+  background: #f31544;
+  color: #fff;
+}
+
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.col-left {
+  float: left;
+}
+
+.col-right {
+  float: right;
+}
+
+h1 {
+  font-size: 1.5em;
+  color: #444;
+}
+
+h2 {
+  font-size: 0.9em;
+}
+
+h3 {
+  font-size: 1.2em;
+  font-weight: 300;
+  line-height: 2em;
+}
+
+p {
+  font-size: 0.75em;
+  color: #666;
+  line-height: 1.2em;
+}
+
+#invoiceholder {
+  width: 100%;
+  height: 100%;
+  padding: 50px 0;
+}
+
+#invoice {
+  position: relative;
+  margin: 0 auto;
+  width: 100%;
+  background: #fff;
+  padding-inline: 10px;
+}
+
+#invoice-top {
+  border-bottom: 2px solid #565656;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#invoice-mid {
+  min-height: 110px;
+  padding: 10px;
+  background-color: lightgray;
+  border-radius: 5px;
+  margin-block: 5px;
+}
+
+#invoice-bot {
+  min-height: 240px;
+}
+
+.logo {
+  display: inline-block;
+  vertical-align: middle;
+  width: 110px;
+  overflow: hidden;
+}
+
+.info {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 20px;
+}
+
+.logo img,
+.clientlogo img {
+  width: 100%;
+}
+
+.clientlogo {
+  display: inline-block;
+  vertical-align: middle;
+  width: 50px;
+}
+
+.clientinfo {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 20px;
+}
+
+#message {
+  margin-bottom: 30px;
+  display: block;
+}
+
+h2 {
+  margin-bottom: 5px;
+  color: #444;
+}
+
+.col-right td {
+  color: #666;
+  padding: 5px 8px;
+  border: 0;
+  font-size: 0.75em;
+}
+
+.bold {
+  font-weight: bold !important;
+}
+.small {
+  font-size: 12px;
+}
+
+.pl {
+  padding-left: 1px;
+}
+
+.col-right td label {
+  margin-left: 5px;
+  font-weight: 600;
+  color: #444;
+}
+
+.cta-group a {
+  display: inline-block;
+  padding: 7px;
+  border-radius: 4px;
+  background: rgb(196, 57, 10);
+  margin-right: 10px;
+  min-width: 100px;
+  text-align: center;
+  color: #fff;
+  font-size: 0.75em;
+}
+
+.cta-group .btn-primary {
+  background: #00a63f;
+}
+
+.cta-group.mobile-btn-group {
+  display: none;
+}
+
+#table table {
+  width: 100%;
+  border: 2px solid rgb(139, 138, 138);
+  border-radius: 10px !important;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+}
+
+#table table thead {
+  background-color: lightgray;
+}
+
+#table td,
+#table th {
+  padding: 10px;
+  font-size: 0.7em;
+  border-bottom: 1px solid #eee;
+}
+
+#table th {
+  text-align: right;
+}
+
+.item {
+  width: 50%;
+}
+
+.total-row th,
+.total-row td {
+  font-weight: 700;
+  font-size: 0.75em;
+  border: 0 none;
+}
+
+footer {
+  border-top: 1px solid #eeeeee;
+  padding: 15px 20px;
+}
+
+.effect2 {
+  position: relative;
+}
+
+.effect2:before,
+.effect2:after {
+  z-index: -1;
+  position: absolute;
+  content: "";
+  bottom: 15px;
+  left: 10px;
+  width: 50%;
+  top: 80%;
+  max-width: 300px;
+  background: #777;
+  -webkit-box-shadow: 0 15px 10px #777;
+  -moz-box-shadow: 0 15px 10px #777;
+  box-shadow: 0 15px 10px #777;
+  -webkit-transform: rotate(-3deg);
+  -moz-transform: rotate(-3deg);
+  -o-transform: rotate(-3deg);
+  -ms-transform: rotate(-3deg);
+  transform: rotate(-3deg);
+}
+
+.effect2:after {
+  -webkit-transform: rotate(3deg);
+  -moz-transform: rotate(3deg);
+  -o-transform: rotate(3deg);
+  -ms-transform: rotate(3deg);
+  transform: rotate(3deg);
+  right: 10px;
+  left: auto;
+}
+
+@media screen and (max-width: 767px) {
+  h1 {
+    font-size: 0.9em;
+  }
+
+  #invoice {
+    width: 100%;
+  }
+
+  #message {
+    margin-bottom: 20px;
+  }
+
+  [id*="invoice-"] {
+    padding: 20px 10px;
+  }
+
+  .logo {
+    width: 140px;
+  }
+
+  .title {
+    float: none;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 40px;
+  }
+
+  .col-left,
+  .col-right {
+    width: 100%;
+  }
+
+  .table {
+    margin-top: 20px;
+  }
+
+  #table {
+    white-space: nowrap;
+    overflow: auto;
+  }
+
+  td {
+    white-space: normal;
+  }
+
+  .cta-group.mobile-btn-group {
+    display: block;
+    margin-bottom: 20px;
+  }
+
+  /*==================== Table ====================*/
+  .table-main {
+    border: 0 none;
+  }
+
+  .table-main thead {
+    border: none;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+  }
+
+  .table-main tr {
+    border-bottom: 2px solid #eee;
+    display: block;
+    margin-bottom: 20px;
+  }
+
+  .table-main td {
+    font-weight: 700;
+    display: block;
+    padding-left: 40%;
+    max-width: none;
+    position: relative;
+    border: 1px solid #cccaca;
+  }
+
+  .table-main td:before {
+    /** aria-label has no advantage, it won't be read inside a table
+        content: attr(aria-label);
+        */
+    content: attr(data-label);
+    position: absolute;
+    left: 10px;
+    font-weight: normal;
+    text-transform: uppercase;
+  }
+
+  .total-row th {
+    display: none;
+  }
+}

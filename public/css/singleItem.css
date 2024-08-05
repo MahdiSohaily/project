@@ -1,0 +1,264 @@
+section {
+    background-color: rgb(227, 227, 227) !important;
+    padding-inline: 15px;
+    border-radius: 10px;
+    padding: 20px;
+    margin-inline: 20px;
+    margin-bottom: 70px !important;
+}
+
+.flex {
+    display: flex;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.form-controller {
+    padding: 10px;
+    width: 300px;
+    font-size: 12px;
+    border-radius: 5px;
+    border: 1px solid lightgray;
+}
+
+.form-controller::placeholder {
+    font-size: 12px;
+}
+
+.MOB {
+    background: #195d8c;
+}
+
+.GEN {
+    background: #042135;
+}
+
+.link-s {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    text-decoration: none;
+    color: white;
+    margin-right: 0.5rem;
+    padding: 0.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.Request {
+    background-color: seagreen;
+}
+
+.NO-Price {
+    background-color: black;
+}
+
+.NO-Mobis {
+    background-color: red;
+}
+
+.part {
+    width: 30px !important;
+    height: 30px !important;
+}
+
+.weight {
+    background-color: rgb(231, 98, 98);
+    display: inline-block;
+    font-size: 12px;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    color: white;
+}
+
+.mobis {
+    background-color: rgb(190, 187, 187);
+}
+
+#error {
+    text-align: center;
+    background-color: rgb(107, 106, 106);
+    color: white;
+    font-family: Vazir, sans-serif !important;
+}
+
+td.A,
+td.B,
+td.C,
+td.D,
+td.E,
+td.F,
+td.G {
+    font-weight: bold;
+}
+
+.A {
+    background-color: brown;
+}
+
+.B {
+    background-color: red;
+}
+
+.C {
+    background-color: #b68f3a;
+}
+
+.D {
+    background-color: #b63a95;
+}
+
+.E {
+    background-color: #3a86b6;
+}
+
+.F {
+    background-color: #de6ffa;
+}
+
+.G {
+    background-color: #fc8ea0;
+}
+
+td.A {
+    background-color: rgb(224, 84, 3);
+}
+
+td.B {
+    background-color: rgb(255, 145, 0);
+}
+
+td.C {
+    background-color: #d8a943;
+}
+
+td.D {
+    background-color: #e449ba;
+}
+
+td.E {
+    background-color: #47b0f1;
+}
+
+td.F {
+    background-color: #e58ffa;
+}
+
+td.G {
+    background-color: #f8b6c1;
+}
+
+.b-A,
+.b-B,
+.b-C,
+.b-D,
+.b-E,
+.b-F,
+.b-G {
+    font-weight: bold !important;
+}
+
+.part {
+    width: 250px !important;
+}
+
+.dollar {
+    width: 80px !important;
+}
+
+.social {
+    width: 20px;
+}
+
+.action {
+    width: 150px;
+}
+
+.kg {
+    width: 70px;
+}
+
+.orange {
+    background-color: orange;
+    font-weight: bold;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+table {
+    width: 98% !important;
+    margin-inline: auto !important;
+    margin-block: 10px;
+    direction: ltr !important;
+}
+
+th {
+    padding: 15px;
+    font-size:12px;
+}
+
+thead {
+    background-color: seagreen;
+    color: white;
+}
+
+.w-5 {
+    width: 20px;
+}
+
+.gap-1 {
+    gap: 5px;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.px-2 {
+    padding-inline: 5px;
+}
+
+.bg-blue-900 {
+    background-color: rgb(30 58 138);
+}
+
+.text-white {
+    color: white;
+}
+
+.font-bold {
+    font-weight: bold;
+}
+
+.ml-4 {
+    margin-left: 1rem;
+    /* 16px */
+}
+
+.ml-11 {
+    margin-left: 2.90rem;
+    /* 44px */
+}
+
+.pl-12 {
+    padding-left: 4rem;
+    /* 48px */
+}
+
+.text-center {
+    text-align: center !important;
+}
+
+td {
+    padding: 15px;
+}
+
+.border-r-2 {
+    border-right: 2px solid black;
+}

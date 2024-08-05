@@ -1,0 +1,56 @@
+<svg version="1.1" id="Layer_1"
+	xmlns="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 297 297" xml:space="preserve" width="64px" height="64px" fill="#000000">
+	<g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+	<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+	<g id="SVGRepo_iconCarrier">
+		<g>
+			<g>
+				<circle style="fill:#345065;" cx="148.5" cy="148.5" r="148.5"></circle>
+			</g>
+			<g>
+				<path style="fill:#263D49;" d="M297,148.5c0-19.547-3.784-38.208-10.648-55.301L261.01,69.114L35.708,227.582l61.005,60.131 C112.838,293.714,130.284,297,148.5,297C230.514,297,297,230.514,297,148.5z"></path>
+			</g>
+			<g>
+				<rect x="33" y="82.5" style="fill:#FFFFFF;" width="231" height="132"></rect>
+			</g>
+			<g>
+				<path style="fill:#3498DB;" d="M33,82.5h231v-6.084C264,70.664,259.336,66,253.583,66H43.416C37.664,66,33,70.664,33,76.416V82.5z "></path>
+			</g>
+			<g>
+				<path style="fill:#D0D5D9;" d="M264,214.5H33v6.084C33,226.336,37.664,231,43.417,231h210.167c5.753,0,10.417-4.664,10.417-10.417 V214.5H264z"></path>
+			</g>
+			<g>
+				<g>
+					<g>
+						<path style="fill:#9ADAD9;" d="M219.502,101.5c0,6.157-4.991,11.149-11.149,11.149s-11.149-4.991-11.149-11.149h-13.936v55.743 h50.169V101.5H219.502z"></path>
+					</g>
+					<g>
+						<path style="fill:#3498DB;" d="M208.353,112.649c6.157,0,11.149-4.991,11.149-11.149h-22.297 C197.205,107.657,202.196,112.649,208.353,112.649z"></path>
+					</g>
+				</g>
+				<g>
+					<polygon style="fill:#3498DB;" points="183.269,101.5 169.333,107.074 169.333,123.797 183.269,123.797 "></polygon>
+				</g>
+				<g>
+					<polygon style="fill:#3498DB;" points="233.438,101.5 247.374,107.074 247.374,123.797 233.438,123.797 "></polygon>
+				</g>
+				<g>
+					<path style="fill:#3498DB;" d="M219.502,129.372L219.502,129.372c3.079,0,5.574-2.496,5.574-5.574v-5.574h-11.149v5.574 C213.928,126.876,216.423,129.372,219.502,129.372z"></path>
+				</g>
+			</g>
+			<g>
+				<rect x="60" y="115.5" style="fill:#BDC3C7;" width="78" height="6"></rect>
+			</g>
+			<g>
+				<rect x="60" y="145.5" style="fill:#BDC3C7;" width="78" height="6"></rect>
+			</g>
+			<g>
+				<rect x="60" y="175.5" style="fill:#BDC3C7;" width="78" height="6"></rect>
+			</g>
+			<g>
+				<rect x="177.603" y="175.5" style="fill:#3498DB;" width="61.5" height="6"></rect>
+			</g>
+		</g>
+	</g>
+</svg>

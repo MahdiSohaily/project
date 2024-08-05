@@ -1,0 +1,22 @@
+.accordion__content {
+    max-height: 0em;
+    transition: all 0.4s cubic-bezier(0.865, 0.14, 0.095, 0.87);
+}
+
+input[name='panel']:checked~.accordion__content {
+    /* Get this as close to what height you expect */
+    max-height: 50em;
+}
+
+.selected_day {
+    background-color: rgb(156, 156, 156) !important;
+}
+
+.edit-container {
+    opacity: 0 !important;
+    transition: all 0.3s ease-in-out;
+}
+
+.card-container:hover .edit-container {
+    opacity: 1 !important;
+}

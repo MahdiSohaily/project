@@ -1,1 +1,1 @@
-# project
+# yadak-shop

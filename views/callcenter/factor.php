@@ -1,0 +1,501 @@
+<?php
+$pageTitle = "شماره فاکتور";
+$iconUrl = 'bill.png';
+require_once './components/header.php';
+require_once '../../app/controller/callcenter/FactorController.php';
+require_once '../../layouts/callcenter/nav.php';
+require_once '../../layouts/callcenter/sidebar.php';
+?>
+<!-- COMPONENT STYLES -->
+<style>
+    #editFactorModal {
+        position: fixed;
+        z-index: 1;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    #saved_factor_message {
+        position: fixed;
+        top: 120%;
+        left: 50%;
+        /* Changed 'right' to 'left' */
+        transform: translate(-50%, -50%);
+        /* Centering both horizontally and vertically */
+        transform-origin: top center;
+        /* Ensuring transform origin is centered vertically */
+        transition: all 0.5s ease;
+    }
+
+    /* Hide everything except #factor_table for print */
+    @media print {
+        @page {
+            size: auto;
+            /* auto is the default size */
+            margin: 0;
+            /* remove default margin */
+        }
+
+        body {
+            margin: 20px;
+            padding: 0 !important;
+            /* remove body margin */
+        }
+
+        nav,
+        aside,
+        .hide_while_print,
+        #operation_message,
+        #tvMessage {
+            display: none !important;
+        }
+
+        #resultBox.grid {
+            display: block;
+            /* Change from grid to block */
+            grid-template-columns: none;
+            /* Remove grid columns */
+            grid-template-rows: none;
+            padding: 0;
+            margin: 0;
+            /* Remove grid rows */
+        }
+
+        #wrapper {
+            padding: 0;
+            margin: 0;
+            /* Remove padding and margin */
+            box-shadow: none;
+        }
+    }
+</style>
+
+<!-- HTML STRUCTURE -->
+<section id="wrapper" class="mx-5 rounded-lg shadow overflow-hidden">
+    <div class="bg-gray-800 p-3 flex justify-between h-28 pt-8 hide_while_print">
+        <div>
+            <input minlength="3" id="customer" class="bg-transparent border-2 border-white px-3 py-2 text-white w-72 outline-none" autofocus="true" name="customer" type="text" placeholder="نام خریدار را وارد کنید ...">
+            <button onclick="getNewFactorNumber()" class="bg-blue-500 border-2 border-transparent py-2 px-3 text-white" type="button"> گرفتن شماره فاکتور</button>
+            <p id="customer_error" class="py-2 text-rose-500 text-xs font-semibold hidden">نام خریدار باید بیشتر از ۳ حرف باشد.</p>
+        </div>
+        <p class="text-white text-lg font-semibold">
+            <?= jdate('l J F'); ?> -
+            <?= jdate('Y/m/d')  ?>
+        </p>
+    </div>
+    <div class="bg-gray-100 p-5 flex justify-between hide_while_print">
+        <form>
+            <label class="text-sm font-semibold" for="invoice_time">
+                <img class="inline" src="./assets/img/filter.svg" alt="filter icon">
+            </label>
+            <input class="text-sm py-2 px-3 font-semibold w-60 border-2" data-gdate="<?= date('Y/m/d') ?>" value="<?= (jdate("Y/m/d", time(), "", "Asia/Tehran", "en")) ?>" type="text" name="invoice_time" id="invoice_time">
+        </form>
+        <div class="flex justify-center items-center gap-2">
+            <a title="چاپ کردن گزارش" class="bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded-md cursor-pointer" onClick="window.print()">
+                <img src="./assets/img/print.svg" alt="print icon" />
+            </a>
+        </div>
+    </div>
+
+    <!-- Saved new factor success message START -->
+    <div id="saved_factor_message" class="flex justify-between py-3 px-2 gap-5 rounded-md  bg-green-600 hide_while_print">
+        <div class="flex justify-center items-center gap-2 cursor-pointer">
+            <img src="./assets/img/copy.svg" alt="copy icon" />
+            <p id="success_message" class="text-white text-sm font-semibold"></p>
+        </div>
+        <img class="cursor-pointer" title="بستن" src="./assets/img/close.svg" alt="close icon" onclick="closeAlert()">
+    </div>
+    <!-- Saved new factor success message END -->
+
+    <div id="resultBox" class="grid grid-cols-8 gap-3 py-5">
+        <div class="col-span-6">
+            <table id="factor_table" class="w-full">
+                <thead class="bg-gray-800">
+                    <tr class="text-white">
+                        <th class="p-3 text-sm font-semibold">شماره فاکتور</th>
+                        <th class="p-3 text-sm font-semibold hide_while_print"></th>
+                        <th class="p-3 text-sm font-semibold">خریدار</th>
+                        <th class="p-3 text-sm font-semibold">کاربر</th>
+                        <?php
+                        $isAdmin = $_SESSION['username'] === 'niyayesh' || $_SESSION['username'] === 'mahdi' || $_SESSION['username'] === 'babak' ? true : false;
+                        if ($isAdmin) : ?>
+                            <th class="p-3 text-sm font-semibold hide_while_print">ویرایش</th>
+                        <?php endif; ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (count($factors)) :
+                        foreach ($factors as $factor) : ?>
+                            <tr class="even:bg-gray-100">
+                                <td class="text-center align-middle">
+                                    <span class="flex justify-center items-center gap-2 bg-blue-500 rounded-sm text-white w-24 py-2 mx-auto cursor-pointer" title="کپی کردن شماره فاکتور" data-billNumber="<?= $factor['shomare'] ?>" onClick="copyBillNumberSingle(this)">
+                                        <?= $factor['shomare'] ?>
+                                        <img src="./assets/img/copy.svg" alt="copy icon" />
+                                    </span>
+                                </td>
+                                <td class="text-center align-middle hide_while_print">
+                                    <?php if ($factor['exists_in_bill']) : ?>
+                                        <a href="../factor/complete.php?factor_number=<?= $factor['bill_id'] ?>">
+                                            <img class="w-6 mr-4 cursor-pointer d-block" title="مشاهده فاکتور" src="./assets/img/bill.svg" />
+                                        </a>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="text-center align-middle font-semibold">
+                                    <?= $factor['kharidar'] ?>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <img onclick="userReport(this)" class="w-10 rounded-full hover:cursor-pointer mt-2" data-id="<?= $factor['user']; ?>" src="<?= getUserProfile($factor['user']) ?>" />
+                                </td>
+
+                                <?php
+                                if ($isAdmin) : ?>
+                                    <td class="text-center align-middle hide_while_print">
+                                        <a onclick="toggleModal(this); edit(this)" data-factor="<?= $factor["id"] ?>" data-user="<?= $factor['user']; ?>" data-billNO="<?= $factor['shomare'] ?>" data-user-info="<?= getUserInfo($factor['user']) ?>" data-customer="<?= $factor['kharidar'] ?>" class="text-xs bg-cyan-500 text-white cursor-pointer px-2 py-1 rounded">
+                                            ویرایش
+                                        </a>
+                                    </td>
+                                <?php endif; ?>
+                            </tr>
+                        <?php
+                        endforeach;
+                    else : ?>
+                        <tr class="bg-gray-100">
+                            <td class="text-center py-40" colspan="5">
+                                <p class="text-rose-500 font-semibold">هیچ فاکتوری برای امروز ثبت نشده است.</p>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-span-2 hide_while_print">
+            <div class="px-3">
+                <table class="w-full">
+                    <thead class="bg-gray-800">
+                        <tr class="text-white">
+                            <th class="text-right p-3 text-sm font-semibold">
+                                تعداد کل
+                            </th>
+                            <th class="text-center p-3 text-sm font-semibold">
+                                <?= count($factors) ?>
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+
+            <div class="py-10 hide_while_print">
+                <?php
+                if (count($countFactorByUser)) :
+                    foreach ($countFactorByUser as $index => $row) : $index++; ?>
+                        <div class="relative bg-gray-100 hover:bg-gray-200 p-5 shadow rounded-lg m-3 mb-10 cursor-pointer">
+                            <div class="flex justify-between">
+                                <div class="w-16 h-16 overflow-hidden rounded-full bg-gray-100 hover:bg-gray-200 p-2" style="position: absolute; top: -50%;">
+                                    <img class="rounded-full" src="<?= getUserProfile($row['user']) ?>" alt="ananddavis" />
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div class="grow text-left">
+                                    <img style="z-index: 10000;" src="../../public/icons/<?= getRankingBadge($index) ?>" alt="first" />
+                                </div>
+                                <div class="grow">
+                                    <h4 class="text-left font-semibold text-sm"><?= getUserInfo($row['user']) ?></h4>
+                                </div>
+                                <div class="grow">
+                                    <div class="text-sm text-left font-semibold">فاکتورها
+                                        <span class="profile__key"><?= $row['count_shomare']; ?></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php
+                    endforeach;
+                else : ?>
+                    <div class="flex justify-center items-center h-64 bg-gray-100 mx-3">
+                        <p class="text-rose-500 font-semibold">هیچ فاکتوری برای امروز ثبت نشده است.</p>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modal for editing factor number -->
+<div id="editFactorModal" class="justify-center items-center hidden">
+    <div class="w-2/3 rounded-md overflow-hidden">
+        <div class="bg-gray-800 flex justify-between p-5 ">
+            <h2 class="text-xl text-white">ویرایش مشخصات فاکتور</h2>
+            <span class="text-rose-600 text-2xl cursor-pointer" onclick="toggleModal()">&times;</span>
+        </div>
+        <div class="bg-white p-5">
+            <table class="w-full">
+                <thead class="bg-gray-600 text-white">
+                    <tr>
+                        <th class="p-3 font-semibold">شماره فاکتور</th>
+                        <th class="p-3 font-semibold">خریدار</th>
+                        <th class="p-3 font-semibold">کاربر</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="bg-gray-100">
+                        <td id="edit_billNo" class="p-3 text-center">123456</td>
+                        <td id="edit_customer" class="p-3 text-center">محمدرضا نیایش</td>
+                        <td id="edit_user_info" class="p-3 text-center">محمدرضا نیایش</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <p id="operation_message" class="bg-green-600 text-white text-sm font-semibold text-center py-3 hidden">
+                                تغیررات موفقانه ذخیره شد.
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="editFactorForm" class="p-5">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <input type="hidden" name="factor_id" id="edit_facto_id">
+                        <label class="text-sm font-semibold ml-3" for="editFactorCustomer">نام خریدار</label>
+                        <input class="text-sm py-2 px-3 font-semibold border-2 border-gray-500 " name="editFactorCustomer" id="editFactorCustomer" type="text">
+                    </div>
+                    <div>
+                        <label class="text-sm font-semibold ml-3" for="edit_user_id">کاربر ثبت کننده</label>
+                        <select class="text-sm py-2 px-3 font-semibold border-2 border-gray-500" name="edit_user_id" id="edit_user_id">
+                            <?php foreach ($users as $user) { ?>
+                                <option id="option-<?= $user['id'] ?>" value="<?= $user['id'] ?>"><?= $user['name'] . ' ' . $user['family'] ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <button onclick="saveChanges()" class="bg-blue-500 text-white py-2 px-5 rounded-md tet-sm" type="button">ثبت تغیرات</button>
+                </div>
+            </div>
+        </div>
+        <div class="bg-gray-800 flex justify-between p-5 ">
+            <ul>
+                <li>
+                    <p class="text-rose-500 text-sm font-semibold">
+                        شماره فاکتور قابلیت حذف شدن ندارد.
+                    </p>
+                </li>
+                <li>
+                    <p class="text-rose-500 text-sm font-semibold py-3">
+                        شماره فاکتور را میتوانید به کاربر و یا خریدار دیگری نسبت دهید یا در قسمت خریدار علت عدم استفاده از آن را بنویسید.
+                    </p>
+                </li>
+                <li>
+                    <p class="text-rose-500 text-sm font-semibold">
+                        هر گونه تغییر باید به مسئول مربوطه اطلاع داده شود.
+                    </p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    const resultBox = document.getElementById('resultBox');
+    const element = document.getElementById('invoice_time');
+    let filter = false;
+
+    $(function() {
+        $("#invoice_time").persianDatepicker({
+            months: ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"],
+            dowTitle: ["شنبه", "یکشنبه", "دوشنبه", "سه شنبه", "چهارشنبه", "پنج شنبه", "جمعه"],
+            shortDowTitle: ["ش", "ی", "د", "س", "چ", "پ", "ج"],
+            showGregorianDate: !1,
+            persianNumbers: !0,
+            formatDate: "YYYY/MM/DD",
+            selectedBefore: !1,
+            selectedDate: null,
+            startDate: null,
+            endDate: null,
+            prevArrow: '\u25c4',
+            nextArrow: '\u25ba',
+            theme: 'default',
+            alwaysShow: !1,
+            selectableYears: null,
+            selectableMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+            cellWidth: 25, // by px
+            cellHeight: 20, // by px
+            fontSize: 13, // by px
+            isRTL: !1,
+            calendarPosition: {
+                x: 0,
+                y: 0,
+            },
+            onShow: function() {},
+            onHide: function() {},
+            onSelect: function() {
+                const date = ($("#invoice_time").attr("data-gdate"));
+                var params = new URLSearchParams();
+                params.append('getFactor', 'getFactor');
+                params.append('date', date);
+                axios.post("../../app/partials/factors/factor.php", params)
+                    .then(function(response) {
+                        resultBox.innerHTML = response.data;
+                    })
+                    .catch(function(error) {
+                        console.log(error);
+                    });
+            },
+            onRender: function() {}
+        });
+    });
+
+    function userReport(element) {
+        const id = element.getAttribute('data-id');
+        const date = ($("#invoice_time").attr("data-gdate"));
+        var params = new URLSearchParams();
+
+        filter = !filter;
+
+        if (filter == false) {
+            params.append('getFactor', 'getFactor');
+            params.append('date', date);
+            axios.post("../../app/partials/factors/factor.php", params)
+                .then(function(response) {
+                    resultBox.innerHTML = response.data;
+                })
+                .catch(function(error) {
+                    console.log(error);
+                });
+            return;
+        }
+
+        params.append('getReport', 'getReport');
+        params.append('date', date);
+        params.append('user', id);
+        axios.post("../../app/partials/factors/factor.php", params)
+            .then(function(response) {
+                resultBox.innerHTML = response.data;
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+    }
+
+    function getNewFactorNumber() {
+        const date = ($("#invoice_time").attr("data-gdate"));
+        const customer = document.getElementById('customer');
+        if (customer.value.length >= 3) {
+            var params = new URLSearchParams();
+            params.append('getNewFactorNumber', 'getNewFactorNumber');
+            params.append('customer', customer.value);
+            axios.post("../../app/api/callcenter/FactorApi.php", params)
+                .then(function(response) {
+                    const message_container = document.getElementById('saved_factor_message');
+                    const success_message = document.getElementById('success_message');
+                    success_message.innerHTML = 'شماره فاکتور ' + response.data + ' برای ' + customer.value + ' ثبت شد.';
+                    message_container.style.top = '93%';
+                    customer.value = null;
+                    params.append('getNewFactor', 'getNewFactor');
+                    params.append('date', date);
+                    axios.post("../../app/partials/factors/factor.php", params)
+                        .then(function(response) {
+                            resultBox.innerHTML = response.data;
+                        })
+                        .catch(function(error) {
+                            console.log(error);
+                        });
+
+                    setTimeout(() => {
+                        message_container.style.top = '120%';
+                    }, 7000);
+                })
+                .catch(function(error) {
+                    console.log(error);
+                });
+        } else {
+            document.getElementById('customer_error').classList.remove('hidden');
+
+            setTimeout(() => {
+                document.getElementById('customer_error').classList.add('hidden');
+            }, 2000);
+        }
+    }
+
+    function closeAlert() {
+        const message_container = document.getElementById('saved_factor_message');
+        message_container.style.top = '120%';
+    }
+
+    function copyBillNumberSingle(element) {
+        const billNumber = element.getAttribute('data-billNumber');
+        copyToClipboard(billNumber);
+        element.classList.remove('bg-blue-500');
+        element.classList.add('bg-green-500');
+        element.innerHTML = billNumber + '<img class="w-5" src="./assets/img/done.svg" alt="copy icon" />';
+    }
+
+    function displayBill(billNumber) {
+        window.location.href = "../factor/complete.php?factor_number=" + billNumber;
+    }
+
+    function toggleModal(element) {
+        const modal = document.getElementById('editFactorModal');
+        modal.classList.toggle('hidden');
+        modal.classList.toggle('flex');
+    }
+
+    function edit(element) {
+        const factor = element.getAttribute('data-factor');
+        const user = element.getAttribute('data-user');
+        const billNO = element.getAttribute('data-billNO');
+        const userInfo = element.getAttribute('data-user-info');
+        const customer = element.getAttribute('data-customer');
+
+        document.getElementById('edit_facto_id').value = factor;
+        document.getElementById('edit_billNo').innerHTML = billNO;
+        document.getElementById('edit_customer').innerHTML = customer;
+        document.getElementById('edit_user_info').innerHTML = userInfo;
+        document.getElementById('editFactorCustomer').value = customer;
+        document.getElementById('option-' + user).selected = true;
+    }
+
+    function saveChanges() {
+
+        const factor = document.getElementById('edit_facto_id').value;
+        const customer = document.getElementById('editFactorCustomer').value;
+        const edit_user_id = document.getElementById('edit_user_id').value;
+        var params = new URLSearchParams();
+        params.append('saveChanges', 'saveChanges');
+        params.append('customer', customer);
+        params.append('factor', factor);
+        params.append('edit_user_id', edit_user_id);
+        axios.post("../../app/api/callcenter/FactorApi.php", params)
+            .then(function(response) {
+
+                const date = ($("#invoice_time").attr("data-gdate"));
+                params.append('getNewFactor', 'getNewFactor');
+                params.append('date', date);
+                axios.post("../../app/partials/factors/factor.php", params)
+                    .then(function(response) {
+                        resultBox.innerHTML = response.data;
+                    })
+                    .catch(function(error) {
+                        console.log(error);
+                    });
+
+                document.getElementById('operation_message').classList.remove('hidden');
+
+                setTimeout(() => {
+                    document.getElementById('operation_message').classList.add('hidden');
+                    toggleModal();
+                }, 4000);
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+    }
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter' || event.keyCode === 13) {
+            getNewFactorNumber();
+        }
+    });
+</script>
+<?php
+require_once './components/footer.php';
