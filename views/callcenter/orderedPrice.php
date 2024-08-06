@@ -76,11 +76,7 @@ if ($isValidCustomer) :
                     </thead>
                     <tbody id="priceReport">
                         <?php
-                        foreach ($explodedCodes as $__index => $code) {
-                            $selectedBrands = $brands[$__index] ?? [];
-                            $selectedPrices = $givenPrices[$__index] ?? [];
-                            $_existingBrands = getExistingBrands($selectedBrands);
-
+                        foreach ($explodedCodes as $code) {
                             $relation_id =  array_key_exists($code, $relation_ids) ? $relation_ids[$code] : 'xxx';
                             $max = 0;
                             if (array_key_exists($code, $existing)) {
@@ -97,16 +93,10 @@ if ($isValidCustomer) :
                                     } else {
                                         if ($max && current($existing[$code])['givenPrice']) {
 
-                                            $returnedPrices = current(current($existing[$code])['givenPrice']);
-
-                                            if (count($returnedPrices) > 0) {
-                                                $target = $returnedPrices;
-                                            } else {
-                                                $target = ['price' => 'موجود نیست', 'created_at' => ''];
-                                            }
-
-                                            $finalPrice = $target['price'];
+                                            $target = current(current($existing[$code])['givenPrice']);
                                             $priceDate = $target['created_at'];
+
+                                            $finalPrice = trim(current(current($existing[$code])['givenPrice'])['price']);
 
                                             if (checkDateIfOkay($applyDate, $priceDate) && $target['price'] !== 'موجود نیست') :
                                                 $rawGivenPrice = $target['price'];
@@ -174,7 +164,7 @@ if ($isValidCustomer) :
                             $sorted =  $relation['sorted'];
                             $stockInfo =  $relation['stockInfo'];
                             $givenPrice =  $item['givenPrice'];
-                            $limit_id = $relation['limit_alert']; ?>
+                            $limit_id = $relation['limit_alert'];?>
                             <div style="direction: ltr !important;" class="grid grid-cols-1 gap-6 lg:grid-cols-11 lg:gap-2 mb-7">
                                 <?php
                                 $infoSize = 'lg:col-span-2';

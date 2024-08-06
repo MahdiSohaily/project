@@ -13,8 +13,6 @@ if (isset($_POST['delete_price'])) :
 
     $id = $_POST['id'];
     $partNumber = $_POST['partNumber'];
-    $_existingBrands = json_decode($_POST['brands'], true);
-
     $customer_id = $_POST['customer_id'];
     $notification_id = $_POST['notification_id'];
     $relation_id = $_POST['relation_id'];
@@ -38,11 +36,9 @@ if (isset($_POST['delete_price'])) :
 
     if (count($givenPrice) > 0) :
         $target = current($givenPrice);
-        $_sanitizedPrices = $target;
-        $__GOOD_PRICE_Dollar = $_sanitizedPrices['price'];
-        $priceDate = $target['created_at'];
-        if (checkDateIfOkay($applyDate, $priceDate) && $__GOOD_PRICE_Dollar !== 'موجود نیست') :
-            $rawGivenPrice = $__GOOD_PRICE_Dollar;
+        $priceDate = $target['created_at'] ?? '';
+        if (checkDateIfOkay($applyDate, $priceDate) && $target['price'] !== 'موجود نیست') :
+            $rawGivenPrice = $target['price'];
             $finalPriceForm = (applyDollarRate($rawGivenPrice, $priceDate)); ?>
             <tr class="bg-cyan-400 hover:cursor-pointer text-sm">
                 <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $finalPriceForm ?>" data-part="<?= $partNumber ?>" scope="col">
@@ -57,7 +53,7 @@ if (isset($_POST['delete_price'])) :
                     افزایش قیمت <?= $appliedRate ?>%
                 </td>
                 <td style='direction: ltr !important;' onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $finalPriceForm ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left text-white px-2 py-2">
-                    <?= $__GOOD_PRICE_Dollar === null ? 'ندارد' :  $finalPriceForm ?>
+                    <?= $target['price'] === null ? 'ندارد' :  $finalPriceForm ?>
                 </td>
                 <?php if ($_SESSION['username'] == 'mahdi' || $_SESSION['username'] = 'niyayesh') : ?>
                     <td>
@@ -67,34 +63,44 @@ if (isset($_POST['delete_price'])) :
             <?php
         endif;
         foreach ($givenPrice as $price) :
-            if ($price['price'] !== null && $price['price'] !== '') :
-                $__GOOD_PRICE = $price;
-                if ($__GOOD_PRICE) :
-                    $__GOOD_PRICE = $__GOOD_PRICE['price']; ?>
-                    <tr class="w-full mb-1 hover:cursor-pointer  text-sm <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'bg-red-400' : 'bg-indigo-200'; ?>">
-                        <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $__GOOD_PRICE ?>" data-part="<?= $partNumber ?>" scope="col" class="text-center text-gray-800 px-2 py-1 <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
-                            <?php if (!array_key_exists("ordered", $price)) : ?>
-                                <img class="userImage" src="../../public/userimg/<?= $price['userID'] ?>.jpg" alt="userimage">
-                            <?php endif; ?>
-                        </td>
-                        <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $__GOOD_PRICE ?>" data-part="<?= $partNumber ?>" class="text-sm text-left <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?> ">
-                            <?= array_key_exists("partnumber", $price) ? $price['partnumber'] : '' ?>
-                        </td>
-                        <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $__GOOD_PRICE ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left px-2 py-1 <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
-                            <?= array_key_exists("ordered", $price) ? 'قیمت دستوری' : $price['name'] . ' ' . $price['family']; ?>
-                        </td>
-                        <td style="direction: ltr !important;" onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $__GOOD_PRICE ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left px-2 py-1 <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
-                            <?= $__GOOD_PRICE === null ? 'ندارد' : $__GOOD_PRICE; ?>
-                        </td>
-                        <?php if ($_SESSION['username'] == 'mahdi' || $_SESSION['username'] = 'niyayesh') : ?>
-                            <td data-part="<?= $partNumber ?>" data-code="<?= $code ?>" onclick="deleteGivenPrice(this)" data-brands='<?= json_encode($_existingBrands) ?>' data-del='<?= $price['id'] ?>' data-target="<?= $relation_id ?>" scope="col" class="text-sm text-left px-2 py-1 <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
-                                <i id="deleteGivenPrice" class="material-icons" title="حذف قیمت">close</i>
-                            </td>
+            if ($price['price'] !== null && $price['price'] !== '') : ?>
+                <tr class="min-w-full mb-1 hover:cursor-pointer <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'bg-red-400' : 'bg-indigo-200'; ?>">
+                    <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $price['price'] ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left px-2 py-1 rtl <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
+                        <?php if (!array_key_exists("ordered", $price)) : ?>
+                            <img class="userImage" src="../../public/userimg/<?= $price['userID'] ?>.jpg" alt="userimage">
                         <?php endif; ?>
+                    </td>
+                    <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $price['price'] ?>" data-part="<?= $partNumber ?>" class="text-sm text-left <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?> ">
+                        <?= array_key_exists("partnumber", $price) ? $price['partnumber'] : '' ?>
+                    </td>
+                    <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $price['price'] ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left px-2 py-1 rtl <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
+                        <?= array_key_exists("ordered", $price) ? 'قیمت دستوری' : $price['name'] . ' ' . $price['family']; ?>
+                    </td>
+                    <td style="direction: ltr !important;" onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $price['price'] ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left px-2 py-1 <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
+                        <?= $price['price'] === null ? 'ندارد' : $price['price']  ?>
+                    </td>
+                    <?php if (array_key_exists("id", $price) && $_SESSION['username'] == 'mahdi' || $_SESSION['username'] == 'niyayesh') : ?>
+                        <td onclick="deleteGivenPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-part="<?= $partNumber ?>" data-del='<?= $price['id'] ?>' scope="col" class="text-center text-gray-800 px-2 py-1 <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
+                            <i id="deleteGivenPrice" class="material-icons" title="حذف قیمت">close</i>
+                        </td>
+                    <?php else : ?>
+                        <td></td>
+                    <?php endif; ?>
+                </tr>
+                <?php if (array_key_exists("ordered", $price) || $price['customerID'] == 1) : ?>
+                    <tr class="min-w-full mb-1 border-b-2 bg-red-500">
+                        <td class="<?php array_key_exists("ordered", $price) ? 'text-white' : '' ?> text-gray-800 px-2 tiny-text" colspan="<?= $_SESSION['username'] == 'mahdi' || $_SESSION['username'] == 'niyayesh' ? 4 : 3 ?>" scope="col">
+                            <div class="rtl flex items-center w-full <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : 'text-gray-800' ?>">
+                                <i class="px-1 material-icons tiny-text <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : 'text-gray-800' ?>">access_time</i>
+                                <?= timeFormatter($price['created_at']); ?>
+                            </div>
+                        </td>
+                        <td></td>
                     </tr>
-                    <tr class="w-full mb-1 border-b-2 <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'bg-red-500' : 'bg-indigo-300' ?>" data-price='<?= $__GOOD_PRICE ?>'>
-                        <td class="<?php array_key_exists("ordered", $price) ? 'text-white' : '' ?> text-gray-800  py-1 px-2 tiny-text" colspan="<?= ($_SESSION['username'] == 'mahdi' || $_SESSION['username'] = 'niyayesh') ? 4 : 3 ?>" scope="col">
-                            <div class="flex items-center w-full <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : 'text-gray-800' ?>">
+                <?php else : ?>
+                    <tr class="min-w-full mb-1 bg-slate-400 hover:cursor-pointer">
+                        <td class="<?php array_key_exists("ordered", $price) ? 'text-white' : '' ?> text-gray-800 px-2 tiny-text" colspan="<?= $_SESSION['username'] == 'mahdi' || $_SESSION['username'] == 'niyayesh' ? 4 : 3 ?>" scope="col">
+                            <div class="rtl flex items-center w-full <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : 'text-gray-800' ?>">
                                 <i class="px-1 material-icons tiny-text <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : 'text-gray-800' ?>">access_time</i>
                                 <?= timeFormatter($price['created_at']); ?>
                             </div>
@@ -116,7 +122,6 @@ endif;
 
 if (isset($_POST['store_price'])) :
     $partNumber = $_POST['partNumber'];
-    $_existingBrands = json_decode($_POST['brands'], true);
     $price = $_POST['price'];
     $customer_id = $_POST['customer_id'];
     $notification_id = $_POST['notification_id'];
@@ -137,72 +142,79 @@ if (isset($_POST['store_price'])) :
 
     if ($givenPrice !== null) {
         $target = current($givenPrice);
-        $_sanitizedPrices = $target;
-        $__GOOD_PRICE_Dollar = $_sanitizedPrices['price'];
         $priceDate = $target['created_at'];
-        if (checkDateIfOkay($applyDate, $priceDate) && $__GOOD_PRICE_Dollar !== 'موجود نیست') :
-            $rawGivenPrice = $__GOOD_PRICE_Dollar;
-            $finalPriceForm = (applyDollarRate($rawGivenPrice, $priceDate)); ?>
-            <tr class="bg-cyan-400 hover:cursor-pointer text-sm">
-                <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $finalPriceForm ?>" data-part="<?= $partNumber ?>" scope="col">
+        if (checkDateIfOkay($applyDate, $priceDate) && $target['price'] !== 'موجود نیست') :
+            $rawGivenPrice = $target['price'];
+            $finalPrice = applyDollarRate($rawGivenPrice, $priceDate); ?>
+            <tr class="min-w-full mb-1  bg-cyan-400 hover:cursor-pointer">
+                <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $finalPrice ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left px-2 py-1 rtl <?= array_key_exists("ordered", $target) || $target['customerID'] == 1 ? 'text-white' : '' ?>">
                     <?php if (!array_key_exists("ordered", $target)) : ?>
-                        <img class="w-7 h-7 rounded-full mx-auto" src="../../public/userimg/<?= $target['userID'] ?>.jpg" alt="userimage">
+                        <img class="userImage" src="../../public/userimg/<?= $target['userID'] ?>.jpg" alt="userimage">
                     <?php endif; ?>
                 </td>
-                <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $finalPriceForm ?>" data-part="<?= $partNumber ?>" class="text-sm text-left text-white">
+                <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $finalPrice ?>" data-part="<?= $partNumber ?>" class="text-sm text-left <?= array_key_exists("ordered", $target) || $target['customerID'] == 1 ? 'text-white' : '' ?> ">
                     <?= array_key_exists("partnumber", $target) ? $target['partnumber'] : '' ?>
                 </td>
-                <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $finalPriceForm ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left text-white px-1 py-1">
-                    افزایش قیمت <?= $appliedRate ?>%
+                <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $finalPrice ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left px-2 py-1 rtl <?= array_key_exists("ordered", $target) || $target['customerID'] == 1 ? 'text-white' : '' ?>">
+                    افزایش قیمت <?= $appliedRate ?> در صد
                 </td>
-                <td style='direction: ltr !important;' onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $finalPriceForm ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left text-white px-2 py-2">
-                    <?= $__GOOD_PRICE_Dollar === null ? 'ندارد' :  $finalPriceForm ?>
+                <td style='direction: ltr !important;' onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $finalPrice ?>" data-part="<?= $partNumber ?>" scope="col" class="relative text-sm text-left px-2 py-1 <?= array_key_exists("ordered", $target) || $target['customerID'] == 1 ? 'text-white' : '' ?>">
+                    <?= $target['price'] === null ? 'ندارد' :  $finalPrice ?>
                 </td>
-                <?php if ($_SESSION['username'] == 'mahdi' || $_SESSION['username'] = 'niyayesh') : ?>
-                    <td>
-                    </td>
-                <?php endif; ?>
+                <td>
+                </td>
             </tr>
             <?php
         endif;
-        foreach ($givenPrice as $price) :
-            if ($price['price'] !== null && $price['price'] !== '') :
-                $__GOOD_PRICE = $price;
-                if ($__GOOD_PRICE) :
-                    $__GOOD_PRICE = $__GOOD_PRICE['price']; ?>
-                    <tr class="w-full mb-1 hover:cursor-pointer  text-sm <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'bg-red-400' : 'bg-indigo-200'; ?>">
-                        <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $__GOOD_PRICE ?>" data-part="<?= $partNumber ?>" scope="col" class="text-center text-gray-800 px-2 py-1 <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
-                            <?php if (!array_key_exists("ordered", $price)) : ?>
-                                <img class="userImage" src="../../public/userimg/<?= $price['userID'] ?>.jpg" alt="userimage">
-                            <?php endif; ?>
-                        </td>
-                        <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $__GOOD_PRICE ?>" data-part="<?= $partNumber ?>" class="text-sm text-left <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?> ">
-                            <?= array_key_exists("partnumber", $price) ? $price['partnumber'] : '' ?>
-                        </td>
-                        <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $__GOOD_PRICE ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left px-2 py-1 <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
-                            <?= array_key_exists("ordered", $price) ? 'قیمت دستوری' : $price['name'] . ' ' . $price['family']; ?>
-                        </td>
-                        <td style="direction: ltr !important;" onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $__GOOD_PRICE ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left px-2 py-1 <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
-                            <?= $__GOOD_PRICE === null ? 'ندارد' : $__GOOD_PRICE; ?>
-                        </td>
-                        <?php if ($_SESSION['username'] == 'mahdi' || $_SESSION['username'] = 'niyayesh') : ?>
-                            <td data-part="<?= $partNumber ?>" data-code="<?= $code ?>" onclick="deleteGivenPrice(this)" data-brands='<?= json_encode($_existingBrands) ?>' data-del='<?= $price['id'] ?>' data-target="<?= $relation_id ?>" scope="col" class="text-sm text-left px-2 py-1 <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
-                                <i id="deleteGivenPrice" class="material-icons" title="حذف قیمت">close</i>
-                            </td>
+        foreach ($givenPrice as $price) {
+            if ($price['price'] !== null && $price['price'] !== '') : ?>
+                <tr class="min-w-full mb-1 hover:cursor-pointer <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? ' bg-red-400' : 'bg-slate-300'; ?>">
+                    <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $price['price'] ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left px-2 py-1 rtl <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
+                        <?php if (!array_key_exists("ordered", $price)) :  ?>
+                            <img class="userImage" src="../../public/userimg/<?= $price['userID'] ?>.jpg" alt="userimage">
                         <?php endif; ?>
-                    </tr>
-                    <tr class="w-full mb-1 border-b-2 <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'bg-red-500' : 'bg-indigo-300' ?>" data-price='<?= $__GOOD_PRICE ?>'>
-                        <td class="<?php array_key_exists("ordered", $price) ? 'text-white' : '' ?> text-gray-800  py-1 px-2 tiny-text" colspan="<?= ($_SESSION['username'] == 'mahdi' || $_SESSION['username'] = 'niyayesh') ? 4 : 3 ?>" scope="col">
-                            <div class="flex items-center w-full <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : 'text-gray-800' ?>">
+                    </td>
+                    <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $price['price'] ?>" data-part="<?= $partNumber ?>" class="text-sm text-left <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?> ">
+                        <?= array_key_exists("partnumber", $price) ? $price['partnumber'] : '' ?>
+                    </td>
+                    <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $price['price'] ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left px-2 py-1 rtl <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
+                        <?= array_key_exists("ordered", $price) ? 'قیمت دستوری' : $price['name'] . ' ' . $price['family']; ?>
+                    </td>
+                    <td style='direction: ltr !important;' onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $price['price'] ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left px-2 py-1 <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
+                        <?= $price['price'] === null ? 'ندارد' : $price['price']  ?>
+                    </td>
+                    <?php if (array_key_exists("id", $price)) : ?>
+                        <td onclick="deleteGivenPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-part="<?= $partNumber ?>" data-del='<?= $price['id'] ?>' scope="col" class="text-sm text-left px-2 py-1 <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
+                            <i id="deleteGivenPrice" class="material-icons" title="حذف قیمت">close</i>
+                        </td>
+                    <?php else : ?>
+                        <td></td>
+                    <?php endif; ?>
+                </tr>
+                <?php if (array_key_exists("ordered", $price) || $price['customerID'] == 1) : ?>
+                    <tr class="min-w-full mb-1 border-b-2 bg-red-500">
+                        <td class="<?php array_key_exists("ordered", $price) ? 'text-white' : '' ?> text-gray-800 px-2 tiny-text" colspan="4" scope="col">
+                            <div class="rtl flex items-center w-full <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : 'text-gray-800' ?>">
                                 <i class="px-1 material-icons tiny-text <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : 'text-gray-800' ?>">access_time</i>
                                 <?= timeFormatter($price['created_at']); ?>
                             </div>
                         </td>
                         <td></td>
                     </tr>
-        <?php endif;
+                <?php else : ?>
+                    <tr class="min-w-full mb-1 bg-slate-400 hover:cursor-pointer">
+                        <td class="<?php array_key_exists("ordered", $price) ? 'text-white' : '' ?> text-gray-800 px-2 tiny-text" colspan="4" scope="col">
+                            <div class="rtl flex items-center w-full <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : 'text-gray-800' ?>">
+                                <i class="px-1 material-icons tiny-text <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : 'text-gray-800' ?>">access_time</i>
+                                <?= timeFormatter($price['created_at']); ?>
+                            </div>
+                        </td>
+                        <td></td>
+                    </tr>
+        <?php
+                endif;
             endif;
-        endforeach;
+        }
     } else { ?>
         <tr class="min-w-full mb-4 border-b-2 border-white">
             <td colspan="3" scope="col" class="text-gray-800 py-2 text-center bg-indigo-300">
