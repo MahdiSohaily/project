@@ -20,9 +20,35 @@ $_sanitizedPrices = getSanitizedPrices($givenPrice, $_existingBrands);
         <tbody id="price-<?= $partNumber ?>">
             <?php
             $finalPriceForm = '';
-            if ($givenPrice !== null && count($givenPrice) > 0 && current($_sanitizedPrices)) :
+            if ($givenPrice !== null && count($givenPrice) > 0) :
+                if ($_sanitizedPrices) : ?>
+                    <tr class="bg-green-500 hover:cursor-pointer text-sm">
+                        <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $finalPriceForm ?>" data-part="<?= $partNumber ?>" scope="col">
+                            <?php if (!array_key_exists("ordered", $target)) : ?>
+                                <img class="w-7 h-7 rounded-full mx-auto" src="../../public/userimg/<?= $target['userID'] ?>.jpg" alt="userimage">
+                            <?php endif; ?>
+                        </td>
+                        <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $finalPriceForm ?>" data-part="<?= $partNumber ?>" class="text-sm text-left text-white">
+                            <?= array_key_exists("partnumber", $target) ? $target['partnumber'] : '' ?>
+                        </td>
+                        <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $finalPriceForm ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left text-white px-1 py-1">
+                            افزایش قیمت <?= $appliedRate ?>%
+                        </td>
+                        <td style='direction: ltr !important;' onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $finalPriceForm ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left text-white px-2 py-2">
+                            <?= $__GOOD_PRICE_Dollar === null ? 'ندارد' :  $finalPriceForm ?>
+                            <?= $__GOOD_PRICE_Dollar === null ? 'ندارد' :  $finalPriceForm ?>
+                            <?= $__GOOD_PRICE_Dollar === null ? 'ندارد' :  $finalPriceForm ?>
+                        </td>
+                        <?php if ($_SESSION['username'] == 'mahdi' || $_SESSION['username'] = 'niyayesh') : ?>
+                            <td>
+                            </td>
+                        <?php endif; ?>
+                    </tr>
+
+                <?php
+                endif;
                 $target = current($givenPrice);
-                $__GOOD_PRICE_Dollar = current($_sanitizedPrices)['price'];
+                $__GOOD_PRICE_Dollar = $target['price'];
                 $priceDate = $target['created_at'];
                 if (checkDateIfOkay($applyDate, $priceDate) && $__GOOD_PRICE_Dollar !== 'موجود نیست') :
                     $rawGivenPrice = $__GOOD_PRICE_Dollar;
@@ -51,12 +77,9 @@ $_sanitizedPrices = getSanitizedPrices($givenPrice, $_existingBrands);
                 endif;
                 foreach ($givenPrice as $price) :
                     if ($price['price'] !== null && $price['price'] !== '') :
-                        $__GOOD_PRICE = getSanitizedPrices([$price], $_existingBrands);
-
+                        $__GOOD_PRICE = $price;
                         if ($__GOOD_PRICE) :
-
-                            $__GOOD_PRICE = $__GOOD_PRICE[0]['price'];
-                    ?>
+                            $__GOOD_PRICE = $__GOOD_PRICE['price']; ?>
                             <tr class="w-full mb-1 hover:cursor-pointer  text-sm <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'bg-red-400' : 'bg-indigo-200'; ?>">
                                 <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $__GOOD_PRICE ?>" data-part="<?= $partNumber ?>" scope="col" class="text-center text-gray-800 px-2 py-1 <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
                                     <?php if (!array_key_exists("ordered", $price)) : ?>

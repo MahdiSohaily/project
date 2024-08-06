@@ -38,8 +38,8 @@ if (isset($_POST['delete_price'])) :
 
     if (count($givenPrice) > 0) :
         $target = current($givenPrice);
-        $_sanitizedPrices = getSanitizedPrices($givenPrice, $_existingBrands);
-        $__GOOD_PRICE_Dollar = current($_sanitizedPrices)['price'];
+        $_sanitizedPrices = $target;
+        $__GOOD_PRICE_Dollar = $_sanitizedPrices['price'];
         $priceDate = $target['created_at'];
         if (checkDateIfOkay($applyDate, $priceDate) && $__GOOD_PRICE_Dollar !== 'موجود نیست') :
             $rawGivenPrice = $__GOOD_PRICE_Dollar;
@@ -68,9 +68,9 @@ if (isset($_POST['delete_price'])) :
         endif;
         foreach ($givenPrice as $price) :
             if ($price['price'] !== null && $price['price'] !== '') :
-                $__GOOD_PRICE = getSanitizedPrices([$price], $_existingBrands);
+                $__GOOD_PRICE = $price;
                 if ($__GOOD_PRICE) :
-                    $__GOOD_PRICE = $__GOOD_PRICE[0]['price']; ?>
+                    $__GOOD_PRICE = $__GOOD_PRICE['price']; ?>
                     <tr class="w-full mb-1 hover:cursor-pointer  text-sm <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'bg-red-400' : 'bg-indigo-200'; ?>">
                         <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $__GOOD_PRICE ?>" data-part="<?= $partNumber ?>" scope="col" class="text-center text-gray-800 px-2 py-1 <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
                             <?php if (!array_key_exists("ordered", $price)) : ?>
@@ -137,8 +137,8 @@ if (isset($_POST['store_price'])) :
 
     if ($givenPrice !== null) {
         $target = current($givenPrice);
-        $_sanitizedPrices = getSanitizedPrices($givenPrice, $_existingBrands);
-        $__GOOD_PRICE_Dollar = current($_sanitizedPrices)['price'];
+        $_sanitizedPrices = $target;
+        $__GOOD_PRICE_Dollar = $_sanitizedPrices['price'];
         $priceDate = $target['created_at'];
         if (checkDateIfOkay($applyDate, $priceDate) && $__GOOD_PRICE_Dollar !== 'موجود نیست') :
             $rawGivenPrice = $__GOOD_PRICE_Dollar;
@@ -167,9 +167,9 @@ if (isset($_POST['store_price'])) :
         endif;
         foreach ($givenPrice as $price) :
             if ($price['price'] !== null && $price['price'] !== '') :
-                $__GOOD_PRICE = getSanitizedPrices([$price], $_existingBrands);
+                $__GOOD_PRICE = $price;
                 if ($__GOOD_PRICE) :
-                    $__GOOD_PRICE = $__GOOD_PRICE[0]['price']; ?>
+                    $__GOOD_PRICE = $__GOOD_PRICE['price']; ?>
                     <tr class="w-full mb-1 hover:cursor-pointer  text-sm <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'bg-red-400' : 'bg-indigo-200'; ?>">
                         <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $__GOOD_PRICE ?>" data-part="<?= $partNumber ?>" scope="col" class="text-center text-gray-800 px-2 py-1 <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
                             <?php if (!array_key_exists("ordered", $price)) : ?>

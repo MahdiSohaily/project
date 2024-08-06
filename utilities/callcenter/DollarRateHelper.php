@@ -217,7 +217,7 @@ function timeFormatter($date)
 
 function getExistingBrands($goods)
 {
-    $brands = ["GEN", "MOB"];
+    $brands = [];
     // Filter out empty arrays
     $goods = array_filter($goods, function ($good) {
         return !empty($good);
@@ -243,11 +243,17 @@ function getSanitizedPrices($prices, $brands)
 {
     $sanitizedPrices = [];
 
-    foreach ($prices as $price) {
-        if ($price['price'] == 'موجود نیست') {
-            $sanitizedPrices[] = ['price' => $price['price'], 'created_at' => $price['created_at']];
-            continue;
+    $addedBrands = [];
+
+    foreach ($prices as &$price) {
+        $rawGivenPrice = $price['price'];
+        $priceDate = $price['created_at'];
+
+        if (checkDateIfOkay(null, $priceDate) && $price !== 'موجود نیست') {
+            $finalPriceForm = (applyDollarRate($rawGivenPrice, $priceDate));
+            $price['price'] = $finalPriceForm;
         }
+
         // Split the price string into parts
         $priceParts = explode('/', $price['price']);
 
@@ -256,7 +262,7 @@ function getSanitizedPrices($prices, $brands)
         $priceParts = array_map('trim', $priceParts);
 
         // Filter the parts based on the brands
-        $filteredParts = array_filter($priceParts, function ($part) use ($brands) {
+        $filteredParts = array_filter($priceParts, function ($part) use ($brands, $addedBrands) {
             // Split the part to get the brand
             $firstSpacePos = strpos($part, ' ');
 
@@ -266,7 +272,12 @@ function getSanitizedPrices($prices, $brands)
 
                 $brand = trim($brandParts[0]);
                 // Check if the brand is in the list of brands
-                return in_array($brand, $brands);
+                if (!in_array($brand, $addedBrands)) {
+                    array_push($addedBrands, $brand);
+                    return in_array($brand, $brands);
+                } else {
+                    return false;
+                }
             } else {
 
                 $brand = "MOB";
@@ -282,13 +293,13 @@ function getSanitizedPrices($prices, $brands)
             }
             return false;
         });
-
         // Collect the filtered parts
-        $sanitizedPrices[] = ['price' => implode(' / ', $filteredParts), 'created_at' => $price['created_at']];
+        $sanitizedPrices[] =  implode(' / ', $filteredParts);
         $sanitizedPrices = array_filter($sanitizedPrices, function ($price) {
             return !empty($price['price']);
         });
     }
+
 
     return $sanitizedPrices;
 }

@@ -97,10 +97,10 @@ if ($isValidCustomer) :
                                     } else {
                                         if ($max && current($existing[$code])['givenPrice']) {
 
-                                            $returnedPrices = getSanitizedPrices(current($existing[$code])['givenPrice'], $_existingBrands);
+                                            $returnedPrices = current(current($existing[$code])['givenPrice']);
 
                                             if (count($returnedPrices) > 0) {
-                                                $target = $returnedPrices[0];
+                                                $target = $returnedPrices;
                                             } else {
                                                 $target = ['price' => 'موجود نیست', 'created_at' => ''];
                                             }
