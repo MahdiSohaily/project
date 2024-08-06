@@ -217,7 +217,7 @@ function timeFormatter($date)
 
 function getExistingBrands($goods)
 {
-    $brands = [];
+    $brands = ["GEN", "MOB"];
     // Filter out empty arrays
     $goods = array_filter($goods, function ($good) {
         return !empty($good);
