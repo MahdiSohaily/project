@@ -78,7 +78,7 @@ if ($isValidCustomer) :
                         <?php
                         foreach ($explodedCodes as $__index => $code) {
                             $selectedBrands = $brands[$__index];
-                            $selectedPrices = $givenPrices[$__index];
+                            // $selectedPrices = $givenPrices[$__index];
                             $_existingBrands = getExistingBrands($selectedBrands);
 
                             $relation_id =  array_key_exists($code, $relation_ids) ? $relation_ids[$code] : 'xxx';
