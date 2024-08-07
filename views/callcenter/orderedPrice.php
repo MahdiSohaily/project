@@ -76,7 +76,7 @@ if ($isValidCustomer) :
                     </thead>
                     <tbody id="priceReport">
                         <?php
-                        foreach ($explodedCodes as $code) {
+                        foreach ($explodedCodes as $__index => $code) {
                             $relation_id =  array_key_exists($code, $relation_ids) ? $relation_ids[$code] : 'xxx';
                             $max = 0;
                             if (array_key_exists($code, $existing)) {
@@ -96,12 +96,9 @@ if ($isValidCustomer) :
                                             $target = current(current($existing[$code])['givenPrice']);
                                             $priceDate = $target['created_at'];
 
-                                            $finalPrice = strtoupper(trim(current(current($existing[$code])['givenPrice'])['price']));
-
-                                            if (checkDateIfOkay($applyDate, $priceDate) && $target['price'] !== 'موجود نیست') :
-                                                $rawGivenPrice = $target['price'];
-                                                $finalPrice = strtoupper(applyDollarRate($rawGivenPrice, $priceDate));
-                                            endif; // 
+                                            $finalPrice = current(current($existing[$code])['givenPrice']);
+                                            $existing_brands = getExistingBrands($brands[$__index]);
+                                            $finalPrice = getFinalSanitizedPrice([$finalPrice], $existing_brands);
                                     ?>
                                             <p style='direction: ltr !important;' data-relation='<?= $relation_id ?>' id='<?= $code ?>-append' class="<?= $finalPrice !== 'موجود نیست' ? '' : 'text-yellow-400' ?>">
                                                 <?= $finalPrice !== 'موجود نیست' ? $finalPrice : 'نیاز به بررسی' ?>
@@ -152,7 +149,7 @@ if ($isValidCustomer) :
 
                     </p>
                 </div>
-                <div style="<?= $max > 0 ? 'max-height: 1000vh' : 'max-height: 1000vh' ?>" class="accordion-content overflow-hidden bg-grey-lighter">
+                <div style="<?= $max > 0 ? 'max-height: 1000vh' : 'max-height: 0vh' ?>" class="accordion-content overflow-hidden bg-grey-lighter">
                     <?php
                     if (array_key_exists($code, $existing)) {
                         foreach ($existing[$code] as $index => $item) {
