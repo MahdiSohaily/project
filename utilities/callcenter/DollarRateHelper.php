@@ -288,7 +288,7 @@ function getFinalSanitizedPrice($givenPrices, $existing_brands)
                             continue;
                         }
 
-                        $filteredPrices[] = strtoupper($priceSubStr . ' ' . $brand);
+                        $filteredPrices[] = strtoupper($priceSubStr . ' ' . $brandSubStr);
                     }
                 }
             }
