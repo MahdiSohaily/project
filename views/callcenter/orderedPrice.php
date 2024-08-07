@@ -96,9 +96,18 @@ if ($isValidCustomer) :
                                             $target = current(current($existing[$code])['givenPrice']);
                                             $priceDate = $target['created_at'];
 
-                                            $finalPrice = current(current($existing[$code])['givenPrice']);
+                                            $rawPrice = current(current($existing[$code])['givenPrice']);
+
                                             $existing_brands = getExistingBrands(current($existing[$code])['relation']['stockInfo']);
-                                            $finalPrice = getFinalSanitizedPrice([$finalPrice], $existing_brands);
+                                            $finalPrice = getFinalSanitizedPrice([$rawPrice], $existing_brands);
+
+                                            if (!$finalPrice) {
+                                                $finalPrice = $rawPrice['price'];
+                                                if (checkDateIfOkay($applyDate, $priceDate) && $target['price'] !== 'موجود نیست') :
+                                                    $rawGivenPrice = $target['price'];
+                                                    $finalPrice = strtoupper(applyDollarRate($rawGivenPrice, $priceDate));
+                                                endif;
+                                            }
                                     ?>
                                             <p style='direction: ltr !important;' data-relation='<?= $relation_id ?>' id='<?= $code ?>-append' class="<?= $finalPrice !== 'موجود نیست' ? '' : 'text-yellow-400' ?>">
                                                 <?= $finalPrice !== 'موجود نیست' ? $finalPrice : 'نیاز به بررسی' ?>

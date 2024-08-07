@@ -298,16 +298,13 @@ function getFinalSanitizedPrice($givenPrices, $existing_brands)
                 }
 
                 if (empty($brand)) {
-                    $brands = ['GEN', 'MOB'];
-                    $filteredPrices[] = $priceSubStr . ' ' . $brands[array_rand($brands)] . ' ' . $brandSubStr;
+                    $filteredPrices[] = $priceSubStr . '  ' . $brandSubStr;
                 }
             } else {
-                $brands = ['GEN', 'MOB'];
-                $filteredPrices[] = $part . ' ' . $brands[array_rand($brands)];
+                $filteredPrices[] = $part;
             }
         }
         break;
     }
-
     return implode(" / ", array_unique($filteredPrices)); // Ensure uniqueness in the final result
 }
