@@ -76,7 +76,8 @@ if ($isValidCustomer) :
                     </thead>
                     <tbody id="priceReport">
                         <?php
-                        foreach ($explodedCodes as $__index => $code) {
+                        $___index__counter = 0;
+                        foreach ($explodedCodes as $code) {
                             $relation_id =  array_key_exists($code, $relation_ids) ? $relation_ids[$code] : 'xxx';
                             $max = 0;
                             if (array_key_exists($code, $existing)) {
@@ -91,13 +92,14 @@ if ($isValidCustomer) :
                                     if (in_array($code, $not_exist)) {
                                         echo "<p class ='text-red-600' data-relation='" . $relation_id . "' id='" . $code . '-append' . "'>کد اشتباه</p>";
                                     } else {
+                                        $___index__counter++;
                                         if ($max && current($existing[$code])['givenPrice']) {
 
                                             $target = current(current($existing[$code])['givenPrice']);
                                             $priceDate = $target['created_at'];
 
                                             $finalPrice = current(current($existing[$code])['givenPrice']);
-                                            $existing_brands = getExistingBrands($brands[$__index]);
+                                            $existing_brands = getExistingBrands(current($existing[$code])['relation']['stockInfo']);
                                             $finalPrice = getFinalSanitizedPrice([$finalPrice], $existing_brands);
                                     ?>
                                             <p style='direction: ltr !important;' data-relation='<?= $relation_id ?>' id='<?= $code ?>-append' class="<?= $finalPrice !== 'موجود نیست' ? '' : 'text-yellow-400' ?>">
