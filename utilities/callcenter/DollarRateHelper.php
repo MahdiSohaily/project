@@ -293,6 +293,7 @@ function getFinalSanitizedPrice($givenPrices, $existing_brands)
                 }
             }
         }
+        break;
     }
 
     return implode(" / ", array_unique($filteredPrices)); // Ensure uniqueness in the final result
