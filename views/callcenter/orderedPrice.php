@@ -17,8 +17,8 @@ if ($isValidCustomer) :
         $completeCode = $finalResult['completeCode'];
         $notification = $finalResult['notification'];
         $rates = $finalResult['rates'];
-        $relation_ids = $finalResult['relation_id'];
-?>
+        $relation_ids = $finalResult['relation_id']; ?>
+
         <link href="./assets/css/report.css" rel="stylesheet" />
         <section class="flex gap-8 justify-between">
             <div class="m-2 bg-gray-700 p-2 w-96">
@@ -96,11 +96,11 @@ if ($isValidCustomer) :
                                             $target = current(current($existing[$code])['givenPrice']);
                                             $priceDate = $target['created_at'];
 
-                                            $finalPrice = trim(current(current($existing[$code])['givenPrice'])['price']);
+                                            $finalPrice = strtoupper(trim(current(current($existing[$code])['givenPrice'])['price']));
 
                                             if (checkDateIfOkay($applyDate, $priceDate) && $target['price'] !== 'موجود نیست') :
                                                 $rawGivenPrice = $target['price'];
-                                                $finalPrice = applyDollarRate($rawGivenPrice, $priceDate);
+                                                $finalPrice = strtoupper(applyDollarRate($rawGivenPrice, $priceDate));
                                             endif; // 
                                     ?>
                                             <p style='direction: ltr !important;' data-relation='<?= $relation_id ?>' id='<?= $code ?>-append' class="<?= $finalPrice !== 'موجود نیست' ? '' : 'text-yellow-400' ?>">
@@ -164,7 +164,9 @@ if ($isValidCustomer) :
                             $sorted =  $relation['sorted'];
                             $stockInfo =  $relation['stockInfo'];
                             $givenPrice =  $item['givenPrice'];
-                            $limit_id = $relation['limit_alert'];?>
+                            $limit_id = $relation['limit_alert'];
+                            $existing_brands = getExistingBrands($stockInfo);
+                    ?>
                             <div style="direction: ltr !important;" class="grid grid-cols-1 gap-6 lg:grid-cols-11 lg:gap-2 mb-7">
                                 <?php
                                 $infoSize = 'lg:col-span-2';

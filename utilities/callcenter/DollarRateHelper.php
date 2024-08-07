@@ -214,3 +214,83 @@ function timeFormatter($date)
 
     return "<p class='text-xs'>$text قبل</p>";
 }
+
+function getExistingBrands($stockInfo)
+{
+    if ($stockInfo) {
+        $stockInfo = array_values($stockInfo);
+
+        $stockInfo = array_filter($stockInfo, function ($item) {
+            return count($item) > 0;
+        });
+
+        $brands = [];
+        foreach ($stockInfo as $stock) {
+            foreach ($stock as $item) {
+                $brands[] = strtoupper($item['brandName']);
+            }
+        }
+
+        if (in_array('HI Q', $brands)) {
+            $brands[] = 'HIQ';
+            $brands[] = 'HI';
+        }
+
+        if (in_array('MOB', $brands) || in_array('GEN', $brands)) {
+            $brands[] = 'MOB';
+            $brands[] = 'GEN';
+        }
+
+        if (in_array('OEMAX', $brands) || in_array('JYR', $brands) || in_array('RB2', $brands)) {
+            $brands[] = 'CHINA';
+        }
+
+        if (in_array('YONG', $brands) || in_array('YONG HOO', $brands)) {
+            $brands[] = 'KOREA';
+        }
+
+        return array_unique($brands); // Remove duplicate brand names
+    }
+    return [];
+}
+
+function getFinalSanitizedPrice($givenPrices, $existing_brands)
+{
+    $addedBrands = [];
+    $filteredPrices = [];
+    foreach ($givenPrices as $price) {
+        if (count($filteredPrices) == 0  && $price['price'] == 'موجود نیست') {
+            $filteredPrices[] = 'موجود نیست';
+            break;
+        }
+
+        $pricesParts = explode('/', $price['price']);
+        $pricesParts = array_map('trim', $pricesParts);
+        $pricesParts = array_map('strtoupper', $pricesParts);
+
+        foreach ($pricesParts as $part) {
+            $spaceIndex = strpos($part, ' ');
+            if ($spaceIndex !== false) {
+                $brandSubStr = substr($part, $spaceIndex);
+                $brand = trim(explode('(', $brandSubStr)[0]);
+
+                if (!in_array($brand, $addedBrands)) {
+                    $addedBrands[] = $brand;
+                    if (in_array($brand, $existing_brands)) {
+                        $finalPriceForm = $price['price'];
+                        if ($finalPriceForm == 'موجود نیست') {
+                            continue;
+                        }
+
+                        if (checkDateIfOkay(null, $price['created_at']) && $price['price'] !== 'موجود نیست') {
+                            $finalPriceForm = (applyDollarRate($finalPriceForm, $price['created_at']));
+                        }
+                        $filteredPrices[] = strtoupper($finalPriceForm);
+                    }
+                }
+            }
+        }
+    }
+
+    return implode(" / ", $filteredPrices);
+}

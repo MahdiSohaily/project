@@ -1,4 +1,7 @@
 <!-- Given Price section -->
+<?php
+$sanitizedPrice = getFinalSanitizedPrice($givenPrice, $existing_brands);
+?>
 <div class="w-full bg-white <?= $priceSize; ?> overflow-auto shadow-md p-2">
     <table class="w-full text-sm font-light">
         <thead>
@@ -14,13 +17,36 @@
         </thead>
         <tbody id="price-<?= $partNumber ?>">
             <?php
+            if ($sanitizedPrice) : ?>
+                <tr class="bg-green-500 hover:cursor-pointer text-sm">
+                    <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $sanitizedPrice ?>" data-part="<?= $partNumber ?>" scope="col">
+                        <?php if (!array_key_exists("ordered", $target)) : ?>
+                            <img class="w-7 h-7 rounded-full mx-auto" src="../../public/userimg/<?= $target['userID'] ?>.jpg" alt="userimage">
+                        <?php endif; ?>
+                    </td>
+                    <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $sanitizedPrice ?>" data-part="<?= $partNumber ?>" class="text-sm text-left text-white">
+                        <?= array_key_exists("partnumber", $target) ? $target['partnumber'] : '' ?>
+                    </td>
+                    <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $sanitizedPrice ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left text-white px-1 py-1">
+                        قیمت نهایی
+                    </td>
+                    <td style='direction: ltr !important;' onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $sanitizedPrice ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left text-white px-2 py-2">
+                        <?= $target['price'] === null ? 'ندارد' :  $sanitizedPrice ?>
+                    </td>
+                    <?php if ($_SESSION['username'] == 'mahdi' || $_SESSION['username'] = 'niyayesh') : ?>
+                        <td>
+                        </td>
+                    <?php endif; ?>
+                </tr>
+                <?php
+            endif;
             $finalPriceForm = '';
             if ($givenPrice !== null && count($givenPrice) > 0) :
                 $target = current($givenPrice);
                 $priceDate = $target['created_at'];
                 if (checkDateIfOkay($applyDate, $priceDate) && $target['price'] !== 'موجود نیست') :
                     $rawGivenPrice = $target['price'];
-                    $finalPriceForm = (applyDollarRate($rawGivenPrice, $priceDate)); ?>
+                    $finalPriceForm = strtoupper(applyDollarRate($rawGivenPrice, $priceDate)); ?>
                     <tr class="bg-cyan-400 hover:cursor-pointer text-sm">
                         <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $finalPriceForm ?>" data-part="<?= $partNumber ?>" scope="col">
                             <?php if (!array_key_exists("ordered", $target)) : ?>
@@ -46,22 +72,22 @@
                 foreach ($givenPrice as $price) :
                     if ($price['price'] !== null && $price['price'] !== '') : ?>
                         <tr class="w-full mb-1 hover:cursor-pointer  text-sm <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'bg-red-400' : 'bg-indigo-200'; ?>">
-                            <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $price['price'] ?>" data-part="<?= $partNumber ?>" scope="col" class="text-center text-gray-800 px-2 py-1 <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
+                            <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= strtoupper($price['price']) ?>" data-part="<?= $partNumber ?>" scope="col" class="text-center text-gray-800 px-2 py-1 <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
                                 <?php if (!array_key_exists("ordered", $price)) : ?>
                                     <img class="userImage" src="../../public/userimg/<?= $price['userID'] ?>.jpg" alt="userimage">
                                 <?php endif; ?>
                             </td>
-                            <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $price['price'] ?>" data-part="<?= $partNumber ?>" class="text-sm text-left <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?> ">
+                            <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= strtoupper($price['price']) ?>" data-part="<?= $partNumber ?>" class="text-sm text-left <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?> ">
                                 <?= array_key_exists("partnumber", $price) ? $price['partnumber'] : '' ?>
                             </td>
-                            <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $price['price'] ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left px-2 py-1 <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
+                            <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= strtoupper($price['price']) ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left px-2 py-1 <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
                                 <?= array_key_exists("ordered", $price) ? 'قیمت دستوری' : $price['name'] . ' ' . $price['family']; ?>
                             </td>
                             <td style="direction: ltr !important;" onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $price['price'] ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left px-2 py-1 <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
-                                <?= $price['price'] === null ? 'ندارد' : $price['price']; ?>
+                                <?= $price['price'] === null ? 'ندارد' : strtoupper($price['price']); ?>
                             </td>
                             <?php if ($_SESSION['username'] == 'mahdi' || $_SESSION['username'] = 'niyayesh') : ?>
-                                <td data-part="<?= $partNumber ?>" data-code="<?= $code ?>" onclick="deleteGivenPrice(this)" data-del='<?= $price['id'] ?>' data-target="<?= $relation_id ?>" scope="col" class="text-sm text-left px-2 py-1 <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
+                                <td data-part="<?= $partNumber ?>" data-code="<?= $code ?>" onclick="deleteGivenPrice(this)" data-brands='<?= json_encode($existing_brands) ?>' data-del='<?= $price['id'] ?>' data-target="<?= $relation_id ?>" scope="col" class="text-sm text-left px-2 py-1 <?= array_key_exists("ordered", $price) || $price['customerID'] == 1 ? 'text-white' : '' ?>">
                                     <i id="deleteGivenPrice" class="material-icons" title="حذف قیمت">close</i>
                                 </td>
                             <?php endif; ?>
@@ -112,10 +138,10 @@
             </div>
 
             <div class="flex gap-2">
-                <button onclick=" createRelation(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-part="<?= $partNumber ?>" type="submit" class="disabled:cursor-not-allowed  disabled:bg-gray-500 tiny-txt inline-flex items-center bg-gray-700 border border-transparent rounded-md text-sm text-white uppercase tracking-widest hover:bg-gray-700 px-2 py-2">
+                <button onclick=" createRelation(this)" data-brands='<?= json_encode($existing_brands) ?>' data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-part="<?= $partNumber ?>" type="submit" class="disabled:cursor-not-allowed  disabled:bg-gray-500 tiny-txt inline-flex items-center bg-gray-700 border border-transparent rounded-md text-sm text-white uppercase tracking-widest hover:bg-gray-700 px-2 py-2">
                     ثبت قیمت
                 </button>
-                <button onclick="donotHave(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-part="<?= $partNumber ?>" type="submit" class="disabled:cursor-not-allowed  disabled:bg-gray-500 tiny-txt inline-flex items-center bg-gray-700 border border-transparent rounded-md text-sm text-white uppercase tracking-widest hover:bg-gray-700 px-2 py-2">
+                <button onclick="donotHave(this)" data-brands='<?= json_encode($existing_brands) ?>' data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-part="<?= $partNumber ?>" type="submit" class="disabled:cursor-not-allowed  disabled:bg-gray-500 tiny-txt inline-flex items-center bg-gray-700 border border-transparent rounded-md text-sm text-white uppercase tracking-widest hover:bg-gray-700 px-2 py-2">
                     موجود نیست
                 </button>
                 <button onclick="askPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-user="<?= $_SESSION['user_id'] ?>" data-part="<?= $partNumber ?>" type="button" class="disabled:cursor-not-allowed  disabled:bg-gray-500 tiny-txt inline-flex items-center bg-gray-700 border border-transparent rounded-md text-sm text-white uppercase tracking-widest hover:bg-gray-700 px-2 py-2">

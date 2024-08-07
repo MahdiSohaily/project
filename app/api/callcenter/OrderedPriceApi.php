@@ -13,6 +13,7 @@ if (isset($_POST['delete_price'])) :
 
     $id = $_POST['id'];
     $partNumber = $_POST['partNumber'];
+    $existing_brands = json_decode($_POST['brands'], true);
     $customer_id = $_POST['customer_id'];
     $notification_id = $_POST['notification_id'];
     $relation_id = $_POST['relation_id'];
@@ -33,8 +34,33 @@ if (isset($_POST['delete_price'])) :
     $relations = relations($good['id']);
     $relations = array_keys($relations['goods']);
     $givenPrice = givenPrice($relations, $relation_exist);
+    $sanitizedPrice = getFinalSanitizedPrice($givenPrice, $existing_brands);
 
     if (count($givenPrice) > 0) :
+        if ($sanitizedPrice) :
+            $target = current($givenPrice); ?>
+            <tr class="bg-green-500 hover:cursor-pointer text-sm">
+                <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $sanitizedPrice ?>" data-part="<?= $partNumber ?>" scope="col">
+                    <?php if (!array_key_exists("ordered", $target)) : ?>
+                        <img class="w-7 h-7 rounded-full mx-auto" src="../../public/userimg/<?= $target['userID'] ?>.jpg" alt="userimage">
+                    <?php endif; ?>
+                </td>
+                <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $sanitizedPrice ?>" data-part="<?= $partNumber ?>" class="text-sm text-left text-white">
+                    <?= array_key_exists("partnumber", $target) ? $target['partnumber'] : '' ?>
+                </td>
+                <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $sanitizedPrice ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left text-white px-1 py-1">
+                    قیمت نهایی
+                </td>
+                <td style='direction: ltr !important;' onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $sanitizedPrice ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left text-white px-2 py-2">
+                    <?= $target['price'] === null ? 'ندارد' :  $sanitizedPrice ?>
+                </td>
+                <?php if ($_SESSION['username'] == 'mahdi' || $_SESSION['username'] = 'niyayesh') : ?>
+                    <td>
+                    </td>
+                <?php endif; ?>
+            </tr>
+        <?php
+        endif;
         $target = current($givenPrice);
         $priceDate = $target['created_at'] ?? '';
         if (checkDateIfOkay($applyDate, $priceDate) && $target['price'] !== 'موجود نیست') :
@@ -122,6 +148,7 @@ endif;
 
 if (isset($_POST['store_price'])) :
     $partNumber = $_POST['partNumber'];
+    $existing_brands = json_decode($_POST['brands'], true);
     $price = $_POST['price'];
     $customer_id = $_POST['customer_id'];
     $notification_id = $_POST['notification_id'];
@@ -139,8 +166,33 @@ if (isset($_POST['store_price'])) :
     $relations = relations($good['id']);
     $relations = array_keys($relations['goods']);
     $givenPrice = givenPrice($relations, $relation_exist);
+    $sanitizedPrice = getFinalSanitizedPrice($givenPrice, $existing_brands);
 
     if ($givenPrice !== null) {
+        if ($sanitizedPrice) :
+            $target = current($givenPrice); ?>
+            <tr class="bg-green-500 hover:cursor-pointer text-sm">
+                <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $sanitizedPrice ?>" data-part="<?= $partNumber ?>" scope="col">
+                    <?php if (!array_key_exists("ordered", $target)) : ?>
+                        <img class="w-7 h-7 rounded-full mx-auto" src="../../public/userimg/<?= $target['userID'] ?>.jpg" alt="userimage">
+                    <?php endif; ?>
+                </td>
+                <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $sanitizedPrice ?>" data-part="<?= $partNumber ?>" class="text-sm text-left text-white">
+                    <?= array_key_exists("partnumber", $target) ? $target['partnumber'] : '' ?>
+                </td>
+                <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $sanitizedPrice ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left text-white px-1 py-1">
+                    قیمت نهایی
+                </td>
+                <td style='direction: ltr !important;' onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $sanitizedPrice ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left text-white px-2 py-2">
+                    <?= $target['price'] === null ? 'ندارد' :  $sanitizedPrice ?>
+                </td>
+                <?php if ($_SESSION['username'] == 'mahdi' || $_SESSION['username'] = 'niyayesh') : ?>
+                    <td>
+                    </td>
+                <?php endif; ?>
+            </tr>
+        <?php
+        endif;
         $target = current($givenPrice);
         $priceDate = $target['created_at'];
         if (checkDateIfOkay($applyDate, $priceDate) && $target['price'] !== 'موجود نیست') :
