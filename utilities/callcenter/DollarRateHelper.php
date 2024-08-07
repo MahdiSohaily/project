@@ -241,7 +241,7 @@ function getExistingBrands($stockInfo)
             $brands[] = 'GEN';
         }
 
-        if (in_array('OEMAX', $brands) || in_array('JYR', $brands) || in_array('RB2', $brands)) {
+        if (in_array('OEMAX', $brands) || in_array('JYR', $brands) || in_array('RB2', $brands) || in_array('IRAN', $brands)) {
             $brands[] = 'CHINA';
         }
 
@@ -250,8 +250,9 @@ function getExistingBrands($stockInfo)
             $brands[] = 'HANON';
             $brands[] = 'DOOWON';
         }
+        
 
-        if (in_array('YONG', $brands) || in_array('YONG HOO', $brands)) {
+        if (in_array('YONG', $brands) || in_array('YONG HOO', $brands) || in_array('OEM', $brands)) {
             $brands[] = 'KOREA';
         }
 
