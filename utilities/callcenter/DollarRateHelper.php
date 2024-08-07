@@ -258,39 +258,42 @@ function getFinalSanitizedPrice($givenPrices, $existing_brands)
 {
     $addedBrands = [];
     $filteredPrices = [];
+
     foreach ($givenPrices as $price) {
-        if (count($filteredPrices) == 0  && $price['price'] == 'موجود نیست') {
+        if (empty($filteredPrices) && $price['price'] == 'موجود نیست') {
             $filteredPrices[] = 'موجود نیست';
             break;
         }
 
-        $pricesParts = explode('/', $price['price']);
+        $finalPriceForm = $price['price'];
+        if (checkDateIfOkay(null, $price['created_at']) && $price['price'] !== 'موجود نیست') {
+            $finalPriceForm = applyDollarRate($finalPriceForm, $price['created_at']);
+        }
+
+        $pricesParts = explode('/', $finalPriceForm);
         $pricesParts = array_map('trim', $pricesParts);
         $pricesParts = array_map('strtoupper', $pricesParts);
 
         foreach ($pricesParts as $part) {
             $spaceIndex = strpos($part, ' ');
             if ($spaceIndex !== false) {
-                $brandSubStr = substr($part, $spaceIndex);
+                $priceSubStr = substr($part, 0, $spaceIndex);
+                $brandSubStr = substr($part, $spaceIndex + 1); // Adjusted to skip the space
                 $brand = trim(explode('(', $brandSubStr)[0]);
 
                 if (!in_array($brand, $addedBrands)) {
                     $addedBrands[] = $brand;
                     if (in_array($brand, $existing_brands)) {
-                        $finalPriceForm = $price['price'];
                         if ($finalPriceForm == 'موجود نیست') {
                             continue;
                         }
 
-                        if (checkDateIfOkay(null, $price['created_at']) && $price['price'] !== 'موجود نیست') {
-                            $finalPriceForm = (applyDollarRate($finalPriceForm, $price['created_at']));
-                        }
-                        $filteredPrices[] = strtoupper($finalPriceForm);
+                        $filteredPrices[] = strtoupper($priceSubStr . ' ' . $brand);
                     }
                 }
             }
         }
     }
 
-    return implode(" / ", $filteredPrices);
+    return implode(" / ", array_unique($filteredPrices)); // Ensure uniqueness in the final result
 }
