@@ -244,7 +244,7 @@ function getExistingBrands($stockInfo)
         if (in_array('OEMAX', $brands) || in_array('JYR', $brands) || in_array('RB2', $brands)) {
             $brands[] = 'CHINA';
         }
-        
+
         if (in_array('DOOWON', $brands) || in_array('HANON', $brands) || in_array('HCC', $brands)) {
             $brands[] = 'HCC';
             $brands[] = 'HANON';
@@ -297,6 +297,9 @@ function getFinalSanitizedPrice($givenPrices, $existing_brands)
                         $filteredPrices[] = strtoupper($priceSubStr . ' ' . $brandSubStr);
                     }
                 }
+            } else {
+                $brands = ['GEN', 'MOB'];
+                $filteredPrices[] = $part . ' ' .$brands[array_rand($brands)];
             }
         }
         break;

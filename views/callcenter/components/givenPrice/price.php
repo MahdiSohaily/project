@@ -17,7 +17,9 @@ $sanitizedPrice = getFinalSanitizedPrice($givenPrice, $existing_brands);
         </thead>
         <tbody id="price-<?= $partNumber ?>">
             <?php
-            if ($sanitizedPrice) : ?>
+            if ($sanitizedPrice) : 
+                $target = current($givenPrice);
+            ?>
                 <tr class="bg-green-500 hover:cursor-pointer text-sm">
                     <td onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $sanitizedPrice ?>" data-part="<?= $partNumber ?>" scope="col">
                         <?php if (!array_key_exists("ordered", $target)) : ?>

@@ -152,7 +152,7 @@ if ($isValidCustomer) :
 
                     </p>
                 </div>
-                <div style="<?= $max > 0 ? 'max-height: 1000vh' : 'max-height: 0vh' ?>" class="accordion-content overflow-hidden bg-grey-lighter">
+                <div style="<?= $max > 0 ? 'max-height: 1000vh' : 'max-height: 1000vh' ?>" class="accordion-content overflow-hidden bg-grey-lighter">
                     <?php
                     if (array_key_exists($code, $existing)) {
                         foreach ($existing[$code] as $index => $item) {
