@@ -129,8 +129,8 @@ $sanitizedPrice = getFinalSanitizedPrice($givenPrice, $existing_brands);
                 </label>
                 <?php
                 $value = null;
-                if ($sanitizedPrice) {
-                    $value = $sanitizedPrice;
+                if ($finalPriceForm) {
+                    $value = $finalPriceForm;
                 } else if (current($givenPrice)) {
                     $value = current($givenPrice)['price'];
                 }
