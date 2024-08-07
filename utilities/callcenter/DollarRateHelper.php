@@ -286,8 +286,7 @@ function getFinalSanitizedPrice($givenPrices, $existing_brands)
                 $priceSubStr = substr($part, 0, $spaceIndex);
                 $brandSubStr = substr($part, $spaceIndex + 1); // Adjusted to skip the space
                 $brand = trim(explode('(', $brandSubStr)[0]);
-
-                if (!in_array($brand, $addedBrands)) {
+                if (!in_array($brand, $addedBrands) && !empty($brand)) {
                     $addedBrands[] = $brand;
                     if (in_array($brand, $existing_brands)) {
                         if ($finalPriceForm == 'موجود نیست') {
@@ -297,9 +296,14 @@ function getFinalSanitizedPrice($givenPrices, $existing_brands)
                         $filteredPrices[] = strtoupper($priceSubStr . ' ' . $brandSubStr);
                     }
                 }
+
+                if (empty($brand)) {
+                    $brands = ['GEN', 'MOB'];
+                    $filteredPrices[] = $priceSubStr . ' ' . $brands[array_rand($brands)] . ' ' . $brandSubStr;
+                }
             } else {
                 $brands = ['GEN', 'MOB'];
-                $filteredPrices[] = $part . ' ' .$brands[array_rand($brands)];
+                $filteredPrices[] = $part . ' ' . $brands[array_rand($brands)];
             }
         }
         break;

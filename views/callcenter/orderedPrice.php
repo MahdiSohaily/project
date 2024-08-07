@@ -76,7 +76,6 @@ if ($isValidCustomer) :
                     </thead>
                     <tbody id="priceReport">
                         <?php
-                        $___index__counter = 0;
                         foreach ($explodedCodes as $code) {
                             $relation_id =  array_key_exists($code, $relation_ids) ? $relation_ids[$code] : 'xxx';
                             $max = 0;
@@ -92,7 +91,6 @@ if ($isValidCustomer) :
                                     if (in_array($code, $not_exist)) {
                                         echo "<p class ='text-red-600' data-relation='" . $relation_id . "' id='" . $code . '-append' . "'>کد اشتباه</p>";
                                     } else {
-                                        $___index__counter++;
                                         if ($max && current($existing[$code])['givenPrice']) {
 
                                             $target = current(current($existing[$code])['givenPrice']);
