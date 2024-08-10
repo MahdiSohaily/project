@@ -17,7 +17,7 @@ $sanitizedPrice = getFinalSanitizedPrice($givenPrice, $existing_brands);
         </thead>
         <tbody id="price-<?= $partNumber ?>">
             <?php
-            if ($sanitizedPrice) : 
+            if (true) : 
                 $target = current($givenPrice);
             ?>
                 <tr class="bg-green-500 hover:cursor-pointer text-sm">
@@ -33,7 +33,7 @@ $sanitizedPrice = getFinalSanitizedPrice($givenPrice, $existing_brands);
                         قیمت نهایی
                     </td>
                     <td style='direction: ltr !important;' onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $sanitizedPrice ?>" data-part="<?= $partNumber ?>" scope="col" class="text-sm text-left text-white px-2 py-2">
-                        <?= $target['price'] === null ? 'ندارد' :  $sanitizedPrice ?>
+                        <?= $sanitizedPrice == '' ? 'نیاز به بررسی' :  $sanitizedPrice ?>
                     </td>
                     <?php if ($_SESSION['username'] == 'mahdi' || $_SESSION['username'] = 'niyayesh') : ?>
                         <td>

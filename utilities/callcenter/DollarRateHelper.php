@@ -231,6 +231,7 @@ function getExistingBrands($stockInfo)
             }
         }
 
+        // Specific brand logic
         if (in_array('HI Q', $brands)) {
             $brands[] = 'HIQ';
             $brands[] = 'HI';
@@ -250,13 +251,12 @@ function getExistingBrands($stockInfo)
             $brands[] = 'HANON';
             $brands[] = 'DOOWON';
         }
-        
 
-        if (in_array('YONG', $brands) || in_array('YONG HOO', $brands) || in_array('OEM', $brands)) {
+        if (in_array('YONG', $brands) || in_array('YONG HOO', $brands) || in_array('OEM', $brands) || in_array('ONNURI', $brands) ) {
             $brands[] = 'KOREA';
         }
 
-        return array_unique($brands); // Remove duplicate brand names
+        return array_unique($brands);
     }
     return [];
 }
@@ -269,7 +269,7 @@ function getFinalSanitizedPrice($givenPrices, $existing_brands)
     foreach ($givenPrices as $price) {
         if (empty($filteredPrices) && $price['price'] == 'موجود نیست') {
             $filteredPrices[] = 'موجود نیست';
-            break;
+            break; // Stops further processing if the first price is unavailable
         }
 
         $finalPriceForm = $price['price'];
@@ -285,16 +285,16 @@ function getFinalSanitizedPrice($givenPrices, $existing_brands)
             $spaceIndex = strpos($part, ' ');
             if ($spaceIndex !== false) {
                 $priceSubStr = substr($part, 0, $spaceIndex);
-                $brandSubStr = substr($part, $spaceIndex + 1); // Adjusted to skip the space
+                $brandSubStr = substr($part, $spaceIndex + 1); // Skip the space
                 $brand = trim(explode('(', $brandSubStr)[0]);
+                $complexBrands = explode(' ', $brand)[0];
+
                 if (!in_array($brand, $addedBrands) && !empty($brand)) {
                     $addedBrands[] = $brand;
-                    if (in_array($brand, $existing_brands)) {
-                        if ($finalPriceForm == 'موجود نیست') {
-                            continue;
+                    if (in_array($brand, $existing_brands) || in_array($complexBrands, $existing_brands)) {
+                        if ($finalPriceForm !== 'موجود نیست') {
+                            $filteredPrices[] = strtoupper($priceSubStr . ' ' . $brandSubStr);
                         }
-
-                        $filteredPrices[] = strtoupper($priceSubStr . ' ' . $brandSubStr);
                     }
                 }
 
@@ -305,7 +305,7 @@ function getFinalSanitizedPrice($givenPrices, $existing_brands)
                 $filteredPrices[] = $part;
             }
         }
-        break;
+        break; // Stops after the first price; remove this if you want to process all prices
     }
-    return implode(" / ", array_unique($filteredPrices)); // Ensure uniqueness in the final result
+    return implode(" / ", array_unique($filteredPrices)); // Ensure uniqueness
 }

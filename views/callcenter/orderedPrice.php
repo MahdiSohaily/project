@@ -102,11 +102,7 @@ if ($isValidCustomer) :
                                             $finalPrice = getFinalSanitizedPrice([$rawPrice], $existing_brands);
 
                                             if (!$finalPrice) {
-                                                $finalPrice = $rawPrice['price'];
-                                                if (checkDateIfOkay($applyDate, $priceDate) && $target['price'] !== 'موجود نیست') :
-                                                    $rawGivenPrice = $target['price'];
-                                                    $finalPrice = strtoupper(applyDollarRate($rawGivenPrice, $priceDate));
-                                                endif;
+                                                $finalPrice = 'موجود نیست';
                                             }
                                     ?>
                                             <p style='direction: ltr !important;' data-relation='<?= $relation_id ?>' id='<?= $code ?>-append' class="<?= $finalPrice !== 'موجود نیست' ? '' : 'text-yellow-400' ?>">
