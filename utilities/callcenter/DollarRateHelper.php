@@ -230,35 +230,39 @@ function getExistingBrands($stockInfo)
                 $brands[] = strtoupper($item['brandName']);
             }
         }
-
-        // Specific brand logic
-        if (in_array('HI Q', $brands)) {
-            $brands[] = 'HIQ';
-            $brands[] = 'HI';
-        }
-
-        if (in_array('MOB', $brands) || in_array('GEN', $brands)) {
-            $brands[] = 'MOB';
-            $brands[] = 'GEN';
-        }
-
-        if (in_array('OEMAX', $brands) || in_array('JYR', $brands) || in_array('RB2', $brands) || in_array('IRAN', $brands)) {
-            $brands[] = 'CHINA';
-        }
-
-        if (in_array('DOOWON', $brands) || in_array('HANON', $brands) || in_array('HCC', $brands)) {
-            $brands[] = 'HCC';
-            $brands[] = 'HANON';
-            $brands[] = 'DOOWON';
-        }
-
-        if (in_array('YONG', $brands) || in_array('YONG HOO', $brands) || in_array('OEM', $brands) || in_array('ONNURI', $brands) ) {
-            $brands[] = 'KOREA';
-        }
-
-        return array_unique($brands);
+        return addRelatedBrands($brands);
     }
     return [];
+}
+
+function addRelatedBrands($brands)
+{
+    // Specific brand logic
+    if (in_array('HI Q', $brands)) {
+        $brands[] = 'HIQ';
+        $brands[] = 'HI';
+    }
+
+    if (in_array('MOB', $brands) || in_array('GEN', $brands)) {
+        $brands[] = 'MOB';
+        $brands[] = 'GEN';
+    }
+
+    if (in_array('OEMAX', $brands) || in_array('JYR', $brands) || in_array('RB2', $brands) || in_array('IRAN', $brands)) {
+        $brands[] = 'CHINA';
+    }
+
+    if (in_array('DOOWON', $brands) || in_array('HANON', $brands) || in_array('HCC', $brands)) {
+        $brands[] = 'HCC';
+        $brands[] = 'HANON';
+        $brands[] = 'DOOWON';
+    }
+
+    if (in_array('YONG', $brands) || in_array('YONG HOO', $brands) || in_array('OEM', $brands) || in_array('ONNURI', $brands)) {
+        $brands[] = 'KOREA';
+    }
+
+    return array_unique($brands);
 }
 
 function getFinalSanitizedPrice($givenPrices, $existing_brands)
@@ -302,7 +306,9 @@ function getFinalSanitizedPrice($givenPrices, $existing_brands)
                     $filteredPrices[] = $priceSubStr . '  ' . $brandSubStr;
                 }
             } else {
-                $filteredPrices[] = $part;
+                if (in_array("MOB", $existing_brands) || in_array("GEN", $existing_brands)) {
+                    $filteredPrices[] = $part;
+                }
             }
         }
         break; // Stops after the first price; remove this if you want to process all prices

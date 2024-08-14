@@ -47,7 +47,7 @@ function setup_loading($customer, $completeCode, $notification = null)
 
     $explodedCodes = array_map(function ($code) {
         if (strlen($code) > 0) {
-            return  preg_replace('/[^a-z0-9]/i', '', $code);
+            return  strtoupper(preg_replace('/[^a-z0-9]/i', '', $code));
         }
     }, $explodedCodes);
 

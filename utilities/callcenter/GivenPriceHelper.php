@@ -78,7 +78,6 @@ function info($relation_exist = null)
     return $info ? ['relationInfo' => $info, 'cars' => $cars] : false;
 }
 
-
 function relations($id, $condition)
 {
     $relations = [];
@@ -108,7 +107,6 @@ function relations($id, $condition)
     $stockInfo = [];
     $sortedGoods = [];
     $unique_goods = [];
-    $sanitizedQuantity = [];
 
     foreach ($relations as $relation) {
         if (!array_key_exists($relation['partnumber'], $unique_goods)) {
@@ -145,10 +143,6 @@ function relations($id, $condition)
 
     arsort($sorted);
 
-    global $brands;
-
-    array_push($brands, $stockInfo);
-
     return [
         'goods' => $sortedGoods,
         'existing' => $existing,
@@ -159,10 +153,8 @@ function relations($id, $condition)
     ];
 }
 
-
 function givenPrice($codes, $relation_exist = null)
 {
-
     // Filter and lowercase the codes
     $codes = array_map('strtolower', array_filter($codes));
     $ordered_price = [];
@@ -207,8 +199,6 @@ function givenPrice($codes, $relation_exist = null)
     $filtered_data = array_filter($final_data, function ($item) {
         return isset($item['price']) && $item['price'] !== '';
     });
-    global $givenPrices;
-    $givenPrices[] = $filtered_data;
     return $filtered_data;
 }
 
@@ -406,7 +396,6 @@ function inventorySpecification($id, $type)
 
     return $yadakLimit;
 }
-
 
 function overallSpecification($id, $type)
 {

@@ -218,7 +218,7 @@ require_once './components/factor.php'; ?>
 
     // A function to display bill items and calculate the amount and goods count and display bill details afterword
     function displayBill() {
-        let counter = 1;
+        let counter = 0;
         let template = ``;
         let totalPrice = 0;
         factorInfo.quantity = 0;
@@ -230,10 +230,10 @@ require_once './components/factor.php'; ?>
             template += `
             <tr id="${item.id}" class="even:bg-gray-100 border-gray-800 add-column" >
                 <td class="py-3 px-4 w-10 relative text-left">
-                    <span>${counter}</span>
+                    <span>${counter + 1}</span>
                     <div class="absolute inset-0 flex flex-col items-start justify-center hidden-action">
-                        <img onclick="addNewRowAt('before','${counter - 1}')" title="افزودن ردیف قبل از این ردیف" class="cursor-pointer w-6" src="./assets/img/top_arrow.svg" />
-                        <img onclick="addNewRowAt('after','${counter - 1}')" title="افزودن ردیف بعد از این ردیف" class="cursor-pointer w-6" src="./assets/img/bottom_arrow.svg" />
+                        <img onclick="addNewRowAt('before','${counter}')" title="افزودن ردیف قبل از این ردیف" class="cursor-pointer w-6" src="./assets/img/top_arrow.svg" />
+                        <img onclick="addNewRowAt('after','${counter + 1}')" title="افزودن ردیف بعد از این ردیف" class="cursor-pointer w-6" src="./assets/img/bottom_arrow.svg" />
                     </div>
                 </td>
                 <td class="relative py-3 px-4 w-2/4" >
@@ -311,40 +311,31 @@ require_once './components/factor.php'; ?>
         displayBill();
     }
 
-    // This function adds a new bill item manually at specific position
+    // This function adds a new bill item manually at a specific position
     function addNewRowAt(position, targetIndex) {
+        // Insert the new object either before or after the target index
+        const newItem = {
+            id: Math.floor(Math.random() * (9000000 - 1000000 + 1)) + 1000000,
+            partName: "اسم قطعه را وارد کنید.",
+            price_per: 0,
+            quantity: 1,
+            max: 'undefined',
+            partNumber: 'NOTPART'
+        };
         // Ensure the targetIndex is within the valid range
         if (targetIndex >= 0 && targetIndex < factorItems.length) {
-            // Insert the new object either before or after the target index
-            const newItem = {
-                id: Math.floor(Math.random() * (9000000 - 1000000 + 1)) + 1000000,
-                partName: "اسم قطعه",
-                price_per: 0,
-                quantity: 1,
-                max: 'undefined',
-                partNumber: 'NOTPART'
-            };
-
             if (position === 'before') {
                 factorItems.splice(targetIndex, 0, newItem);
             } else if (position === 'after') {
-                factorItems.splice(targetIndex + 1, 0, newItem);
+                factorItems.splice(targetIndex, 0, newItem);
             } else {
                 console.error("Invalid position. Use 'before' or 'after'.");
             }
 
             displayBill();
-        } else if (targetIndex === factorItems.length && position === 'after') {
+        } else if (targetIndex == factorItems.length && position === 'after') {
             // If 'after' is selected and the target index is at the end, add to the end
-            factorItems.push({
-                id: Math.floor(Math.random() * (9000000 - 1000000 + 1)) + 1000000,
-                partName: "اسم قطعه",
-                price_per: 0,
-                quantity: 1,
-                max: 'undefined',
-                partNumber: 'NOTPART'
-            });
-
+            factorItems.push(newItem);
             displayBill();
         } else {
             console.error("Invalid target index.");
