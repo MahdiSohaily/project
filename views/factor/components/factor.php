@@ -197,13 +197,13 @@
                 document.getElementById('factor_description').style.display = 'block';
                 document.getElementById('factor_address').style.display = 'block';
                 document.getElementById('factor_phone').innerHTML = `<span style="direction: ltr !important;">
-                                                                        ۰۲۱ - ۳۳ ۹۷ ۹۳ ۷۰
+                                                                        ۰۲۱ - ۳۳ ۹۸ ۷۲ ۳۲
                                                                     </span>
                                                                     <span style="direction: ltr !important;">
-                                                                        ۰۲۱ - ۳۳ ۹۴ ۶۷ ۸۸
+                                                                        ۰۲۱ - ۳۳ ۹۸ ۷۲ ۳۳
                                                                     </span>
                                                                     <span style="direction: ltr !important;">
-                                                                        ۰۹۱۲ - ۰۸۱ ۸۳ ۵۵
+                                                                        ۰۲۱ - ۳۳ ۹۸ ۷۲ ۳۴
                                                                     </span>`;
                 break;
                 break;
@@ -213,16 +213,10 @@
                 document.getElementById('factor_description').style.display = 'block';
                 document.getElementById('factor_address').style.display = 'block';
                 document.getElementById('factor_phone').innerHTML = `<span>
-                                                                        ۷۰ ۹۳ ۹۷ ۳۳ - ۰۲۱
+                                                                        ۰۲۱ - ۳۳ ۹۲ ۵۴ ۱۱
                                                                     </span>
                                                                     <span>
-                                                                        ۸۸ ۶۷ ۹۴ ۳۳ - ۰۲۱
-                                                                    </span>
-                                                                    <span>
-                                                                        ۸۰۹ ۱۹ ۳۶۶ - ۰۲۱
-                                                                    </span>
-                                                                    <span>
-                                                                        ۴۳۲ ۱۹ ۳۶۶ - ۰۲۱
+                                                                        ۰۹۳۰ - ۳۱۵ ۰۶ ۹۴
                                                                     </span>`;
                 break;
                 break;
