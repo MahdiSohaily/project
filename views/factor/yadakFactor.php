@@ -4,6 +4,7 @@ $iconUrl = 'factor.svg';
 $logo = "./assets/img/logo.png";
 $title = 'فاکتور فروش یدک شاپ';
 $subTitle = 'لوازم یدکی هیوندای و کیا';
+$factorType = 'yadak';
 
 require_once './components/header.php';
 require_once '../../app/controller/factor/DisplayFactorController.php';

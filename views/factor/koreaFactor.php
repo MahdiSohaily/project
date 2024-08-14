@@ -4,6 +4,7 @@ $iconUrl = 'factor.svg';
 $logo = "./assets/img/Korea.jpg";
 $title = 'بازرگانی کره اتوپارت';
 $subTitle = 'لوازم یدکی هیوندای و کیا';
+$factorType = 'korea';
 
 require_once './components/header.php';
 require_once '../../app/controller/factor/DisplayFactorController.php';

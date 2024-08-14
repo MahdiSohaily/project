@@ -11,14 +11,33 @@
         نظامیه ، بن بست ویژه ، پلاک ۴
     </p>
     <p style="direction: ltr !important;" class="footer-box-tell">
-        <span style="direction: ltr !important;">
-            ۰۲۱ - ۳۳ ۹۷ ۹۳ ۷۰
-        </span>
-        <span style="direction: ltr !important;">
-            ۰۲۱ - ۳۳ ۹۴ ۶۷ ۸۸
-        </span>
-        <span style="direction: ltr !important;">
-            ۰۹۱۲ - ۰۸۱ ۸۳ ۵۵
-        </span>
+        <?php if ($factorType == 'korea'): ?>
+            <span>
+                ۰۲۱ - ۳۳ ۹۲ ۵۴ ۱۱
+            </span>
+            <span>
+                ۰۹۳۰ - ۳۱۵ ۰۶ ۹۴
+            </span>
+        <?php elseif ($factorType == 'partner'): ?>
+            <span style="direction: ltr !important;">
+                ۰۲۱ - ۳۳ ۹۸ ۷۲ ۳۲
+            </span>
+            <span style="direction: ltr !important;">
+                ۰۲۱ - ۳۳ ۹۸ ۷۲ ۳۳
+            </span>
+            <span style="direction: ltr !important;">
+                ۰۲۱ - ۳۳ ۹۸ ۷۲ ۳۴
+            </span>
+        <?php elseif ($factorType == 'yadak'): ?>
+            <span style="direction: ltr !important;">
+                ۰۲۱ - ۳۳ ۹۷ ۹۳ ۷۰
+            </span>
+            <span style="direction: ltr !important;">
+                ۰۲۱ - ۳۳ ۹۴ ۶۷ ۸۸
+            </span>
+            <span style="direction: ltr !important;">
+                ۰۹۱۲ - ۰۸۱ ۸۳ ۵۵
+            </span>
+        <?php endif; ?>
     </p>
 </div>

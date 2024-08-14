@@ -4,6 +4,7 @@ $iconUrl = 'factor.svg';
 $logo = "./assets/img/partner.jpg";
 $title = 'فاکتور فروش همکار';
 $subTitle = 'هیوندای و کیا';
+$factorType = 'partner';
 
 require_once './components/header.php';
 require_once '../../app/controller/factor/DisplayFactorController.php';
