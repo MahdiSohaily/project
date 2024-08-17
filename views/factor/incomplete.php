@@ -241,7 +241,7 @@ require_once './components/factor.php';
             if (ItemsBrands[item['partNumber']]) {
                 template += `<div class="absolute left-1/2 top-5 transform -translate-x-1/2 flex flex-wrap gap-1">`;
                 for (const brand of Object.keys(ItemsBrands[item['partNumber']])) {
-                    template += `<span style="font-size:12px" onclick="appendSufix('${item.id}','${brand}'); adjustPrice('${item.id}',${ItemsBrands[item['partNumber']][brand]})" class="cursor-pointer text-md text-white bg-sky-600 rounded p-1" title="">${brand}</span>`;
+                    template += `<span style="font-size:12px" onclick="appendSufix('${item.id}','${brand}'); adjustPrice(this, '${item.id}',${ItemsBrands[item['partNumber']][brand]})" class="priceTag cursor-pointer text-md text-white bg-sky-600 rounded p-1" title="">${brand}</span>`;
                 }
                 template += `</div>`;
             }
@@ -441,15 +441,31 @@ require_once './components/factor.php';
         displayBill();
     }
 
-    // Adding item snameElement
-    function adjustPrice(itemId, price) {
+    function adjustPrice(element, itemId, price) {
+
+        const priceTages = document.querySelectorAll('.priceTag');
+
+        element.classList.remove('bg-sky-600');
+        element.classList.add('text-black');
+
+        console.log(element);
+        
+
+        let itemFound = false;
         for (let i = 0; i < factorItems.length; i++) {
             if (factorItems[i].id == itemId) {
                 factorItems[i].price_per = price;
+                itemFound = true;
+                break;
             }
         }
-        displayBill();
+        if (!itemFound) {
+            console.warn('Item not found:', itemId);
+        }
+
+        displayBill(); // Assuming this updates the UI with the new price
     }
+
 
     // This function append a related prefix to the customer name
     function appendPrefix(prefix) {

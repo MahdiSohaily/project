@@ -20,7 +20,7 @@ $explodedCodes = array_unique($sanitizedCodes);
 $existing_code = []; // This array will hold the id and partNumber of the existing codes in DB
 
 // Prepare SQL statement outside the loop for better performance
-$sql = "SELECT id, partnumber FROM yadakshop.nisha WHERE partnumber LIKE :partNumber";
+$sql = "SELECT id, partnumber FROM yadakshop.nisha WHERE partnumber LIKE :partNumber LIMIT 1";
 $stmt = PDO_CONNECTION->prepare($sql);
 
 foreach ($explodedCodes as $code) {
@@ -112,4 +112,5 @@ $incompleteBillDetails = createBillItemsTable(
     json_encode($factorItems)
 );
 
-header('location: /views/factor/checkIncompleteSell.php?factor_number=' . $incompleteBillId);
+// header('location: /views/factor/checkIncompleteSell.php?factor_number=' . $incompleteBillId);
+header('location: /yadakshop-app/views/factor/checkIncompleteSell.php?factor_number=' . $incompleteBillId);
