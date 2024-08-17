@@ -1,4 +1,7 @@
 <?php
+
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat\Wizard\Number;
+
 if (!isset($dbname)) {
     header("Location: ../../../views/auth/403.php");
 }
@@ -42,6 +45,7 @@ function getDetails($completeCode)
 
     $goodDetails = [];
     $relation_id = [];
+    $codeRelationId = [];
     foreach ($explodedCodes as $code) {
         if (!in_array($code, $nonExistingCodes)) {
             foreach ($existing_code[$code] as $item) {
@@ -51,12 +55,14 @@ function getDetails($completeCode)
                     if (!in_array($relation_exist, $relation_id)) {
                         array_push($relation_id, $relation_exist);
                         $goodDescription = relations($relation_exist, true);
+                        $goodDetails[$item['partnumber']]['goods'] = $goodDescription['goods'][$item['partnumber']];
                         $goodDetails[$item['partnumber']]['existing'] = $goodDescription['existing'];
                         $goodDetails[$item['partnumber']]['givenPrice'] = givenPrice(array_keys($goodDescription['goods']), $relation_exist);
                         break;
                     }
                 } else {
                     $goodDescription = relations($item['partnumber'], false);
+                    $goodDetails[$item['partnumber']]['goods'] = $goodDescription['goods'][$item['partnumber']];
                     $goodDetails[$item['partnumber']]['existing'] = $goodDescription['existing'];
                     $goodDetails[$item['partnumber']]['givenPrice'] = givenPrice(array_keys($goodDescription['goods']));
                 }
@@ -72,15 +78,52 @@ function getDetails($completeCode)
             }
         }
         $brands = [...array_unique(array_merge(...$brands))];
-        $goodDetails[$partNumber]['existingBrands'] = $brands;
         $goodDetails[$partNumber]['brands'] = addRelatedBrands($brands);
         $goodDetails[$partNumber]['finalPrice'] = getFinalSanitizedPrice($goodDetail['givenPrice'], $goodDetails[$partNumber]['brands']);
     }
 
-    $result = [
-        'brands' => $goodDetails[$partNumber]['existingBrands'],
-        'finalPrice' => $goodDetails[$partNumber]['finalPrice'],
-    ];
 
-    print_r(json_encode($result));
+    $brandsPrices = [];
+
+    foreach ($goodDetails as $partNumber => $goodDetail) {
+        $brandsPrices[$partNumber] = getFinalPriceBrands($goodDetail['finalPrice']);
+    }
+
+    return $brandsPrices;
+}
+
+function getFinalPriceBrands($price)
+{
+    $brandsPrice = [];
+    $addedBrands = [];
+
+    if (empty($price) || $price == 'موجود نیست') {
+        return $brandsPrice;
+    }
+
+    $pricesParts = explode('/', $price);
+    $pricesParts = array_map('trim', $pricesParts);
+    $pricesParts = array_map('strtoupper', $pricesParts);
+
+    foreach ($pricesParts as $part) {
+        $spaceIndex = strpos($part, ' ');
+        if ($spaceIndex !== false) {
+            $priceSubStr = substr($part, 0, $spaceIndex);
+            $brandSubStr = substr($part, $spaceIndex + 1); // Skip the space
+            $brand = trim(explode('(', $brandSubStr)[0]);
+            $complexBrands = explode(' ', $brand)[0];
+
+            if (!in_array($brand, $addedBrands) && !empty($brand)) {
+                $addedBrands[] = $complexBrands;
+                if ($complexBrands == 'MOB' || $complexBrands == 'GEN') {
+                    $brandsPrice['اصلی'] = $priceSubStr * 10000;
+                    continue;
+                }
+                $brandsPrice[$complexBrands] = $priceSubStr * 10000;
+            }
+        } else {
+            $brandsPrice['اصلی'] = $part * 10000;
+        }
+    }
+    return $brandsPrice;
 }

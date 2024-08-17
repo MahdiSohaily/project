@@ -6,6 +6,7 @@ if (!isset($dbname)) {
 $factorInfo = null;
 $customerInfo = null;
 $billItems = [];
+$billItemsBrandAndPrice = [];
 
 if (isset($_GET['factor_number'])) {
 
@@ -50,6 +51,10 @@ if (isset($_GET['factor_number'])) {
         ];
     }
     $billItems = getBillItems($factorInfo['id']);
+
+    $codes = implode("\n", array_column(json_decode($billItems, true), 'partNumber'));
+
+    $billItemsBrandAndPrice = json_encode(getDetails($codes));
 } else {
     die("Invalid factor number");
 }

@@ -191,6 +191,7 @@ require_once './components/factor.php';
     const customerInfo = <?= json_encode($customerInfo); ?>;
     factorInfo.totalInWords = numberToPersianWords(<?= (float)$factorInfo['total'] ?>)
     const factorItems = <?= $billItems ?>;
+    const ItemsBrands = <?= $billItemsBrandAndPrice ?>;
 
     function bootstrap() {
         displayCustomer(customerInfo);
@@ -224,6 +225,7 @@ require_once './components/factor.php';
             const payPrice = Number(item.quantity) * Number(item.price_per);
             totalPrice += payPrice;
             factorInfo.quantity += Number(item.quantity);
+
             template += `
             <tr id="${item.id}" class="even:bg-gray-100 border-gray-800 add-column" >
                 <td class="py-3 px-4 w-10 relative text-left">
@@ -236,15 +238,14 @@ require_once './components/factor.php';
                 <td class="relative py-3 px-4 w-3/5" >
                     <input type="text" class="tab-op w-2/4 p-2 border-dotted border-1 text-gray-500 w-42" onchange="editCell(this, 'partName', '${item.id}', '${item.partName}')" value="${item.partName}" />`;
 
-            if (item['partNumber'] != 'NOTPART') {
-                template += `<div class="absolute left-1/2 top-5 transform -translate-x-1/2">
-                                <span style="font-size:12px" onclick="appendSufix('${item.id}','اصلی')" class="cursor-pointer text-md text-white bg-sky-800 rounded p-1" title="">اصلی</span>
-                                <span style="font-size:12px" onclick="appendSufix('${item.id}','DYC')" class="cursor-pointer text-md text-white bg-sky-600 rounded p-1" title="">DYC</span>
-                                <span style="font-size:12px" onclick="appendSufix('${item.id}','MANDO')" class="cursor-pointer text-md text-white bg-sky-600 rounded p-1" title="">MANDO</span>
-                                <span style="font-size:12px" onclick="appendSufix('${item.id}','KOREA')" class="cursor-pointer text-md text-white bg-sky-600 rounded p-1" title="">KOREA</span>
-                            </div>`;
+            if (ItemsBrands[item['partNumber']]) {
+                template += `<div class="absolute left-1/2 top-5 transform -translate-x-1/2 flex flex-wrap gap-1">`;
+                for (const brand of Object.keys(ItemsBrands[item['partNumber']])) {
+                    template += `<span style="font-size:12px" onclick="appendSufix('${item.id}','${brand}'); adjustPrice('${item.id}',${ItemsBrands[item['partNumber']][brand]})" class="cursor-pointer text-md text-white bg-sky-600 rounded p-1" title="">${brand}</span>`;
+                }
+                template += `</div>`;
             }
-            template += `  <div class="absolute left-5 top-5 flex flex-wrap gap-1 w-42">
+            template += `<div class="absolute left-5 top-5 flex flex-wrap gap-1 w-42">
                         <span style="font-size:12px" onclick="appendSufix('${item.id}','اصلی')" class="cursor-pointer text-md text-white bg-gray-600 rounded p-1" title="">اصلی</span>
                         <span style="font-size:12px" onclick="appendSufix('${item.id}','چین')" class="cursor-pointer text-md text-white bg-gray-600 rounded p-1" title="">چین</span>
                         <span style="font-size:12px" onclick="appendSufix('${item.id}','کره')" class="cursor-pointer text-md text-white bg-gray-600 rounded p-1" title="">کره</span>
@@ -320,13 +321,13 @@ require_once './components/factor.php';
     function addNewRowAt(position, targetIndex) {
         // Insert the new object either before or after the target index
         const newItem = {
-                id: Math.floor(Math.random() * (9000000 - 1000000 + 1)) + 1000000,
-                partName: "اسم قطعه را وارد کنید.",
-                price_per: 0,
-                quantity: 1,
-                max: 'undefined',
-                partNumber: 'NOTPART'
-            };
+            id: Math.floor(Math.random() * (9000000 - 1000000 + 1)) + 1000000,
+            partName: "اسم قطعه را وارد کنید.",
+            price_per: 0,
+            quantity: 1,
+            max: 'undefined',
+            partNumber: 'NOTPART'
+        };
 
         // Ensure the targetIndex is within the valid range
         if (targetIndex >= 0 && targetIndex < factorItems.length) {
@@ -435,6 +436,16 @@ require_once './components/factor.php';
 
                 let result = lastIndex !== -1 ? partName.substring(0, lastIndex) : partName;
                 factorItems[i].partName = result.trim() + ' - ' + suffix;
+            }
+        }
+        displayBill();
+    }
+
+    // Adding item snameElement
+    function adjustPrice(itemId, price) {
+        for (let i = 0; i < factorItems.length; i++) {
+            if (factorItems[i].id == itemId) {
+                factorItems[i].price_per = price;
             }
         }
         displayBill();

@@ -1,13 +1,14 @@
 <?php
 function getItemName($good, $brands)
 {
+    $brands = array_keys($brands);
     $name = $good['partnumber'];
 
     if ($good['partName']) {
         $name .= " (" . $good['partName'] . ")";
     }
 
-    if (in_array('GEN', $brands)) {
+    if (in_array('اصلی', $brands)) {
         $name .= ' - اصلی';
     }
 
@@ -81,4 +82,40 @@ function convertPersianToEnglish($string)
     $persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
     $englishDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
     return str_replace($persianDigits, $englishDigits, $string);
+}
+
+function getFinalPriceBrands($price)
+{
+    $brandsPrice = [];
+    $addedBrands = [];
+
+    if (empty($price) || $price == 'موجود نیست') {
+        return $brandsPrice;
+    }
+
+    $pricesParts = explode('/', $price);
+    $pricesParts = array_map('trim', $pricesParts);
+    $pricesParts = array_map('strtoupper', $pricesParts);
+
+    foreach ($pricesParts as $part) {
+        $spaceIndex = strpos($part, ' ');
+        if ($spaceIndex !== false) {
+            $priceSubStr = substr($part, 0, $spaceIndex);
+            $brandSubStr = substr($part, $spaceIndex + 1); // Skip the space
+            $brand = trim(explode('(', $brandSubStr)[0]);
+            $complexBrands = explode(' ', $brand)[0];
+
+            if (!in_array($brand, $addedBrands) && !empty($brand)) {
+                $addedBrands[] = $complexBrands;
+                if ($complexBrands == 'MOB' || $complexBrands == 'GEN') {
+                    $brandsPrice['اصلی'] = $priceSubStr;
+                    continue;
+                }
+                $brandsPrice[$complexBrands] = $priceSubStr;
+            }
+        } else {
+            $brandsPrice['اصلی'] = $part;
+        }
+    }
+    return $brandsPrice;
 }

@@ -258,7 +258,7 @@ function addRelatedBrands($brands)
         $brands[] = 'DOOWON';
     }
 
-    if (in_array('YONG', $brands) || in_array('YONG HOO', $brands) || in_array('OEM', $brands) || in_array('ONNURI', $brands)) {
+    if (in_array('YONG', $brands) || in_array('YONG HOO', $brands) || in_array('OEM', $brands) || in_array('ONNURI', $brands)|| in_array('GY', $brands)) {
         $brands[] = 'KOREA';
     }
 

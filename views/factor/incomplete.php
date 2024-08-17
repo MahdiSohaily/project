@@ -2,6 +2,9 @@
 $pageTitle = "ویرایش فاکتور";
 $iconUrl = 'factor.svg';
 require_once './components/header.php';
+require_once '../../utilities/callcenter/GivenPriceHelper.php';
+require_once '../../app/controller/factor/LoadFactorItemBrands.php';
+require_once '../../utilities/callcenter/DollarRateHelper.php';
 require_once '../../app/controller/factor/IncompleteFactorController.php';
 require_once '../../layouts/callcenter/nav.php';
 require_once '../../layouts/callcenter/sidebar.php';
@@ -9,7 +12,8 @@ require_once '../../layouts/callcenter/sidebar.php';
 <link rel="stylesheet" href="./assets/css/bill.css" />
 <link rel="stylesheet" href="./assets/css/incomplete.css" />
 <div id="wholePage" class="bg-rose-300 mb-20">
-    <?php require_once './components/factorSearch.php'; ?>
+    <?php
+    /*require_once './components/factorSearch.php';*/ ?>
     <!-- Bill editing and information section -->
     <section class="rtl mb-4 mt-2">
         <!-- bill and customer information table -->
@@ -77,7 +81,6 @@ require_once '../../layouts/callcenter/sidebar.php';
                     <thead>
                         <tr class="bg-gray-800">
                             <th class="py-2 px-4 border-b text-white w-10">#</th>
-                            <!-- <th class="py-2 px-4 border-b text-white">کد فنی</th> -->
                             <th class="py-2 px-4 border-b text-white text-right w-2/4">نام قطعه</th>
                             <th class="py-2 px-4 border-b text-white w-18"> تعداد</th>
                             <th class="py-2 px-4 border-b text-white  w-18"> قیمت</th>
@@ -90,9 +93,8 @@ require_once '../../layouts/callcenter/sidebar.php';
                     <tbody id="bill_body" class="text-gray-800">
                     </tbody>
                 </table>
-                <!-- <img class="cursor-pointer" onclick="addNewBillItemManually()" src="./assets/img/add.svg" alt="add icon"> -->
                 <div class="flex flex-row justify-between py-5 gap-5">
-                    <textarea onkeyup="updatefactorInfo(this)" class="border border-gray-800 w-1/3 p-5" name="description" id="description" placeholder="توضیحات فاکتور را وارد نمایید ..." cols="20" rows="3"></textarea>
+                    <textarea onkeyup="updateFactorInfo(this)" class="border-2 border-gray-400 focus:border-gray-800 w-1/3 p-5 outline-none" name="description" id="description" placeholder="توضیحات فاکتور را وارد نمایید ..." cols="20" rows="3"></textarea>
                     <section class="rtl p-5 backdrop-blur-xl bg-black/20 m-5 rounded-md">
                         <ul class="list-disc list-inside">
                             <li class="text-sm">برای ایجاد آیتم جدید در فاکتور از کلیدهای ترکیبی <code class="text-white bg-black px-1 rounded-md text-xs">Ctrl + Shift</code> استفاده نمایید. </li>
@@ -127,19 +129,19 @@ require_once '../../layouts/callcenter/sidebar.php';
                 <div>
                     <td class="py-2 px-3 text-white bg-gray-800 text-md">تخفیف</td>
                     <td class="py-2 px-4">
-                        <input onkeyup="updatefactorInfo(this)" class="w-full p-2 border text-gray-500" placeholder="0" type="number" name="discount" id="discount">
+                        <input onkeyup="updateFactorInfo(this)" class="w-full p-2 border text-gray-500" placeholder="0" type="number" name="discount" id="discount">
                     </td>
                 </div>
                 <div>
                     <td class="py-2 px-3 text-white bg-gray-800 text-md">مالیات (۰٪)</td>
                     <td class="py-2 px-4">
-                        <input onkeyup="updatefactorInfo(this)" class="w-full p-2 border text-gray-500" placeholder="0" type="number" name="tax" id="tax">
+                        <input onkeyup="updateFactorInfo(this)" class="w-full p-2 border text-gray-500" placeholder="0" type="number" name="tax" id="tax">
                     </td>
                 </div>
                 <div>
                     <td class="py-2 px-3 text-white bg-gray-800 text-md">عوارض</td>
                     <td class="py-2 px-4">
-                        <input onkeyup="updatefactorInfo(this)" class="w-full p-2 border text-gray-500" placeholder="0" type="number" name="withdraw" id="withdraw">
+                        <input onkeyup="updateFactorInfo(this)" class="w-full p-2 border text-gray-500" placeholder="0" type="number" name="withdraw" id="withdraw">
                     </td>
                 </div>
             </div>
@@ -177,6 +179,7 @@ require_once './components/modal.php';
 require_once './components/factor.php';
 ?>
 <script>
+    const BRANDS_ENDPOINT = '../../app/api/factor/LoadFactorItemBrandsAPI.php';
     // Accessing the conatainers to have global access for easy binding data
     const customer_results = document.getElementById('customer_results');
     const resultBox = document.getElementById("selected_box");
@@ -188,6 +191,7 @@ require_once './components/factor.php';
     const customerInfo = <?= json_encode($customerInfo); ?>;
     factorInfo.totalInWords = numberToPersianWords(<?= (float)$factorInfo['total'] ?>)
     const factorItems = <?= $billItems ?>;
+    const ItemsBrands = <?= $billItemsBrandAndPrice ?>;
 
     function bootstrap() {
         displayCustomer(customerInfo);
@@ -221,6 +225,7 @@ require_once './components/factor.php';
             const payPrice = Number(item.quantity) * Number(item.price_per);
             totalPrice += payPrice;
             factorInfo.quantity += Number(item.quantity);
+
             template += `
             <tr id="${item.id}" class="even:bg-gray-100 border-gray-800 add-column" >
                 <td class="py-3 px-4 w-10 relative text-left">
@@ -230,9 +235,17 @@ require_once './components/factor.php';
                         <img onclick="addNewRowAt('after','${counter + 1}')" title="افزودن ردیف بعد از این ردیف" class="cursor-pointer w-6" src="./assets/img/bottom_arrow.svg" />
                     </div>
                 </td>
-                <td class="relative py-3 px-4 w-2/4" >
-                    <input type="text" class="tab-op w-2/4 p-2 border-dotted border-1 text-gray-500 w-42" onchange="editCell(this, 'partName', '${item.id}', '${item.partName}')" value="${item.partName}" />
-                    <div class="absolute left-5 top-5 flex flex-wrap gap-1 w-42">
+                <td class="relative py-3 px-4 w-3/5" >
+                    <input type="text" class="tab-op w-2/4 p-2 border-dotted border-1 text-gray-500 w-42" onchange="editCell(this, 'partName', '${item.id}', '${item.partName}')" value="${item.partName}" />`;
+
+            if (ItemsBrands[item['partNumber']]) {
+                template += `<div class="absolute left-1/2 top-5 transform -translate-x-1/2 flex flex-wrap gap-1">`;
+                for (const brand of Object.keys(ItemsBrands[item['partNumber']])) {
+                    template += `<span style="font-size:12px" onclick="appendSufix('${item.id}','${brand}'); adjustPrice('${item.id}',${ItemsBrands[item['partNumber']][brand]})" class="cursor-pointer text-md text-white bg-sky-600 rounded p-1" title="">${brand}</span>`;
+                }
+                template += `</div>`;
+            }
+            template += `<div class="absolute left-5 top-5 flex flex-wrap gap-1 w-42">
                         <span style="font-size:12px" onclick="appendSufix('${item.id}','اصلی')" class="cursor-pointer text-md text-white bg-gray-600 rounded p-1" title="">اصلی</span>
                         <span style="font-size:12px" onclick="appendSufix('${item.id}','چین')" class="cursor-pointer text-md text-white bg-gray-600 rounded p-1" title="">چین</span>
                         <span style="font-size:12px" onclick="appendSufix('${item.id}','کره')" class="cursor-pointer text-md text-white bg-gray-600 rounded p-1" title="">کره</span>
@@ -315,12 +328,14 @@ require_once './components/factor.php';
             max: 'undefined',
             partNumber: 'NOTPART'
         };
+
         // Ensure the targetIndex is within the valid range
         if (targetIndex >= 0 && targetIndex < factorItems.length) {
+            console.log(targetIndex);
             if (position === 'before') {
                 factorItems.splice(targetIndex, 0, newItem);
             } else if (position === 'after') {
-                factorItems.splice(targetIndex , 0, newItem);
+                factorItems.splice(targetIndex, 0, newItem);
             } else {
                 console.error("Invalid position. Use 'before' or 'after'.");
             }
@@ -336,7 +351,7 @@ require_once './components/factor.php';
     }
 
     // Updating the bill inforation section (EX: setting the discount or tax)
-    function updatefactorInfo(element) {
+    function updateFactorInfo(element) {
         const proprty = element.getAttribute("name");
         factorInfo[proprty] = element.value;
     }
@@ -421,6 +436,16 @@ require_once './components/factor.php';
 
                 let result = lastIndex !== -1 ? partName.substring(0, lastIndex) : partName;
                 factorItems[i].partName = result.trim() + ' - ' + suffix;
+            }
+        }
+        displayBill();
+    }
+
+    // Adding item snameElement
+    function adjustPrice(itemId, price) {
+        for (let i = 0; i < factorItems.length; i++) {
+            if (factorItems[i].id == itemId) {
+                factorItems[i].price_per = price;
             }
         }
         displayBill();
