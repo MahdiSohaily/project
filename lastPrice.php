@@ -2,7 +2,6 @@
 require_once './config/constants.php';
 require_once './database/db_connect.php';
 require_once './utilities/callcenter/DollarRateHelper.php';
-require_once './utilities/callcenter/GivenPriceHelper.php';
 // Allow requests from any origin
 header("Access-Control-Allow-Origin: *");
 
@@ -21,79 +20,34 @@ header("Content-Type: application/json"); // Allow requests from any origin
 if (isset($_POST['code'])) {
     //remove all the special characters from the user input
     $code = [htmlspecialchars($_POST['code'])];
-
-    $completeCode = $code;
-    $finalResult = (setup_loading($completeCode));
-
-    $explodedCodes = &$finalResult['explodedCodes'];
-    $not_exist = &$finalResult['not_exist'];
-    $existing = &$finalResult['existing'];
-    $completeCode = &$finalResult['completeCode'];
-    $relation_ids = &$finalResult['relation_id'];
-
-    foreach ($explodedCodes as $code_index => &$code) {
-        if (array_key_exists($code, $existing)) {
-            foreach ($existing[$code] as &$item) {
-                if ($item['givenPrice'] !== null && count($item['givenPrice']) > 0) {
-                    foreach ($item['givenPrice'] as &$price) {
-                        $priceDate = $price['created_at'];
-
-                        if (checkDateIfOkay($applyDate, $priceDate) && $price['price'] !== 'موجود نیست') {
-                            $rawGivenPrice = $price['price'];
-                            $price['price'] = applyDollarRate($rawGivenPrice, $priceDate);
-                        }
-                    }
-                    unset($price); // Unset the reference to avoid any unintended modifications outside the loop
-                }
-            }
-            unset($item); // Unset the reference to avoid any unintended modifications outside the loop
-        }
-    }
-    unset($code); // Unset the reference to avoid any unintended modifications outside the loop
-
-
-
-    if (!empty($finalResult)) {
-        // Assuming everything went well
-        $response = [
-            'success' => true,
-            'message' => 'Form data received successfully.',
-            'data' => $finalResult,
-        ];
-        // Send the JSON response
-        echo json_encode($response);
-    }
+    $finalResult = getSpecification($code[0]);
+    echo json_encode($finalResult);
 }
 
-function setup_loading($completeCode)
+function getSpecification($explodedCodes)
 {
-    $explodedCodes = $completeCode;
-
-    $results_array = [
-        'not_exist' => [],
-        'existing' => [],
-    ];
-
-    $explodedCodes = array_map(function ($code) {
-        if (strlen($code) > 0) {
-            return  preg_replace('/[^a-z0-9]/i', '', $code);
-        }
-    }, $explodedCodes);
+    $explodedCodes = explode("\n", $explodedCodes);
+    $nonExistingCodes = [];
 
     $explodedCodes = array_filter($explodedCodes, function ($code) {
-        if (strlen($code) > 6) {
-            return  $code;
-        }
+        return strlen($code) > 6;
     });
 
-    // Remove duplicate codes from results array
-    $explodedCodes = array_unique($explodedCodes);
+    // Cleaning and filtering codes
+    $sanitizedCodes = array_map(function ($code) {
+        return strtoupper(preg_replace('/[^a-z0-9]/i', '', $code));
+    }, $explodedCodes);
 
-    $existing_code = []; // this array will hold the id and partNumber of the existing codes in DB
+    // Remove duplicate codes
+    $explodedCodes = array_unique($sanitizedCodes);
+
+    $existing_code = []; // This array will hold the id and partNumber of the existing codes in DB
+
+    // Prepare SQL statement outside the loop for better performance
+    $sql = "SELECT id, partnumber FROM yadakshop.nisha WHERE partnumber LIKE :partNumber";
+    $stmt = PDO_CONNECTION->prepare($sql);
 
     foreach ($explodedCodes as $code) {
-        $sql = "SELECT id, partnumber FROM yadakshop.nisha WHERE partnumber LIKE :partNumber";
-        $stmt = PDO_CONNECTION->prepare($sql);
         $param = $code . '%';
         $stmt->bindParam(':partNumber', $param, PDO::PARAM_STR);
         $stmt->execute();
@@ -102,45 +56,80 @@ function setup_loading($completeCode)
         if ($result) {
             $existing_code[$code] = $result;
         } else {
-            $results_array['not_exist'][] = $code; // Adding nonexisting codes to the final result array's not_exist index
+            $nonExistingCodes[] = $code;
         }
     }
 
-    $itemDetails = [];
+    $goodDetails = [];
     $relation_id = [];
-    $codeRelationId = [];
     foreach ($explodedCodes as $code) {
-        if (!in_array($code, $results_array['not_exist'])) {
-            $itemDetails[$code] = [];
+        if (!in_array($code, $nonExistingCodes)) {
             foreach ($existing_code[$code] as $item) {
                 $relation_exist = isInRelation($item['id']);
 
                 if ($relation_exist) {
-                    $codeRelationId[$code] =  $relation_exist;
                     if (!in_array($relation_exist, $relation_id)) {
-                        array_push($relation_id, $relation_exist); // if a new relation exists -> put it in the result array
-
-                        $itemDetails[$code][$item['partnumber']]['information'] = info($relation_exist);
-                        $itemDetails[$code][$item['partnumber']]['relation'] = relations($relation_exist, true);
-                        $itemDetails[$code][$item['partnumber']]['givenPrice'] = givenPrice(array_keys($itemDetails[$code][$item['partnumber']]['relation']['goods']), $relation_exist);
+                        array_push($relation_id, $relation_exist);
+                        $goodDescription = relations($relation_exist, true);
+                        $goodDetails[$code][$item['partnumber']]['existing'] = $goodDescription['existing'];
+                        $goodDetails[$code][$item['partnumber']]['sorted'] = $goodDescription['sorted'];
+                        $goodDetails[$code][$item['partnumber']]['givenPrice'] = givenPrice(array_keys($goodDescription['goods']), $relation_exist);
+                        break;
                     }
                 } else {
-                    $codeRelationId[$code] =  'not' . rand();
-                    $itemDetails[$code][$item['partnumber']]['information'] = info();
-                    $itemDetails[$code][$item['partnumber']]['relation'] = relations($item['partnumber'], false);
-                    $itemDetails[$code][$item['partnumber']]['givenPrice'] = givenPrice(array_keys($itemDetails[$code][$item['partnumber']]['relation']['goods']));
+                    $goodDescription = relations($item['partnumber'], false);
+                    $goodDetails[$code][$item['partnumber']]['existing'] = $goodDescription['existing'];
+                    $goodDetails[$code][$item['partnumber']]['sorted'] = $goodDescription['sorted'];
+                    $goodDetails[$code][$item['partnumber']]['givenPrice'] = givenPrice(array_keys($goodDescription['goods']));
                 }
             }
         }
     }
 
-    return ([
-        'explodedCodes' => $explodedCodes,
-        'not_exist' => $results_array['not_exist'],
-        'existing' => $itemDetails,
-        'completeCode' => $completeCode,
-        'relation_id' => $codeRelationId
-    ]);
+    // Custom comparison function to sort inner arrays by values in descending order
+    function customSort($a, $b)
+    {
+        $sumA = array_sum($a['sorted']); // Calculate the sum of values in $a
+        $sumB = array_sum($b['sorted']); // Calculate the sum of values in $b
+
+        // Compare the sums in descending order
+        if ($sumA == $sumB) {
+            return 0;
+        }
+        return ($sumA > $sumB) ? -1 : 1;
+    }
+
+
+    foreach ($goodDetails as &$record) {
+        uasort($record, 'customSort'); // Sort the inner array by values
+    }
+
+    $finalGoods = [];
+    foreach ($goodDetails as $good) {
+        foreach ($good as $key => $item) {
+            $finalGoods[$key] = $item;
+            break;
+        }
+    }
+
+    $goodDetails = $finalGoods;
+
+    $finalResult = [];
+
+    foreach ($goodDetails as $partNumber => $goodDetail) {
+        $brands = [];
+        foreach ($goodDetail['existing'] as $item) {
+            if (count($item)) {
+                array_push($brands, array_keys($item));
+            }
+        }
+        $brands = [...array_unique(array_merge(...$brands))];
+        $goodDetails[$partNumber]['brands'] = addRelatedBrands($brands);
+        $goodDetails[$partNumber]['finalPrice'] = getFinalSanitizedPrice($goodDetail['givenPrice'], $goodDetails[$partNumber]['brands']);
+        $finalResult[$partNumber]['finalPrice'] = getFinalSanitizedPrice($goodDetail['givenPrice'], $goodDetails[$partNumber]['brands']);
+    }
+
+    return $finalResult;
 }
 
 function isInRelation($id)
@@ -286,7 +275,7 @@ function relations($id, $condition)
 function givenPrice($codes, $relation_exist = null)
 {
     // Filter and lowercase the codes
-    $codes = array_map('strtolower', array_filter($codes));
+    $codes = array_map('strtolower', array_filter($codes, 'trim'));
     $ordered_price = [];
 
     if ($relation_exist) {
@@ -300,36 +289,45 @@ function givenPrice($codes, $relation_exist = null)
     }
 
     // Query to get prices based on the provided codes
-    $placeholders = implode(',', array_fill(0, count($codes), '?'));
-    $sql = "SELECT prices.id, prices.price, prices.partnumber, customer.name, customer.id AS customerID, 
-                   customer.family, users.id AS userID, prices.created_at
-            FROM shop.prices
-            INNER JOIN callcenter.customer ON customer.id = prices.customer_id
-            INNER JOIN yadakshop.users ON users.id = prices.user_id
-            WHERE partnumber IN ($placeholders)
-            ORDER BY created_at DESC LIMIT 7";
-    $stmt = PDO_CONNECTION->prepare($sql);
-    $stmt->execute($codes);
-    $givenPrices = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if (!empty($codes)) {
+        // Create placeholders for each code
+        $placeholders = implode(',', array_fill(0, count($codes), '?'));
+        $sql = "SELECT prices.id, prices.price, prices.partnumber, customer.name, customer.id AS customerID, 
+                       customer.family, users.id AS userID, prices.created_at
+                FROM shop.prices
+                INNER JOIN callcenter.customer ON customer.id = prices.customer_id
+                INNER JOIN yadakshop.users ON users.id = prices.user_id
+                WHERE partnumber IN ($placeholders)
+                ORDER BY created_at DESC LIMIT 7";
 
-    // Ensure givenPrices is not empty
-    $givenPrices = array_filter($givenPrices);
+        $stmt = PDO_CONNECTION->prepare($sql);
 
-    // Prepare final data array
-    $final_data = $relation_exist ? array_merge([$ordered_price], $givenPrices) : $givenPrices;
+        // Execute the statement with the array of codes
+        $stmt->execute($codes);
+        $givenPrices = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Sort final data by created_at if relation_exist is true
-    if ($relation_exist) {
-        usort($final_data, function ($a, $b) {
-            return strtotime($b['created_at']) - strtotime($a['created_at']);
+        // Ensure givenPrices is not empty
+        $givenPrices = array_filter($givenPrices);
+
+        // Prepare final data array
+        $final_data = $relation_exist ? array_merge([$ordered_price], $givenPrices) : $givenPrices;
+
+        // Sort final data by created_at if relation_exist is true
+        if ($relation_exist) {
+            usort($final_data, function ($a, $b) {
+                return strtotime($b['created_at']) - strtotime($a['created_at']);
+            });
+        }
+
+        // Filter out items without price
+        $filtered_data = array_filter($final_data, function ($item) {
+            return isset($item['price']) && $item['price'] !== '';
         });
+
+        return $filtered_data;
     }
 
-    // Filter out items without price
-    $filtered_data = array_filter($final_data, function ($item) {
-        return isset($item['price']) && $item['price'] !== '';
-    });
-    return $filtered_data;
+    return [];
 }
 
 function exist($ids)

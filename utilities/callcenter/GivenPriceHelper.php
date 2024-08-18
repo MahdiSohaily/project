@@ -6,6 +6,7 @@
  */
 function getSelectedRates()
 {
+
     $sql = "SELECT amount, status FROM shop.rates WHERE selected = '1' ORDER BY amount ASC";
     $result = PDO_CONNECTION->query($sql);
     $rates = $result->fetchAll(PDO::FETCH_ASSOC);
@@ -39,7 +40,6 @@ function isInRelation($id)
  * @return int $relation_exist
  * @return array of information about the good
  */
-
 function info($relation_exist = null)
 {
     $info = false;

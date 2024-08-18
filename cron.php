@@ -153,6 +153,7 @@ function validateMessages($messages)
                             // Add the code to sentMessages before sending the template
                             $sentMessages[$sender][] = $code;
                             sendMessageWithTemplate($sender, $template);
+                            $template = '';
                         }
                     }
                 } catch (Exception $error) {

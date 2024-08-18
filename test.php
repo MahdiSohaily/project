@@ -84,22 +84,25 @@ function validateMessages($messages)
 
                         if ($data) {
                             foreach ($data as $itemCode => $item) {
+
                                 if (trim($item['finalPrice']) == 'موجود نیست' || empty($item['finalPrice'])) {
                                     echo $itemCode . "  قیمت نهایی موجود نیست " . "\n";
                                     continue;
                                 }
+
                                 $template .= $itemCode . $separators[$index] . $item['finalPrice'] . "\n";
                                 $conversation .= $itemCode . $separators[$index] . $item['finalPrice'] . "\n";
                                 saveConversation($sender, $itemCode, $conversation);
                                 $conversation = '';
                             }
-                        }
 
-                        if ($template !== '') {
-                            // Add the code to sentMessages before sending the template
-                            echo $template . "\n";
-                            $sentMessages[$sender][] = $code;
-                            // sendMessageWithTemplate($sender, $template);
+                            if ($template !== '') {
+                                // Add the code to sentMessages before sending the template
+                                $sentMessages[$sender][] = $code;
+                                echo $template . "\n";
+                                // sendMessageWithTemplate($sender, $template);
+                            }
+                            $template = '';
                         }
                     }
                 } catch (Exception $error) {
@@ -114,7 +117,6 @@ function validateMessages($messages)
         }
     }
 }
-
 
 function getSpecification($completeCode)
 {
@@ -201,7 +203,7 @@ function getSpecification($completeCode)
 $response = '{
     "1310670940":
         {"info":[
-            {"code":"253102S550\n253102S550\n","message":"58101-3SA26","date":1710235467}],
+            {"code":"546602B200\n548132D000\n","message":"58101-3SA26","date":1710235467}],
         "name":["Azizi -Diakopar"],
         "userName":[1310670940],
         "profile":["1310670940_x_4.jpg"]}
