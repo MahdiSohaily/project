@@ -48,7 +48,7 @@ foreach ($explodedCodes as $code) {
                 if (!in_array($relation_exist, $relation_id)) {
                     array_push($relation_id, $relation_exist);
                     $goodDescription = relations($relation_exist, true);
-                    $goodDetails[$item['partnumber']]['goods'] = $goodDescription['goods'][$item['partnumber']];
+                    $goodDetails[$item['partnumber']]['goods'] = getIdealGood($goodDescription['goods'], $item['partnumber']);
                     $goodDetails[$item['partnumber']]['existing'] = $goodDescription['existing'];
                     $goodDetails[$item['partnumber']]['givenPrice'] = givenPrice(array_keys($goodDescription['goods']), $relation_exist);
                     break;
@@ -96,7 +96,7 @@ $factorInfo = [
     'withdraw' => 0,
     'total' => 0,
     'date' => $dateTime,
-    'partner' => 0,
+    'partner' => 1,
     'totalInWords' => null
 ];
 
@@ -111,6 +111,20 @@ $incompleteBillDetails = createBillItemsTable(
     $incompleteBillId,
     json_encode($factorItems)
 );
+
+
+function getIdealGood($goods, $partNumber)
+{
+    if (empty($goods[$partNumber]['partName'])) {
+        foreach ($goods as $key => &$good) {
+            if (!empty($good['partName'])) {
+                $good['partnumber'] = $partNumber;
+                return $good;
+            }
+        }
+    }
+    return $goods[$partNumber];
+}
 
 // header('location: /views/factor/checkIncompleteSell.php?factor_number=' . $incompleteBillId);
 header('location: /yadakshop-app/views/factor/checkIncompleteSell.php?factor_number=' . $incompleteBillId);

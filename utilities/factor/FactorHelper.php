@@ -10,6 +10,8 @@ function getItemName($good, $brands)
 
     if (in_array('اصلی', $brands)) {
         $name .= ' - اصلی';
+    } else if (count($brands) == 1) {
+        $name .= ' - ' . $brands[0];
     }
 
     return $name;
@@ -28,6 +30,11 @@ function getItemPrice($givenPrice)
             if ($complexBrands == 'GEN' || $complexBrands == 'MOB') {
                 return $priceSubStr * 10000;
             }
+            if (count($pricesParts) == 1) {
+                return $priceSubStr * 10000;
+            }
+        } else {
+            return $part * 10000;
         }
     }
     return 0;
