@@ -165,14 +165,12 @@ function getSpecification($completeCode)
                     if (!in_array($relation_exist, $relation_id)) {
                         array_push($relation_id, $relation_exist);
                         $goodDescription = relations($relation_exist, true);
-                        // $goodDetails[$item['partnumber']]['goods'] = $goodDescription['goods'][$item['partnumber']];
                         $goodDetails[$item['partnumber']]['existing'] = $goodDescription['existing'];
                         $goodDetails[$item['partnumber']]['givenPrice'] = givenPrice(array_keys($goodDescription['goods']), $relation_exist);
                         break;
                     }
                 } else {
                     $goodDescription = relations($item['partnumber'], false);
-                    // $goodDetails[$item['partnumber']]['goods'] = $goodDescription['goods'][$item['partnumber']];
                     $goodDetails[$item['partnumber']]['existing'] = $goodDescription['existing'];
                     $goodDetails[$item['partnumber']]['givenPrice'] = givenPrice(array_keys($goodDescription['goods']));
                 }
