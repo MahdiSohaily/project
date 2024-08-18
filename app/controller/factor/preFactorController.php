@@ -20,7 +20,7 @@ $explodedCodes = array_unique($sanitizedCodes);
 $existing_code = []; // This array will hold the id and partNumber of the existing codes in DB
 
 // Prepare SQL statement outside the loop for better performance
-$sql = "SELECT id, partnumber FROM yadakshop.nisha WHERE partnumber LIKE :partNumber LIMIT 1";
+$sql = "SELECT id, partnumber FROM yadakshop.nisha WHERE partnumber LIKE :partNumber";
 $stmt = PDO_CONNECTION->prepare($sql);
 
 foreach ($explodedCodes as $code) {
@@ -48,20 +48,49 @@ foreach ($explodedCodes as $code) {
                 if (!in_array($relation_exist, $relation_id)) {
                     array_push($relation_id, $relation_exist);
                     $goodDescription = relations($relation_exist, true);
-                    $goodDetails[$item['partnumber']]['goods'] = getIdealGood($goodDescription['goods'], $item['partnumber']);
-                    $goodDetails[$item['partnumber']]['existing'] = $goodDescription['existing'];
-                    $goodDetails[$item['partnumber']]['givenPrice'] = givenPrice(array_keys($goodDescription['goods']), $relation_exist);
-                    break;
+                    $goodDetails[$code][$item['partnumber']]['goods'] = getIdealGood($goodDescription['goods'], $item['partnumber']);
+                    $goodDetails[$code][$item['partnumber']]['existing'] = $goodDescription['existing'];
+                    $goodDetails[$code][$item['partnumber']]['sorted'] = $goodDescription['sorted'];
+                    $goodDetails[$code][$item['partnumber']]['givenPrice'] = givenPrice(array_keys($goodDescription['goods']), $relation_exist);
                 }
             } else {
                 $goodDescription = relations($item['partnumber'], false);
-                $goodDetails[$item['partnumber']]['goods'] = $goodDescription['goods'][$item['partnumber']];
-                $goodDetails[$item['partnumber']]['existing'] = $goodDescription['existing'];
-                $goodDetails[$item['partnumber']]['givenPrice'] = givenPrice(array_keys($goodDescription['goods']));
+                $goodDetails[$code][$item['partnumber']]['goods'] = $goodDescription['goods'][$item['partnumber']];
+                $goodDetails[$code][$item['partnumber']]['existing'] = $goodDescription['existing'];
+                $goodDetails[$code][$item['partnumber']]['sorted'] = $goodDescription['sorted'];
+                $goodDetails[$code][$item['partnumber']]['givenPrice'] = givenPrice(array_keys($goodDescription['goods']));
             }
         }
     }
 }
+
+// Custom comparison function to sort inner arrays by values in descending order
+function customSort($a, $b)
+{
+    $sumA = array_sum($a['sorted']); // Calculate the sum of values in $a
+    $sumB = array_sum($b['sorted']); // Calculate the sum of values in $b
+
+    // Compare the sums in descending order
+    if ($sumA == $sumB) {
+        return 0;
+    }
+    return ($sumA > $sumB) ? -1 : 1;
+}
+
+
+foreach ($goodDetails as &$record) {
+    uasort($record, 'customSort'); // Sort the inner array by values
+}
+
+$finalGoods = [];
+foreach ($goodDetails as $good) {
+    foreach ($good as $key => $item) {
+        $finalGoods[$key] = $item;
+        break;
+    }
+}
+
+$goodDetails = $finalGoods;
 
 foreach ($goodDetails as $partNumber => $goodDetail) {
     $brands = [];

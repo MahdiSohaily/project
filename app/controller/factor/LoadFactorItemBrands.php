@@ -45,7 +45,6 @@ function getDetails($completeCode)
 
     $goodDetails = [];
     $relation_id = [];
-    $codeRelationId = [];
     foreach ($explodedCodes as $code) {
         if (!in_array($code, $nonExistingCodes)) {
             foreach ($existing_code[$code] as $item) {
@@ -55,20 +54,47 @@ function getDetails($completeCode)
                     if (!in_array($relation_exist, $relation_id)) {
                         array_push($relation_id, $relation_exist);
                         $goodDescription = relations($relation_exist, true);
-                        $goodDetails[$item['partnumber']]['goods'] = $goodDescription['goods'][$item['partnumber']];
-                        $goodDetails[$item['partnumber']]['existing'] = $goodDescription['existing'];
-                        $goodDetails[$item['partnumber']]['givenPrice'] = givenPrice(array_keys($goodDescription['goods']), $relation_exist);
+                        $goodDetails[$code][$item['partnumber']]['goods'] = $goodDescription['goods'][$item['partnumber']];
+                        $goodDetails[$code][$item['partnumber']]['existing'] = $goodDescription['existing'];
+                        $goodDetails[$code][$item['partnumber']]['givenPrice'] = givenPrice(array_keys($goodDescription['goods']), $relation_exist);
                         break;
                     }
                 } else {
                     $goodDescription = relations($item['partnumber'], false);
-                    $goodDetails[$item['partnumber']]['goods'] = $goodDescription['goods'][$item['partnumber']];
-                    $goodDetails[$item['partnumber']]['existing'] = $goodDescription['existing'];
-                    $goodDetails[$item['partnumber']]['givenPrice'] = givenPrice(array_keys($goodDescription['goods']));
+                    $goodDetails[$code][$item['partnumber']]['goods'] = $goodDescription['goods'][$item['partnumber']];
+                    $goodDetails[$code][$item['partnumber']]['existing'] = $goodDescription['existing'];
+                    $goodDetails[$code][$item['partnumber']]['givenPrice'] = givenPrice(array_keys($goodDescription['goods']));
                 }
             }
         }
     }
+    // Custom comparison function to sort inner arrays by values in descending order
+    function customSort($a, $b)
+    {
+        $sumA = array_sum($a['sorted']); // Calculate the sum of values in $a
+        $sumB = array_sum($b['sorted']); // Calculate the sum of values in $b
+
+        // Compare the sums in descending order
+        if ($sumA == $sumB) {
+            return 0;
+        }
+        return ($sumA > $sumB) ? -1 : 1;
+    }
+
+
+    foreach ($goodDetails as &$record) {
+        uasort($record, 'customSort'); // Sort the inner array by values
+    }
+
+    $finalGoods = [];
+    foreach ($goodDetails as $good) {
+        foreach ($good as $key => $item) {
+            $finalGoods[$key] = $item;
+            break;
+        }
+    }
+
+    $goodDetails = $finalGoods;
 
     foreach ($goodDetails as $partNumber => $goodDetail) {
         $brands = [];
@@ -116,13 +142,13 @@ function getFinalPriceBrands($price)
             if (!in_array($brand, $addedBrands) && !empty($brand)) {
                 $addedBrands[] = $complexBrands;
                 if ($complexBrands == 'MOB' || $complexBrands == 'GEN') {
-                    $brandsPrice['اصلی'] = $priceSubStr * 10000;
+                    $brandsPrice['اصلی'] = is_numeric($priceSubStr) ? $priceSubStr * 10000 : 0;
                     continue;
                 }
-                $brandsPrice[$complexBrands] = $priceSubStr * 10000;
+                $brandsPrice[$complexBrands] = is_numeric($priceSubStr) ? $priceSubStr * 10000 : 0;
             }
         } else {
-            $brandsPrice['اصلی'] = $part * 10000;
+            $brandsPrice['اصلی'] = is_numeric($part) ? $part * 10000 : 0;
         }
     }
     return $brandsPrice;

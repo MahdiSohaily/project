@@ -1,7 +1,5 @@
 <?php
 
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat\Wizard\Number;
-
 function getItemName($good, $brands)
 {
     $brands = array_keys($brands);
@@ -22,22 +20,24 @@ function getItemName($good, $brands)
 
 function getItemPrice($givenPrice)
 {
-    $pricesParts = array_map('trim', explode('/', $givenPrice));
-    foreach ($pricesParts as $part) {
-        $spaceIndex = strpos($part, ' ');
-        if ($spaceIndex !== false) {
-            $priceSubStr = substr($part, 0, $spaceIndex);
-            $brandSubStr = substr($part, $spaceIndex + 1); // Skip the space
-            $brand = trim(explode('(', $brandSubStr)[0]);
-            $complexBrands = explode(' ', $brand)[0];
-            if ($complexBrands == 'GEN' || $complexBrands == 'MOB') {
-                return $priceSubStr * 10000;
+    if ($givenPrice != 'موجود نیست') {
+        $pricesParts = array_map('trim', explode('/', $givenPrice));
+        foreach ($pricesParts as $part) {
+            $spaceIndex = strpos($part, ' ');
+            if ($spaceIndex !== false) {
+                $priceSubStr = substr($part, 0, $spaceIndex);
+                $brandSubStr = substr($part, $spaceIndex + 1); // Skip the space
+                $brand = trim(explode('(', $brandSubStr)[0]);
+                $complexBrands = explode(' ', $brand)[0];
+                if ($complexBrands == 'GEN' || $complexBrands == 'MOB') {
+                    return $priceSubStr * 10000;
+                }
+                if (count($pricesParts) == 1) {
+                    return is_numeric($priceSubStr) ? $priceSubStr * 10000 : 0;
+                }
+            } else {
+                return is_numeric($part) ? $part * 10000 : 0;
             }
-            if (count($pricesParts) == 1) {
-                return $priceSubStr * 10000;
-            }
-        } else {
-            return is_numeric($part) ? $part * 10000 : 0;
         }
     }
     return 0;
