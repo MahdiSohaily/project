@@ -2,6 +2,7 @@
 require_once './config/constants.php';
 require_once './database/db_connect.php';
 require_once './utilities/callcenter/DollarRateHelper.php';
+require_once './utilities/callcenter/GivenPriceHelper.php';
 // Allow requests from any origin
 header("Access-Control-Allow-Origin: *");
 
@@ -285,7 +286,7 @@ function relations($id, $condition)
 function givenPrice($codes, $relation_exist = null)
 {
     // Filter and lowercase the codes
-    $codes = array_map('strtolower', array_filter($codes, 'trim'));
+    $codes = array_map('strtolower', array_filter($codes));
     $ordered_price = [];
 
     if ($relation_exist) {
@@ -299,45 +300,36 @@ function givenPrice($codes, $relation_exist = null)
     }
 
     // Query to get prices based on the provided codes
-    if (!empty($codes)) {
-        // Create placeholders for each code
-        $placeholders = implode(',', array_fill(0, count($codes), '?'));
-        $sql = "SELECT prices.id, prices.price, prices.partnumber, customer.name, customer.id AS customerID, 
-                       customer.family, users.id AS userID, prices.created_at
-                FROM shop.prices
-                INNER JOIN callcenter.customer ON customer.id = prices.customer_id
-                INNER JOIN yadakshop.users ON users.id = prices.user_id
-                WHERE partnumber IN ($placeholders)
-                ORDER BY created_at DESC LIMIT 7";
+    $placeholders = implode(',', array_fill(0, count($codes), '?'));
+    $sql = "SELECT prices.id, prices.price, prices.partnumber, customer.name, customer.id AS customerID, 
+                   customer.family, users.id AS userID, prices.created_at
+            FROM shop.prices
+            INNER JOIN callcenter.customer ON customer.id = prices.customer_id
+            INNER JOIN yadakshop.users ON users.id = prices.user_id
+            WHERE partnumber IN ($placeholders)
+            ORDER BY created_at DESC LIMIT 7";
+    $stmt = PDO_CONNECTION->prepare($sql);
+    $stmt->execute($codes);
+    $givenPrices = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $stmt = PDO_CONNECTION->prepare($sql);
+    // Ensure givenPrices is not empty
+    $givenPrices = array_filter($givenPrices);
 
-        // Execute the statement with the array of codes
-        $stmt->execute($codes);
-        $givenPrices = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Prepare final data array
+    $final_data = $relation_exist ? array_merge([$ordered_price], $givenPrices) : $givenPrices;
 
-        // Ensure givenPrices is not empty
-        $givenPrices = array_filter($givenPrices);
-
-        // Prepare final data array
-        $final_data = $relation_exist ? array_merge([$ordered_price], $givenPrices) : $givenPrices;
-
-        // Sort final data by created_at if relation_exist is true
-        if ($relation_exist) {
-            usort($final_data, function ($a, $b) {
-                return strtotime($b['created_at']) - strtotime($a['created_at']);
-            });
-        }
-
-        // Filter out items without price
-        $filtered_data = array_filter($final_data, function ($item) {
-            return isset($item['price']) && $item['price'] !== '';
+    // Sort final data by created_at if relation_exist is true
+    if ($relation_exist) {
+        usort($final_data, function ($a, $b) {
+            return strtotime($b['created_at']) - strtotime($a['created_at']);
         });
-
-        return $filtered_data;
     }
 
-    return [];
+    // Filter out items without price
+    $filtered_data = array_filter($final_data, function ($item) {
+        return isset($item['price']) && $item['price'] !== '';
+    });
+    return $filtered_data;
 }
 
 function exist($ids)
