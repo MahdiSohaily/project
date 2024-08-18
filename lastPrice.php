@@ -67,7 +67,6 @@ if (isset($_POST['code'])) {
 function setup_loading($completeCode)
 {
     $explodedCodes = $completeCode;
-    // echo json_encode($explodedCodes) . "\n";
 
     $results_array = [
         'not_exist' => [],

@@ -1,4 +1,7 @@
 <?php
+
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat\Wizard\Number;
+
 function getItemName($good, $brands)
 {
     $brands = array_keys($brands);
@@ -34,7 +37,7 @@ function getItemPrice($givenPrice)
                 return $priceSubStr * 10000;
             }
         } else {
-            return $part * 10000;
+            return is_numeric($part) ? $part * 10000 : 0;
         }
     }
     return 0;
