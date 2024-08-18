@@ -7,7 +7,27 @@ require_once './app/controller/telegram/AutoMessageController.php';
 
 function validateMessages($messages)
 {
-    $separators = [" ", "  ", " - ", " : ", " = ", " \n", " \n\n", " => "];
+    $separators = [
+        " ",
+        "  ",
+        "     ",
+        "           ",
+        " - ",
+        " -- ",
+        " : ",
+        " = ",
+        " == ",
+        " \n",
+        " \n\n",
+        " \n\n\n",
+        " => ",
+        " / ",
+        " __ ",
+        " **** ",
+    ];
+
+    $sentMessages = [];
+
     foreach ($messages as $sender => $message) {
         if (!checkIfValidSender($sender)) {
             continue;
@@ -22,7 +42,6 @@ function validateMessages($messages)
         $latestRequests = array_merge(...$latestRequests);
 
         $allMessages = $message['info'];
-
 
         foreach ($allMessages as $message) {
 
@@ -40,7 +59,6 @@ function validateMessages($messages)
             // Step 5: Ensure all codes are unique
             $rawCodes = array_unique($rawCodes);
 
-
             // Step 6: Remove codes that are already in the latest requests
             $rawCodes = array_diff($rawCodes, $latestRequests);
 
@@ -52,39 +70,51 @@ function validateMessages($messages)
             // Now $codes contains the filtered codes
             if (count($codes)) {
                 try {
-                    $completeCode = implode("\n", $codes);
-                    $data = getSpecification($completeCode);
                     $template = '';
                     $conversation = '';
                     $index = rand(0, count($separators) - 1);
 
-                    if ($data) {
-                        foreach ($data as $code => $item) {
+                    foreach ($codes as $code) {
+                        // Check if the code has already been sent to this sender
+                        if (isset($sentMessages[$sender]) && in_array($code, $sentMessages[$sender])) {
+                            continue;
+                        }
 
-                            if (trim($item['finalPrice']) == 'موجود نیست' || empty($item['finalPrice'])) {
-                                echo $code . "  قیمت نهایی موجود نیست " . "\n";
-                                continue;
+                        $data = getSpecification($code);
+
+                        if ($data) {
+                            foreach ($data as $itemCode => $item) {
+                                if (trim($item['finalPrice']) == 'موجود نیست' || empty($item['finalPrice'])) {
+                                    echo $itemCode . "  قیمت نهایی موجود نیست " . "\n";
+                                    continue;
+                                }
+                                $template .= $itemCode . $separators[$index] . $item['finalPrice'] . "\n";
+                                $conversation .= $itemCode . $separators[$index] . $item['finalPrice'] . "\n";
+                                saveConversation($sender, $itemCode, $conversation);
+                                $conversation = '';
                             }
-                            $template .= $code . $separators[$index] . $item['finalPrice'] . "\n";
-                            $conversation .= $code . $separators[$index] . $item['finalPrice'] . "\n";
-                            saveConversation($sender, $code, $conversation);
-                            $conversation = '';
+                        }
+
+                        if ($template !== '') {
+                            // Add the code to sentMessages before sending the template
+                            echo $template . "\n";
+                            $sentMessages[$sender][] = $code;
+                            // sendMessageWithTemplate($sender, $template);
                         }
                     }
-
-                    echo $template;
                 } catch (Exception $error) {
                     echo 'Error fetching price: ' . $error->getMessage();
                 }
             } else {
                 if (count($rawCodes) > 0) {
-                    echo implode(', ', $rawCodes);
-                    echo " کد مدنظر اضافه نشده " . "\n";
+                    $codes = implode(', ', $rawCodes);
+                    echo $codes . " کد مدنظر اضافه نشده " . "\n";
                 }
             }
         }
     }
 }
+
 
 function getSpecification($completeCode)
 {
@@ -173,7 +203,7 @@ function getSpecification($completeCode)
 $response = '{
     "1310670940":
         {"info":[
-            {"code":"546602B200\n548132D000\n","message":"58101-3SA26","date":1710235467}],
+            {"code":"253102S550\n253102S550\n","message":"58101-3SA26","date":1710235467}],
         "name":["Azizi -Diakopar"],
         "userName":[1310670940],
         "profile":["1310670940_x_4.jpg"]}

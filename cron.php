@@ -80,6 +80,8 @@ function validateMessages($messages)
         " **** ",
     ];
 
+    $sentMessages = [];
+
     foreach ($messages as $sender => $message) {
         if (!checkIfValidSender($sender)) {
             continue;
@@ -122,29 +124,36 @@ function validateMessages($messages)
             // Now $codes contains the filtered codes
             if (count($codes)) {
                 try {
-                    $completeCode = implode("\n", $codes);
-                    $data = getSpecification($completeCode);
                     $template = '';
                     $conversation = '';
                     $index = rand(0, count($separators) - 1);
 
-                    if ($data) {
-                        foreach ($data as $code => $item) {
-
-                            if (trim($item['finalPrice']) == 'موجود نیست' || empty($item['finalPrice'])) {
-                                echo $code . "  قیمت نهایی موجود نیست " . "\n";
-                                continue;
-                            }
-                            $template .= $code . $separators[$index] . $item['finalPrice'] . "\n";
-                            $conversation .= $code . $separators[$index] . $item['finalPrice'] . "\n";
-                            saveConversation($sender, $code, $conversation);
-                            $conversation = '';
+                    foreach ($codes as $code) {
+                        // Check if the code has already been sent to this sender
+                        if (isset($sentMessages[$sender]) && in_array($code, $sentMessages[$sender])) {
+                            continue;
                         }
-                    }
 
-                    echo $template;
-                    if ($template !== '') {
-                        sendMessageWithTemplate($sender, $template);
+                        $data = getSpecification($code);
+
+                        if ($data) {
+                            foreach ($data as $itemCode => $item) {
+                                if (trim($item['finalPrice']) == 'موجود نیست' || empty($item['finalPrice'])) {
+                                    echo $itemCode . "  قیمت نهایی موجود نیست " . "\n";
+                                    continue;
+                                }
+                                $template .= $itemCode . $separators[$index] . $item['finalPrice'] . "\n";
+                                $conversation .= $itemCode . $separators[$index] . $item['finalPrice'] . "\n";
+                                saveConversation($sender, $itemCode, $conversation);
+                                $conversation = '';
+                            }
+                        }
+
+                        if ($template !== '') {
+                            // Add the code to sentMessages before sending the template
+                            $sentMessages[$sender][] = $code;
+                            sendMessageWithTemplate($sender, $template);
+                        }
                     }
                 } catch (Exception $error) {
                     echo 'Error fetching price: ' . $error->getMessage();
@@ -159,9 +168,9 @@ function validateMessages($messages)
     }
 }
 
+
 function getSpecification($completeCode)
 {
-    // $dateTime = convertPersianToEnglish(jdate('Y/m/d'));
     $explodedCodes = explode("\n", $completeCode);
 
     $nonExistingCodes = [];
@@ -208,14 +217,12 @@ function getSpecification($completeCode)
                     if (!in_array($relation_exist, $relation_id)) {
                         array_push($relation_id, $relation_exist);
                         $goodDescription = relations($relation_exist, true);
-                        // $goodDetails[$item['partnumber']]['goods'] = $goodDescription['goods'][$item['partnumber']];
                         $goodDetails[$item['partnumber']]['existing'] = $goodDescription['existing'];
                         $goodDetails[$item['partnumber']]['givenPrice'] = givenPrice(array_keys($goodDescription['goods']), $relation_exist);
                         break;
                     }
                 } else {
                     $goodDescription = relations($item['partnumber'], false);
-                    // $goodDetails[$item['partnumber']]['goods'] = $goodDescription['goods'][$item['partnumber']];
                     $goodDetails[$item['partnumber']]['existing'] = $goodDescription['existing'];
                     $goodDetails[$item['partnumber']]['givenPrice'] = givenPrice(array_keys($goodDescription['goods']));
                 }
