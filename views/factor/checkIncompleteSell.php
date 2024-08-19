@@ -236,7 +236,7 @@ require_once './components/factor.php';
                     </div>
                 </td>
                 <td class="relative py-3 px-4 w-3/5" >
-                    <input type="text" class="tab-op w-2/4 p-2 border-dotted border-1 text-gray-500 w-42" onchange="editCell(this, 'partName', '${item.id}', '${item.partName}')" value="${item.partName}" />`;
+                    <input type="text" class="tab-op w-2/4 p-2 border-dotted border-1 text-gray-500 w-42" onchange="editCell(this, 'partName', '${item.id}', '${item.partName}'); searchForBrands(${this.value})" value="${item.partName}" />`;
 
             if (ItemsBrands[item['partNumber']]) {
                 template += `<div class="absolute left-1/2 top-5 transform -translate-x-1/2 flex flex-wrap gap-1">`;
@@ -297,7 +297,6 @@ require_once './components/factor.php';
         factorInfo.totalPrice = (totalPrice);
         factorInfo.totalInWords = numberToPersianWords(totalPrice);
         // Display the Bill Information
-        // document.getElementById('billNO').value = factorInfo.billNO;
         document.getElementById('quantity').value = factorInfo.quantity;
         document.getElementById('quantity').value = factorInfo.quantity;
         document.getElementById('totalPrice').value = formatAsMoney(factorInfo.totalPrice);

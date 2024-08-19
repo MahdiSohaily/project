@@ -248,7 +248,7 @@ function addRelatedBrands($brands)
         $brands[] = 'GEN';
     }
 
-    if (in_array('OEMAX', $brands) || in_array('JYR', $brands) || in_array('RB2', $brands) || in_array('IRAN', $brands)) {
+    if (in_array('OEMAX', $brands) || in_array('JYR', $brands) || in_array('RB2', $brands) || in_array('IRAN', $brands)|| in_array('FAKE MOB', $brands)) {
         $brands[] = 'CHINA';
     }
 
