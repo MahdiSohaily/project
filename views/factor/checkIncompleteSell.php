@@ -191,11 +191,91 @@ require_once './components/factor.php';
     const customerInfo = <?= json_encode($customerInfo); ?>;
     factorInfo.totalInWords = numberToPersianWords(<?= (float)$factorInfo['total'] ?>)
     const factorItems = <?= $billItems ?>;
-    const ItemsBrands = <?= $billItemsBrandAndPrice ?>;
+    let ItemsBrands = <?= $billItemsBrandAndPrice ?>;
+
 
     function bootstrap() {
         displayCustomer(customerInfo);
         displayBill();
+    }
+
+    function sanitizedCode(message) {
+        const codes = message.split("\n");
+        const filteredCodes = codes
+            .map(function(code) {
+                code = code.replace(/\[[^\]]*\]/g, "");
+
+                const parts = code.split(/[:,]/, 2);
+
+                // Check if parts[1] contains a forward slash
+                if (parts[1] && parts[1].includes("/")) {
+                    // Remove everything after the forward slash
+                    parts[1] = parts[1].split("/")[0];
+                }
+
+                const rightSide = (parts[1] || "").replace(/[^a-zA-Z0-9 ]/g, "").trim();
+
+                return rightSide ? rightSide : code.replace(/[^a-zA-Z0-9 ]/g, "").trim();
+            })
+            .filter(Boolean);
+
+        const finalCodes = filteredCodes.filter(function(item) {
+            const data = item.split(" ");
+            if (data[0].length > 4) {
+                return item;
+            }
+        });
+
+
+        const mappedFinalCodes = finalCodes.map(function(item) {
+            const parts = item.split(" ");
+            if (parts.length >= 2) {
+                const partOne = parts[0];
+                const partTwo = parts[1];
+                if (!/[a-zA-Z]{4,}/i.test(partOne) && !/[a-zA-Z]{4,}/i.test(partTwo)) {
+                    return partOne + partTwo;
+                }
+            }
+            return parts[0];
+        });
+
+
+        const sanitized = mappedFinalCodes.filter(function(item) {
+            const consecutiveChars = /[a-zA-Z]{4,}/i.test(item);
+            return !consecutiveChars;
+        });
+
+        return sanitized.map(function(item) {
+            return item.split(" ")[0];
+        }).join("\n") + "\n";
+
+    }
+
+    function searchForBrands(element) {
+        const value = element.value.split(' ', )[0];
+
+        const partNumber = sanitizedCode(value);
+
+
+        if (partNumber.length > 6) {
+            
+            const params = new URLSearchParams();
+            params.append('completeCode', partNumber);
+
+            axios.post(BRANDS_ENDPOINT, params)
+                .then(function(response) {
+                    let data = response.data;
+                    console.log(data);
+                    
+                    const key = Object.keys(data)[0];
+                    ItemsBrands[key] = data[key];
+                    displayBill();
+
+                })
+                .catch(function(error) {
+                    console.error("Error fetching brands:", error);
+                });
+        }
     }
 
     // A functionn to display Bill customer information in the table
@@ -236,7 +316,7 @@ require_once './components/factor.php';
                     </div>
                 </td>
                 <td class="relative py-3 px-4 w-3/5" >
-                    <input type="text" class="tab-op w-2/4 p-2 border-dotted border-1 text-gray-500 w-42" onchange="editCell(this, 'partName', '${item.id}', '${item.partName}'); searchForBrands(${this.value})" value="${item.partName}" />`;
+                    <input type="text" class="tab-op w-2/4 p-2 border-dotted border-1 text-gray-500 w-42" onchange="editCell(this, 'partName', '${item.id}', '${item.partName}'); searchForBrands(this)" value="${item.partName}" />`;
 
             if (ItemsBrands[item['partNumber']]) {
                 template += `<div class="absolute left-1/2 top-5 transform -translate-x-1/2 flex flex-wrap gap-1">`;
@@ -405,6 +485,9 @@ require_once './components/factor.php';
             if (factorItems[i].id == itemId) {
                 if (property !== 'quantity') {
                     factorItems[i][property] = newValue;
+                    if (property == 'partName') {
+                        factorItems[i]['partNumber'] = newValue;
+                    }
                     break;
                 } else {
                     if (factorItems[i]['max'] === 'undefined') {

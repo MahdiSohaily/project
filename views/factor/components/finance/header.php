@@ -68,6 +68,11 @@
             "چینی",
             "متفرقه"
         ];
+        const excludeBrands = [
+            "اصلی",
+            "GEN",
+            "MOB"
+        ];
 
         for (const item of billItems) {
             const payPrice = Number(item.quantity) * Number(item.price_per);
@@ -76,14 +81,33 @@
             const isBrand = brands.some(brand => item.partName.includes(brand));
             const specialClass = isBrand ? 'special' : '';
 
+            const nameParts = item.partName.split('-');
+
+            let excludeClass = '';
+
+            if (nameParts[1]) {
+                const brand = nameParts[1].trim();
+                if (!excludeBrands.includes(brand)) {
+                    excludeClass = 'exclude';
+                }
+            }
+
             template += `
                 <tr style="padding: 10px !important;" class="even:bg-gray-100">
                     <td class="text-sm text-center">
                         <span>${counter}</span>
                     </td>
-                    <td class="text-sm ${specialClass}">
-                        <span>${item.partName}</span>
-                    </td>
+                    <?php if ($factorType == 'partner'): ?>
+                        <td class="text-sm ${specialClass}">
+                            <span>${nameParts[0]}
+                            ${nameParts[1] ? ` - <span class="${excludeClass}">${nameParts[1]}</span>` : ''}
+                            </span>
+                        </td>
+                    <?php else: ?>
+                        <td class="text-sm ${specialClass}">
+                            <span>${item.partName}</span>
+                        </td>
+                    <?php endif; ?>
                     <td class="text-sm border-r border-l-2 border-gray-800">
                         <span>${item.quantity}</span>
                     </td>

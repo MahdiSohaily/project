@@ -7,19 +7,43 @@ function displayBill() {
   let template = ``;
   let totalPrice = 0;
 
+  const excludeBrands = ["اصلی", "GEN", "MOB"];
+
   for (const item of billItems) {
     const payPrice = Number(item.quantity) * Number(item.price_per);
     totalPrice += payPrice;
+
+    const nameParts = item.partName.split("-");
+
+    let excludeClass = "";
+
+    if (nameParts[1]) {
+      const brand = nameParts[1].trim();
+      if (!excludeBrands.includes(brand)) {
+        excludeClass = "exclude";
+      }
+    }
 
     template += `
         <tr style="padding: 10px !important;" class="even:bg-gray-100">
             <td class="text-sm text-center">
                 <span>${counter}</span>
             </td>
-            <td class="text-sm">
-                <span>${item.partName}</span>
-            </td>
-            <td class="text-sm border-r border-l-2 border-gray-800">
+            <td class="text-sm">`;
+
+    if (factorType == "partner") {
+      template += `<span>${nameParts[0]}
+                      ${
+                        nameParts[1]
+                          ? ` - <span class="${excludeClass}">${nameParts[1]}</span>`
+                          : ""
+                      } 
+                 </span>`;
+    }else {
+      template += `<span>${nameParts[0]}</span>`;
+    }
+
+    template += `</td> <td class="text-sm border-r border-l-2 border-gray-800">
                 <span>${item.quantity}</span>
             </td>
             <td class="text-sm">

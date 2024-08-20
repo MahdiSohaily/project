@@ -36,6 +36,7 @@ if (!file_exists($profile)) {
 <link rel="stylesheet" href="./assets/css/bill.css" />
 <script src="./assets/js/html2pdf.js"></script>
 <script>
+    const factorType = '<?= $factorType ?>';
     let bill_number = null;
     const customerInfo = <?= json_encode($customerInfo) ?>;
     const BillInfo = <?= json_encode($BillInfo) ?>;
