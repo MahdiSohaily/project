@@ -39,8 +39,8 @@ function displayBill() {
                           : ""
                       } 
                  </span>`;
-    }else {
-      template += `<span>${nameParts[0]}</span>`;
+    } else {
+      template += `<span>${item.partName}</span>`;
     }
 
     template += `</td> <td class="text-sm border-r border-l-2 border-gray-800">

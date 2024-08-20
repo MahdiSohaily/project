@@ -51,7 +51,6 @@
 <style>
     .exclude {
         border-radius: 5px;
-        border: 2px solid white;
         background: #000000;
         padding: 0 5px;
         color: white;
