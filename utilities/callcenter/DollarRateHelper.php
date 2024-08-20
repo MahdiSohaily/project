@@ -258,7 +258,11 @@ function addRelatedBrands($brands)
         $brands[] = 'DOOWON';
     }
 
-    if (in_array('YONG', $brands) || in_array('YONG HOO', $brands) || in_array('OEM', $brands) || in_array('ONNURI', $brands)|| in_array('GY', $brands)) {
+    if (
+        in_array('YONG', $brands) || in_array('YONG HOO', $brands) || in_array('OEM', $brands)|| 
+        in_array('ONNURI', $brands)|| in_array('GY', $brands) || in_array('MIDO', $brands) || in_array('MIRE', $brands) ||
+        in_array('CARDEX', $brands)|| in_array('MANDO', $brands) || in_array('OSUNG', $brands)
+    ) {
         $brands[] = 'KOREA';
     }
 
