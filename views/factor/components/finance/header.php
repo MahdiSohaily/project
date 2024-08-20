@@ -97,7 +97,7 @@
                     <td class="text-sm text-center">
                         <span>${counter}</span>
                     </td>
-                    <?php if ($factorType == 'partner'): ?>
+                    <?php if ($factorType): ?>
                         <td class="text-sm ${specialClass}">
                             <span>${nameParts[0]}
                             ${nameParts[1] ? ` - <span class="${excludeClass}">${nameParts[1]}</span>` : ''}

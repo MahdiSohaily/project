@@ -237,35 +237,41 @@ function getExistingBrands($stockInfo)
 
 function addRelatedBrands($brands)
 {
-    // Specific brand logic
-    if (in_array('HI Q', $brands)) {
-        $brands[] = 'HIQ';
-        $brands[] = 'HI';
+    // Map of brands to their related brands
+    $brandAssociations = [
+        'HI Q' => ['HIQ', 'HI'],
+        'MOB' => ['MOB', 'GEN'],
+        'GEN' => ['MOB', 'GEN'],
+        'OEMAX' => ['CHINA'],
+        'JYR' => ['CHINA'],
+        'RB2' => ['CHINA'],
+        'IRAN' => ['CHINA'],
+        'FAKE MOB' => ['CHINA'],
+        'DOOWON' => ['HCC', 'HANON', 'DOOWON'],
+        'HANON' => ['HCC', 'HANON', 'DOOWON'],
+        'HCC' => ['HCC', 'HANON', 'DOOWON'],
+        'YONG' => ['KOREA'],
+        'YONG HOO' => ['KOREA'],
+        'OEM' => ['KOREA'],
+        'ONNURI' => ['KOREA'],
+        'GY' => ['KOREA'],
+        'MIDO' => ['KOREA'],
+        'MIRE' => ['KOREA'],
+        'CARDEX' => ['KOREA'],
+        'MANDO' => ['KOREA'],
+        'OSUNG' => ['KOREA'],
+    ];
+
+    // Normalize brand names to uppercase
+    $brands = array_map('strtoupper', $brands);
+
+    foreach ($brands as $brand) {
+        if (isset($brandAssociations[$brand])) {
+            $brands = array_merge($brands, $brandAssociations[$brand]);
+        }
     }
 
-    if (in_array('MOB', $brands) || in_array('GEN', $brands)) {
-        $brands[] = 'MOB';
-        $brands[] = 'GEN';
-    }
-
-    if (in_array('OEMAX', $brands) || in_array('JYR', $brands) || in_array('RB2', $brands) || in_array('IRAN', $brands)|| in_array('FAKE MOB', $brands)) {
-        $brands[] = 'CHINA';
-    }
-
-    if (in_array('DOOWON', $brands) || in_array('HANON', $brands) || in_array('HCC', $brands)) {
-        $brands[] = 'HCC';
-        $brands[] = 'HANON';
-        $brands[] = 'DOOWON';
-    }
-
-    if (
-        in_array('YONG', $brands) || in_array('YONG HOO', $brands) || in_array('OEM', $brands)|| 
-        in_array('ONNURI', $brands)|| in_array('GY', $brands) || in_array('MIDO', $brands) || in_array('MIRE', $brands) ||
-        in_array('CARDEX', $brands)|| in_array('MANDO', $brands) || in_array('OSUNG', $brands)
-    ) {
-        $brands[] = 'KOREA';
-    }
-
+    // Remove duplicates and return the result
     return array_unique($brands);
 }
 

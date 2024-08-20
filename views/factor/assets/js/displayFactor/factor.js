@@ -39,7 +39,7 @@ function displayBill() {
                           : ""
                       } 
                  </span>`;
-    } else {
+    }else {
       template += `<span>${item.partName}</span>`;
     }
 
