@@ -56,6 +56,7 @@ function getDetails($completeCode)
                         $goodDescription = relations($relation_exist, true);
                         $goodDetails[$code][$item['partnumber']]['goods'] = $goodDescription['goods'][$item['partnumber']];
                         $goodDetails[$code][$item['partnumber']]['existing'] = $goodDescription['existing'];
+                        $goodDetails[$code][$item['partnumber']]['sorted'] = $goodDescription['sorted'];
                         $goodDetails[$code][$item['partnumber']]['givenPrice'] = givenPrice(array_keys($goodDescription['goods']), $relation_exist);
                         break;
                     }
@@ -63,6 +64,7 @@ function getDetails($completeCode)
                     $goodDescription = relations($item['partnumber'], false);
                     $goodDetails[$code][$item['partnumber']]['goods'] = $goodDescription['goods'][$item['partnumber']];
                     $goodDetails[$code][$item['partnumber']]['existing'] = $goodDescription['existing'];
+                    $goodDetails[$code][$item['partnumber']]['sorted'] = $goodDescription['sorted'];
                     $goodDetails[$code][$item['partnumber']]['givenPrice'] = givenPrice(array_keys($goodDescription['goods']));
                 }
             }
