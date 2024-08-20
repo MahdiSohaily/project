@@ -485,6 +485,10 @@ require_once './components/factor.php'; ?>
         }
 
         localStorage.setItem('displayName', customerInfo.displayName);
+        if (factorInfo['partner']) {
+            window.location.href = './partnerFactor.php?factorNumber=' + factorInfo['id'];
+            return false;
+        }
         window.location.href = './yadakFactor.php?factorNumber=' + factorInfo['id'];
     }
 
