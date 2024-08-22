@@ -260,6 +260,7 @@ function addRelatedBrands($brands)
         'CARDEX' => ['KOREA'],
         'MANDO' => ['KOREA'],
         'OSUNG' => ['KOREA'],
+        'DONGNAM' => ['KOREA'],
     ];
 
     // Normalize brand names to uppercase

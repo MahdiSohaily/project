@@ -104,13 +104,26 @@ foreach ($goodDetails as $partNumber => $goodDetail) {
     $goodDetails[$partNumber]['finalPrice'] = getFinalSanitizedPrice($goodDetail['givenPrice'], $goodDetails[$partNumber]['brands']);
 }
 
+$specificItemsQuantity = [
+    '51712' => 2,
+    '58411' => 2,
+    '23410' => 4,
+    '23041' => 6,
+];
+
 $factorItems = [];
+
 foreach ($goodDetails as $partNumber => $goodDetail) {
+    $ICN = substr($partNumber, 0, 5);
+    $quantity = 1;
+    if (array_key_exists($ICN, $specificItemsQuantity)) {
+        $quantity = $specificItemsQuantity[$ICN];
+    }
     $factorItems[] = [
         "id" => $goodDetail['goods']['id'],
         "partName" => getItemName($goodDetail['goods'], getFinalPriceBrands($goodDetail['finalPrice'])),
         "price_per" => getItemPrice($goodDetail['finalPrice']),
-        "quantity" => 1,
+        "quantity" => $quantity,
         "max" => "undefined",
         "partNumber" => $partNumber
     ];

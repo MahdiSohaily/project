@@ -52,6 +52,10 @@ if (isset($_GET['factor_number']) && is_numeric($_GET['factor_number'])) {
     }
     $billItems = getBillItems($factorInfo['id']);
 
+    $codes = implode("\n", array_column(json_decode($billItems, true), 'partNumber'));
+
+    $billItemsBrandAndPrice = json_encode(getDetails($codes));
+
     // Assuming $factorInfo['created_at'] is in a format that strtotime() can parse
     $created_at_timestamp = strtotime($factorInfo['created_at']);
     $today_timestamp = strtotime('today');

@@ -11,9 +11,7 @@ require_once '../../layouts/callcenter/sidebar.php';
 ?>
 <link rel="stylesheet" href="./assets/css/bill.css" />
 <link rel="stylesheet" href="./assets/css/incomplete.css" />
-<div id="wholePage" class="bg-rose-300 mb-20">
-    <?php
-    /*require_once './components/factorSearch.php';*/ ?>
+<div id="wholePage" class="bg-rose-300 mb-12">
     <!-- Bill editing and information section -->
     <section class="rtl mb-4 mt-2">
         <!-- bill and customer information table -->
@@ -25,7 +23,7 @@ require_once '../../layouts/callcenter/sidebar.php';
                 <div>
                     <td class="py-2 px-3 text-white bg-gray-800 text-md">تلفون</td>
                     <td class="py-2 px-4">
-                        <input onblur="ifCustomerExist(this)" onkeyup="sanitizeCustomerPhone(this);updateCustomerInfo(this)" class="w-full p-2 border text-gray-500" placeholder="093000000000" type="text" name="phone" id="phone">
+                        <input autocomplete="off" onblur="ifCustomerExist(this)" onkeyup="sanitizeCustomerPhone(this);updateCustomerInfo(this)" class="w-full p-2 border text-gray-500" placeholder="093000000000" type="text" name="phone" id="phone">
                         <p id="phone_error" class="hidden text-xs text-red-500 py-1">لطفا شماره تماس مشتری را وارد نمایید.</p>
                     </td>
                 </div>
@@ -34,7 +32,7 @@ require_once '../../layouts/callcenter/sidebar.php';
                     <td class="py-2 px-4">
                         <input class="w-full p-2 border" type="hidden" name="id" id="id">
                         <input class="w-full p-2 border" type="hidden" name="type" id="mode" value='create'>
-                        <input onkeyup="updateCustomerInfo(this)" class="w-full p-2 border text-gray-500" placeholder="نام مشتری را وارد کنید..." type="text" name="name" id="name">
+                        <input autocomplete="off" onkeyup="updateCustomerInfo(this)" class="w-full p-2 border text-gray-500" placeholder="نام مشتری را وارد کنید..." type="text" name="name" id="name">
                         <p id="name_error" class="hidden text-xs text-red-500 py-1">لطفا اسم مشتری را وارد نمایید.</p>
                         <label class="text-xs ml-2 cursor-pointer" for="mr">
                             <input type="radio" class="ml-1" name="suffix" id="mr" onclick="appendPrefix('جناب آقای'); event.stopPropagation();">جناب آقای
@@ -56,20 +54,20 @@ require_once '../../layouts/callcenter/sidebar.php';
                 <div>
                     <td class="py-2 px-3 text-white bg-gray-800 text-md">نام خانوادگی</td>
                     <td class="py-2 px-4">
-                        <input onkeyup="updateCustomerInfo(this)" class="w-full p-2 border text-gray-500" placeholder="نام خانوادگی مشتری را وارد کنید..." type="text" name="family" id="family">
+                        <input autocomplete="off" onkeyup="updateCustomerInfo(this)" class="w-full p-2 border text-gray-500" placeholder="نام خانوادگی مشتری را وارد کنید..." type="text" name="family" id="family">
                     </td>
                 </div>
 
                 <div>
                     <td class="py-2 px-3 text-white bg-gray-800 text-md">آدرس</td>
                     <td class="py-2 px-4">
-                        <textarea onkeyup="updateCustomerInfo(this)" name="address" id="address" cols="30" rows="1" class="border p-2 w-full text-gray-500" placeholder="آدرس مشتری"></textarea>
+                        <textarea autocomplete="off" onkeyup="updateCustomerInfo(this)" name="address" id="address" cols="30" rows="1" class="border p-2 w-full text-gray-500" placeholder="آدرس مشتری"></textarea>
                     </td>
                 </div>
                 <div>
                     <td class="py-2 px-3 text-white bg-gray-800 text-md">ماشین</td>
                     <td class="py-2 px-4">
-                        <input onkeyup="updateCustomerInfo(this)" class="w-full p-2 border text-gray-500" placeholder="نوعیت ماشین مشتری را مشخص کنید" type="text" name="car" id="car">
+                        <input autocomplete="off" onkeyup="updateCustomerInfo(this)" class="w-full p-2 border text-gray-500" placeholder="نوعیت ماشین مشتری را مشخص کنید" type="text" name="car" id="car">
                     </td>
                 </div>
             </div>
@@ -107,51 +105,7 @@ require_once '../../layouts/callcenter/sidebar.php';
                 </div>
             </div>
         </div>
-        <div id="bill_description_details" class="bg-white mb-5">
-            <div class="bg-gray-800 text-white text-center">
-                <p class="p-3">
-                    اطلاعات فاکتور
-                </p>
-            </div>
-            <div class="min-w-full border border-gray-800 text-gray-400 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 p-2 gap-3">
-                <div>
-                    <td class="py-2 px-3 text-white bg-gray-800 text-md">تعداد اقلام</td>
-                    <td class="py-2 px-4">
-                        <input readonly class="w-full p-2 border text-gray-500" placeholder="تعداد اقلام فاکتور" type="text" name="quantity" id="quantity">
-                    </td>
-                </div>
-                <div>
-                    <td class="py-2 px-3 text-white bg-gray-800 text-md">جمع کل</td>
-                    <td class="py-2 px-4">
-                        <input readonly class="w-full p-2 border text-gray-500" placeholder="جمع کل اقلام فاکتور" type="text" name="totalPrice" id="totalPrice">
-                    </td>
-                </div>
-                <div>
-                    <td class="py-2 px-3 text-white bg-gray-800 text-md">تخفیف</td>
-                    <td class="py-2 px-4">
-                        <input onkeyup="updateFactorInfo(this)" class="w-full p-2 border text-gray-500" placeholder="0" type="number" name="discount" id="discount">
-                    </td>
-                </div>
-                <div>
-                    <td class="py-2 px-3 text-white bg-gray-800 text-md">مالیات (۰٪)</td>
-                    <td class="py-2 px-4">
-                        <input onkeyup="updateFactorInfo(this)" class="w-full p-2 border text-gray-500" placeholder="0" type="number" name="tax" id="tax">
-                    </td>
-                </div>
-                <div>
-                    <td class="py-2 px-3 text-white bg-gray-800 text-md">عوارض</td>
-                    <td class="py-2 px-4">
-                        <input onkeyup="updateFactorInfo(this)" class="w-full p-2 border text-gray-500" placeholder="0" type="number" name="withdraw" id="withdraw">
-                    </td>
-                </div>
-            </div>
-            <div>
-                <p colspan="2" class="bg-gray-800 text-white px-3 py-2">
-                    <span class="text-sm mr-x">مبلغ قابل پرداخت: </span>
-                    <span id="total_in_word" class="px-3 text-sm"></span>
-                </p>
-            </div>
-        </div>
+        <?php require_once './components/factorDetails.php' ?>
     </section>
     <?php if ($_SESSION["financialYear"] == '1403') : ?>
         <!-- Bill Operation Section -->
@@ -236,7 +190,7 @@ require_once './components/factor.php';
                     </div>
                 </td>
                 <td class="relative py-3 px-4 w-3/5" >
-                    <input type="text" class="tab-op w-2/4 p-2 border-dotted border-1 text-gray-500 w-42" onchange="editCell(this, 'partName', '${item.id}', '${item.partName}')" value="${item.partName}" />`;
+                    <input name="itemName" type="text" class="tab-op w-2/4 p-2 border-dotted border-1 text-gray-500 w-42" onchange="editCell(this, 'partName', '${item.id}', '${item.partName}')" value="${item.partName}" />`;
 
             if (ItemsBrands[item['partNumber']]) {
                 template += `<div class="absolute left-1/2 top-5 transform -translate-x-1/2 flex flex-wrap gap-1">`;
@@ -258,10 +212,10 @@ require_once './components/factor.php';
             template += `</div>
                 </td>
                 <td class="text-center w-18 py-3 px-4">
-                    <input  onchange="editCell(this, 'quantity', '${item.id}', '${item.quantity}')" type="number" style="direction:ltr !important;" class="tab-op tab-op-number  p-2 border border-1 w-16" value="${item.quantity}" />
+                    <input name="quantity"  onchange="editCell(this, 'quantity', '${item.id}', '${item.quantity}')" type="number" style="direction:ltr !important;" class="tab-op tab-op-number  p-2 border border-1 w-16" value="${item.quantity}" />
                 </td>
                 <td class="text-center py-3 px-4 w-18" >
-                    <input onchange="editCell(this, 'price_per', '${item.id}', '${item.price_per}')" type="text" style="direction:ltr !important;" class="tab-op tab-op-number w-18 p-2 border " onkeyup="displayAsMoney(this);convertToEnglish(this)" value="${formatAsMoney(item.price_per)}" />
+                    <input name="price" onchange="editCell(this, 'price_per', '${item.id}', '${item.price_per}')" type="text" style="direction:ltr !important;" class="tab-op tab-op-number w-18 p-2 border " onkeyup="displayAsMoney(this);convertToEnglish(this)" value="${formatAsMoney(item.price_per)}" />
                 </td>
                 <td class="text-center py-3 px-4 ltr">${formatAsMoney(payPrice)}</td>
                 <td class="text-center py-3 px-4 w-18 h-12 font-medium">
@@ -434,7 +388,7 @@ require_once './components/factor.php';
                 const partName = factorItems[i].partName;
                 let lastIndex = partName.lastIndexOf('-');
 
-                let result = lastIndex !== -1 ? partName.substring(0, lastIndex) : partName;
+                let result = lastIndex !== -1 ? partName.substring(0, lastIndex).trim() : partName.trim();
                 factorItems[i].partName = result.trim() + ' - ' + suffix;
             }
         }
@@ -447,10 +401,6 @@ require_once './components/factor.php';
 
         element.classList.remove('bg-sky-600');
         element.classList.add('text-black');
-
-        console.log(element);
-        
-
         let itemFound = false;
         for (let i = 0; i < factorItems.length; i++) {
             if (factorItems[i].id == itemId) {
@@ -482,8 +432,9 @@ require_once './components/factor.php';
             if (factorItems[i].id == itemId) {
 
                 const partName = factorItems[i].partName;
-                let lastIndex = partName;
-                factorItems[i].partName = partName + ' ' + suffix;
+                if (partName.indexOf(suffix) == -1) {
+                    factorItems[i].partName = partName + ' ' + suffix;
+                }
             }
         }
         displayBill();
