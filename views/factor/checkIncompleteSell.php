@@ -3,6 +3,7 @@ $pageTitle = "ویرایش فاکتور";
 $iconUrl = 'factor.svg';
 require_once './components/header.php';
 require_once '../../utilities/callcenter/GivenPriceHelper.php';
+require_once '../../utilities/inventory/InventoryHelpers.php';
 require_once '../../app/controller/factor/LoadFactorItemBrands.php';
 require_once '../../utilities/callcenter/DollarRateHelper.php';
 require_once '../../app/controller/factor/IncompleteFactorController.php';
@@ -11,9 +12,7 @@ require_once '../../layouts/callcenter/sidebar.php';
 ?>
 <link rel="stylesheet" href="./assets/css/bill.css" />
 <link rel="stylesheet" href="./assets/css/incomplete.css" />
-<div id="wholePage" class="bg-rose-300 mb-20">
-    <?php
-    /*require_once './components/factorSearch.php';*/ ?>
+<div id="wholePage" class="bg-rose-300 mb-12">
     <!-- Bill editing and information section -->
     <section class="rtl mb-4 mt-2">
         <!-- bill and customer information table -->
@@ -25,7 +24,7 @@ require_once '../../layouts/callcenter/sidebar.php';
                 <div>
                     <td class="py-2 px-3 text-white bg-gray-800 text-md">تلفون</td>
                     <td class="py-2 px-4">
-                        <input onblur="ifCustomerExist(this)" onkeyup="sanitizeCustomerPhone(this);updateCustomerInfo(this)" class="w-full p-2 border text-gray-500" placeholder="093000000000" type="text" name="phone" id="phone">
+                        <input autocomplete="off" onblur="ifCustomerExist(this)" onkeyup="sanitizeCustomerPhone(this);updateCustomerInfo(this)" class="w-full p-2 border text-gray-500" placeholder="093000000000" type="text" name="phone" id="phone">
                         <p id="phone_error" class="hidden text-xs text-red-500 py-1">لطفا شماره تماس مشتری را وارد نمایید.</p>
                     </td>
                 </div>
@@ -34,7 +33,7 @@ require_once '../../layouts/callcenter/sidebar.php';
                     <td class="py-2 px-4">
                         <input class="w-full p-2 border" type="hidden" name="id" id="id">
                         <input class="w-full p-2 border" type="hidden" name="type" id="mode" value='create'>
-                        <input onkeyup="updateCustomerInfo(this)" class="w-full p-2 border text-gray-500" placeholder="نام مشتری را وارد کنید..." type="text" name="name" id="name">
+                        <input autocomplete="off" onkeyup="updateCustomerInfo(this)" class="w-full p-2 border text-gray-500" placeholder="نام مشتری را وارد کنید..." type="text" name="name" id="name">
                         <p id="name_error" class="hidden text-xs text-red-500 py-1">لطفا اسم مشتری را وارد نمایید.</p>
                         <label class="text-xs ml-2 cursor-pointer" for="mr">
                             <input type="radio" class="ml-1" name="suffix" id="mr" onclick="appendPrefix('جناب آقای'); event.stopPropagation();">جناب آقای
@@ -56,20 +55,21 @@ require_once '../../layouts/callcenter/sidebar.php';
                 <div>
                     <td class="py-2 px-3 text-white bg-gray-800 text-md">نام خانوادگی</td>
                     <td class="py-2 px-4">
-                        <input onkeyup="updateCustomerInfo(this)" class="w-full p-2 border text-gray-500" placeholder="نام خانوادگی مشتری را وارد کنید..." type="text" name="family" id="family">
+                        <input autocomplete="off" onkeyup="updateCustomerInfo(this)" class="w-full p-2 border text-gray-500" placeholder="نام خانوادگی مشتری را وارد کنید..." type="text" name="family" id="family">
                     </td>
                 </div>
 
                 <div>
                     <td class="py-2 px-3 text-white bg-gray-800 text-md">آدرس</td>
                     <td class="py-2 px-4">
-                        <textarea onkeyup="updateCustomerInfo(this)" name="address" id="address" cols="30" rows="1" class="border p-2 w-full text-gray-500" placeholder="آدرس مشتری"></textarea>
+                        <textarea autocomplete="off" onkeyup="updateCustomerInfo(this)" name="address" id="address" cols="30" rows="1" class="border p-2 w-full text-gray-500" placeholder="آدرس مشتری"></textarea>
+                        <p id="address_error" class="hidden text-xs text-red-500 py-1">لطفا آدرس مشتری را وارد نمایید.</p>
                     </td>
                 </div>
                 <div>
                     <td class="py-2 px-3 text-white bg-gray-800 text-md">ماشین</td>
                     <td class="py-2 px-4">
-                        <input onkeyup="updateCustomerInfo(this)" class="w-full p-2 border text-gray-500" placeholder="نوعیت ماشین مشتری را مشخص کنید" type="text" name="car" id="car">
+                        <input autocomplete="off" onkeyup="updateCustomerInfo(this)" class="w-full p-2 border text-gray-500" placeholder="نوعیت ماشین مشتری را مشخص کنید" type="text" name="car" id="car">
                     </td>
                 </div>
             </div>
@@ -107,51 +107,7 @@ require_once '../../layouts/callcenter/sidebar.php';
                 </div>
             </div>
         </div>
-        <div id="bill_description_details" class="bg-white mb-5">
-            <div class="bg-gray-800 text-white text-center">
-                <p class="p-3">
-                    اطلاعات فاکتور
-                </p>
-            </div>
-            <div class="min-w-full border border-gray-800 text-gray-400 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 p-2 gap-3">
-                <div>
-                    <td class="py-2 px-3 text-white bg-gray-800 text-md">تعداد اقلام</td>
-                    <td class="py-2 px-4">
-                        <input readonly class="w-full p-2 border text-gray-500" placeholder="تعداد اقلام فاکتور" type="text" name="quantity" id="quantity">
-                    </td>
-                </div>
-                <div>
-                    <td class="py-2 px-3 text-white bg-gray-800 text-md">جمع کل</td>
-                    <td class="py-2 px-4">
-                        <input readonly class="w-full p-2 border text-gray-500" placeholder="جمع کل اقلام فاکتور" type="text" name="totalPrice" id="totalPrice">
-                    </td>
-                </div>
-                <div>
-                    <td class="py-2 px-3 text-white bg-gray-800 text-md">تخفیف</td>
-                    <td class="py-2 px-4">
-                        <input onkeyup="updateFactorInfo(this)" class="w-full p-2 border text-gray-500" placeholder="0" type="number" name="discount" id="discount">
-                    </td>
-                </div>
-                <div>
-                    <td class="py-2 px-3 text-white bg-gray-800 text-md">مالیات (۰٪)</td>
-                    <td class="py-2 px-4">
-                        <input onkeyup="updateFactorInfo(this)" class="w-full p-2 border text-gray-500" placeholder="0" type="number" name="tax" id="tax">
-                    </td>
-                </div>
-                <div>
-                    <td class="py-2 px-3 text-white bg-gray-800 text-md">عوارض</td>
-                    <td class="py-2 px-4">
-                        <input onkeyup="updateFactorInfo(this)" class="w-full p-2 border text-gray-500" placeholder="0" type="number" name="withdraw" id="withdraw">
-                    </td>
-                </div>
-            </div>
-            <div>
-                <p colspan="2" class="bg-gray-800 text-white px-3 py-2">
-                    <span class="text-sm mr-x">مبلغ قابل پرداخت: </span>
-                    <span id="total_in_word" class="px-3 text-sm"></span>
-                </p>
-            </div>
-        </div>
+        <?php require_once './components/factorDetails.php' ?>
     </section>
     <?php if ($_SESSION["financialYear"] == '1403') : ?>
         <!-- Bill Operation Section -->
@@ -191,91 +147,12 @@ require_once './components/factor.php';
     const customerInfo = <?= json_encode($customerInfo); ?>;
     factorInfo.totalInWords = numberToPersianWords(<?= (float)$factorInfo['total'] ?>)
     const factorItems = <?= $billItems ?>;
-    let ItemsBrands = <?= $billItemsBrandAndPrice ?>;
-
+    const ItemsBrands = <?= $billItemsBrandAndPrice ?>;
+    const AllBrands = <?= json_encode($brands) ?>;
 
     function bootstrap() {
         displayCustomer(customerInfo);
         displayBill();
-    }
-
-    function sanitizedCode(message) {
-        const codes = message.split("\n");
-        const filteredCodes = codes
-            .map(function(code) {
-                code = code.replace(/\[[^\]]*\]/g, "");
-
-                const parts = code.split(/[:,]/, 2);
-
-                // Check if parts[1] contains a forward slash
-                if (parts[1] && parts[1].includes("/")) {
-                    // Remove everything after the forward slash
-                    parts[1] = parts[1].split("/")[0];
-                }
-
-                const rightSide = (parts[1] || "").replace(/[^a-zA-Z0-9 ]/g, "").trim();
-
-                return rightSide ? rightSide : code.replace(/[^a-zA-Z0-9 ]/g, "").trim();
-            })
-            .filter(Boolean);
-
-        const finalCodes = filteredCodes.filter(function(item) {
-            const data = item.split(" ");
-            if (data[0].length > 4) {
-                return item;
-            }
-        });
-
-
-        const mappedFinalCodes = finalCodes.map(function(item) {
-            const parts = item.split(" ");
-            if (parts.length >= 2) {
-                const partOne = parts[0];
-                const partTwo = parts[1];
-                if (!/[a-zA-Z]{4,}/i.test(partOne) && !/[a-zA-Z]{4,}/i.test(partTwo)) {
-                    return partOne + partTwo;
-                }
-            }
-            return parts[0];
-        });
-
-
-        const sanitized = mappedFinalCodes.filter(function(item) {
-            const consecutiveChars = /[a-zA-Z]{4,}/i.test(item);
-            return !consecutiveChars;
-        });
-
-        return sanitized.map(function(item) {
-            return item.split(" ")[0];
-        }).join("\n") + "\n";
-
-    }
-
-    function searchForBrands(element) {
-        const value = element.value.split(' ', )[0];
-
-        const partNumber = sanitizedCode(value);
-
-
-        if (partNumber.length > 6) {
-            
-            const params = new URLSearchParams();
-            params.append('completeCode', partNumber);
-
-            axios.post(BRANDS_ENDPOINT, params)
-                .then(function(response) {
-                    let data = response.data;
-                    console.log(data);
-                    
-                    const key = Object.keys(data)[0];
-                    ItemsBrands[key] = data[key];
-                    displayBill();
-
-                })
-                .catch(function(error) {
-                    console.error("Error fetching brands:", error);
-                });
-        }
     }
 
     // A functionn to display Bill customer information in the table
@@ -316,12 +193,12 @@ require_once './components/factor.php';
                     </div>
                 </td>
                 <td class="relative py-3 px-4 w-3/5" >
-                    <input type="text" class="tab-op w-2/4 p-2 border-dotted border-1 text-gray-500 w-42" onchange="editCell(this, 'partName', '${item.id}', '${item.partName}'); searchForBrands(this)" value="${item.partName}" />`;
+                    <input name="itemName" type="text" class="tab-op w-2/4 p-2 border-dotted border-1 text-gray-500 w-42" onchange="editCell(this, 'partName', '${item.id}', '${item.partName}')" value="${item.partName}" />`;
 
             if (ItemsBrands[item['partNumber']]) {
                 template += `<div class="absolute left-1/2 top-5 transform -translate-x-1/2 flex flex-wrap gap-1">`;
                 for (const brand of Object.keys(ItemsBrands[item['partNumber']])) {
-                    template += `<span style="font-size:12px" onclick="appendSufix('${item.id}','${brand}'); adjustPrice('${item.id}',${ItemsBrands[item['partNumber']][brand]})" class="cursor-pointer text-md text-white bg-sky-600 rounded p-1" title="">${brand}</span>`;
+                    template += `<span style="font-size:12px" onclick="appendSufix('${item.id}','${brand}'); adjustPrice(this, '${item.id}',${ItemsBrands[item['partNumber']][brand]})" class="priceTag cursor-pointer text-md text-white bg-sky-600 rounded p-1" title="">${brand}</span>`;
                 }
                 template += `</div>`;
             }
@@ -338,10 +215,10 @@ require_once './components/factor.php';
             template += `</div>
                 </td>
                 <td class="text-center w-18 py-3 px-4">
-                    <input  onchange="editCell(this, 'quantity', '${item.id}', '${item.quantity}')" type="number" style="direction:ltr !important;" class="tab-op tab-op-number  p-2 border border-1 w-16" value="${item.quantity}" />
+                    <input name="quantity"  onchange="editCell(this, 'quantity', '${item.id}', '${item.quantity}')" type="number" style="direction:ltr !important;" class="tab-op tab-op-number  p-2 border border-1 w-16" value="${item.quantity}" />
                 </td>
                 <td class="text-center py-3 px-4 w-18" >
-                    <input onchange="editCell(this, 'price_per', '${item.id}', '${item.price_per}')" type="text" style="direction:ltr !important;" class="tab-op tab-op-number w-18 p-2 border " onkeyup="displayAsMoney(this);convertToEnglish(this)" value="${formatAsMoney(item.price_per)}" />
+                    <input name="price" onchange="editCell(this, 'price_per', '${item.id}', '${item.price_per}')" type="text" style="direction:ltr !important;" class="tab-op tab-op-number w-18 p-2 border " onkeyup="displayAsMoney(this);convertToEnglish(this)" value="${formatAsMoney(item.price_per)}" />
                 </td>
                 <td class="text-center py-3 px-4 ltr">${formatAsMoney(payPrice)}</td>
                 <td class="text-center py-3 px-4 w-18 h-12 font-medium">
@@ -377,6 +254,7 @@ require_once './components/factor.php';
         factorInfo.totalPrice = (totalPrice);
         factorInfo.totalInWords = numberToPersianWords(totalPrice);
         // Display the Bill Information
+        // document.getElementById('billNO').value = factorInfo.billNO;
         document.getElementById('quantity').value = factorInfo.quantity;
         document.getElementById('quantity').value = factorInfo.quantity;
         document.getElementById('totalPrice').value = formatAsMoney(factorInfo.totalPrice);
@@ -401,7 +279,7 @@ require_once './components/factor.php';
         // Insert the new object either before or after the target index
         const newItem = {
             id: Math.floor(Math.random() * (9000000 - 1000000 + 1)) + 1000000,
-            partName: "اسم قطعه را وارد کنید.",
+            partName: "اسم قطعه",
             price_per: 0,
             quantity: 1,
             max: 'undefined',
@@ -485,9 +363,6 @@ require_once './components/factor.php';
             if (factorItems[i].id == itemId) {
                 if (property !== 'quantity') {
                     factorItems[i][property] = newValue;
-                    if (property == 'partName') {
-                        factorItems[i]['partNumber'] = newValue;
-                    }
                     break;
                 } else {
                     if (factorItems[i]['max'] === 'undefined') {
@@ -516,21 +391,32 @@ require_once './components/factor.php';
                 const partName = factorItems[i].partName;
                 let lastIndex = partName.lastIndexOf('-');
 
-                let result = lastIndex !== -1 ? partName.substring(0, lastIndex) : partName;
+                let result = lastIndex !== -1 ? partName.substring(0, lastIndex).trim() : partName.trim();
                 factorItems[i].partName = result.trim() + ' - ' + suffix;
             }
         }
         displayBill();
     }
 
-    // Adding item snameElement
-    function adjustPrice(itemId, price) {
+    function adjustPrice(element, itemId, price) {
+
+        const priceTages = document.querySelectorAll('.priceTag');
+
+        element.classList.remove('bg-sky-600');
+        element.classList.add('text-black');
+        let itemFound = false;
         for (let i = 0; i < factorItems.length; i++) {
             if (factorItems[i].id == itemId) {
                 factorItems[i].price_per = price;
+                itemFound = true;
+                break;
             }
         }
-        displayBill();
+        if (!itemFound) {
+            console.warn('Item not found:', itemId);
+        }
+
+        displayBill(); // Assuming this updates the UI with the new price
     }
 
     // This function append a related prefix to the customer name
@@ -548,8 +434,9 @@ require_once './components/factor.php';
             if (factorItems[i].id == itemId) {
 
                 const partName = factorItems[i].partName;
-                let lastIndex = partName;
-                factorItems[i].partName = partName + ' ' + suffix;
+                if (partName.indexOf(suffix) == -1) {
+                    factorItems[i].partName = partName + ' ' + suffix;
+                }
             }
         }
         displayBill();
@@ -585,9 +472,22 @@ require_once './components/factor.php';
             return false;
         }
 
+        if (!factorInfo['partner']) {
+            if (!checkIfReadyToUpdate('address')) {
+                element.disabled = false;
+                return false;
+            }
+        }
+
         if (factorItems.length <= 0) {
             displayModal('فاکتور مشتری خالی بوده نمیتواند.');
             // Enable the element before returning if factor is empty
+            element.disabled = false;
+            return false;
+        }
+
+        if (factorItems.length > 0 && !checkIfFactorItemsValid()) {
+            displayModal('لطفا موجودیت و صحت برند قطعات را بررسی نمایید.');
             element.disabled = false;
             return false;
         }
@@ -657,9 +557,21 @@ require_once './components/factor.php';
         if (!checkIfReadyToUpdate('name')) {
             return false
         }
-        if (factorItems.length <= 0) {
 
+        if (!factorInfo['partner']) {
+
+            if (!checkIfReadyToUpdate('address')) {
+                return false
+            }
+        }
+
+        if (factorItems.length <= 0) {
             displayModal('فاکتور مشتری خالی بوده نمیتواند.')
+            return false;
+        }
+
+        if (!checkIfFactorItemsValid()) {
+            displayModal('لطفا موجودیت و صحت برند قطعات را بررسی نمایید.');
             return false;
         }
 
@@ -707,6 +619,27 @@ require_once './components/factor.php';
             return false;
         }
         return true;
+    }
+
+    function checkIfFactorItemsValid() {
+        for (const item of factorItems) {
+            const parandSection = item.partName.split('-');
+            const ItemBrand = parandSection[parandSection.length - 1].trim();
+            AllBrands.push('اصلی', 'چین', 'کره', 'متفرقه', 'تایوان', 'شرکتی');
+
+            if (!AllBrands.includes(ItemBrand.trim())) {
+                return false;
+            }
+
+            if (ItemBrand === '' || ItemBrand === null) {
+                return false;
+            }
+
+            if (item.partName === '' || item.price_per === '' || item.quantity === '') {
+                return false;
+            }
+            return true;
+        }
     }
 
     // This function checks wheter the phone numbers is a valid number and correct the format

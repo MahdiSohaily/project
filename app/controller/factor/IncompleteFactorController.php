@@ -7,6 +7,7 @@ $factorInfo = null;
 $customerInfo = null;
 $billItems = [];
 $billItemsBrandAndPrice = [];
+$brands = array_column(getBrands(), 'name');
 
 if (isset($_GET['factor_number'])) {
 

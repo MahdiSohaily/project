@@ -107,7 +107,7 @@ foreach ($goodDetails as $partNumber => $goodDetail) {
 $specificItemsQuantity = [
     '51712' => 2,
     '58411' => 2,
-    '23410' => 4,
+    '234102' => 4,
     '23041' => 6,
 ];
 
@@ -169,4 +169,4 @@ function getIdealGood($goods, $partNumber)
 }
 
 // header('location: /views/factor/checkIncompleteSell.php?factor_number=' . $incompleteBillId);
-header('location: /yadakshop-app/views/factor/checkIncompleteSell.php?factor_number=' . $incompleteBillId);
+header('location: /yadakshop-app/views/factor/incomplete.php?factor_number=' . $incompleteBillId);

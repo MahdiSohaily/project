@@ -3,6 +3,7 @@ $pageTitle = "ویرایش فاکتور";
 $iconUrl = 'factor.svg';
 require_once './components/header.php';
 require_once '../../utilities/callcenter/GivenPriceHelper.php';
+require_once '../../utilities/inventory/InventoryHelpers.php';
 require_once '../../app/controller/factor/LoadFactorItemBrands.php';
 require_once '../../utilities/callcenter/DollarRateHelper.php';
 require_once '../../app/controller/factor/IncompleteFactorController.php';
@@ -62,6 +63,7 @@ require_once '../../layouts/callcenter/sidebar.php';
                     <td class="py-2 px-3 text-white bg-gray-800 text-md">آدرس</td>
                     <td class="py-2 px-4">
                         <textarea autocomplete="off" onkeyup="updateCustomerInfo(this)" name="address" id="address" cols="30" rows="1" class="border p-2 w-full text-gray-500" placeholder="آدرس مشتری"></textarea>
+                        <p id="address_error" class="hidden text-xs text-red-500 py-1">لطفا آدرس مشتری را وارد نمایید.</p>
                     </td>
                 </div>
                 <div>
@@ -146,6 +148,7 @@ require_once './components/factor.php';
     factorInfo.totalInWords = numberToPersianWords(<?= (float)$factorInfo['total'] ?>)
     const factorItems = <?= $billItems ?>;
     const ItemsBrands = <?= $billItemsBrandAndPrice ?>;
+    const AllBrands = <?= json_encode($brands) ?>;
 
     function bootstrap() {
         displayCustomer(customerInfo);
@@ -276,7 +279,7 @@ require_once './components/factor.php';
         // Insert the new object either before or after the target index
         const newItem = {
             id: Math.floor(Math.random() * (9000000 - 1000000 + 1)) + 1000000,
-            partName: "اسم قطعه را وارد کنید.",
+            partName: "اسم قطعه",
             price_per: 0,
             quantity: 1,
             max: 'undefined',
@@ -416,7 +419,6 @@ require_once './components/factor.php';
         displayBill(); // Assuming this updates the UI with the new price
     }
 
-
     // This function append a related prefix to the customer name
     function appendPrefix(prefix) {
         const nameElement = document.getElementById('name');
@@ -470,9 +472,22 @@ require_once './components/factor.php';
             return false;
         }
 
+        if (!factorInfo['partner']) {
+            if (!checkIfReadyToUpdate('address')) {
+                element.disabled = false;
+                return false;
+            }
+        }
+
         if (factorItems.length <= 0) {
             displayModal('فاکتور مشتری خالی بوده نمیتواند.');
             // Enable the element before returning if factor is empty
+            element.disabled = false;
+            return false;
+        }
+
+        if (factorItems.length > 0 && !checkIfFactorItemsValid()) {
+            displayModal('لطفا موجودیت و صحت برند قطعات را بررسی نمایید.');
             element.disabled = false;
             return false;
         }
@@ -542,9 +557,21 @@ require_once './components/factor.php';
         if (!checkIfReadyToUpdate('name')) {
             return false
         }
-        if (factorItems.length <= 0) {
 
+        if (!factorInfo['partner']) {
+
+            if (!checkIfReadyToUpdate('address')) {
+                return false
+            }
+        }
+
+        if (factorItems.length <= 0) {
             displayModal('فاکتور مشتری خالی بوده نمیتواند.')
+            return false;
+        }
+
+        if (!checkIfFactorItemsValid()) {
+            displayModal('لطفا موجودیت و صحت برند قطعات را بررسی نمایید.');
             return false;
         }
 
@@ -592,6 +619,27 @@ require_once './components/factor.php';
             return false;
         }
         return true;
+    }
+
+    function checkIfFactorItemsValid() {
+        for (const item of factorItems) {
+            const parandSection = item.partName.split('-');
+            const ItemBrand = parandSection[parandSection.length - 1].trim();
+            AllBrands.push('اصلی', 'چین', 'کره', 'متفرقه', 'تایوان', 'شرکتی');
+
+            if (!AllBrands.includes(ItemBrand.trim())) {
+                return false;
+            }
+
+            if (ItemBrand === '' || ItemBrand === null) {
+                return false;
+            }
+
+            if (item.partName === '' || item.price_per === '' || item.quantity === '') {
+                return false;
+            }
+            return true;
+        }
     }
 
     // This function checks wheter the phone numbers is a valid number and correct the format
