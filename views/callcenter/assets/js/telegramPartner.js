@@ -158,7 +158,7 @@ function displayLocalData() {
                 <td class="p-2 text-center">${counter} </td>
                 <td class="p-2 text-center">${user.telegram_partner_name}</td>
                 <td class="p-2 text-center" style="text-decoration:ltr">${user.username}</td>
-                <td class="p-2 text-center"> <img class="w-8 h-8 rounded-full mx-2 mx-auto d-block" src='${newUrl}' /> </td>`;
+                <td class="p-2 text-center"> <img class="w-8 h-8 rounded-full mx-auto d-block" src='${newUrl}' /> </td>`;
         for (let cat of categories) {
           template += ` 
                   <td class="p-2 text-center">
@@ -227,7 +227,7 @@ function displayTelegramData(data) {
           <td class="p-2 text-center">${counter}</td>
           <td class="p-2 text-center">${user.title}</td>
           <td class="p-2 text-center" style="text-decoration:ltr">${user.username}</td>
-          <td class="p-2 text-center"><img class="w-8 h-8 rounded-full mx-2 mx-auto d-block" src="${user.profile_path}" /></td>`;
+          <td class="p-2 text-center"><img class="w-8 h-8 rounded-full mx-auto d-block" src="${user.profile_path}" /></td>`;
       for (let cat of categories) {
         related_cats = foundObject ? foundObject.category_names.split(",") : [];
         template += ` 
@@ -330,7 +330,9 @@ function addPartner(element) {
 
   axios
     .post(address, params)
-    .then(function (response) {})
+    .then(function (response) {
+      console.log(response.data);
+    })
     .catch(function (error) {
       console.log(error);
     });

@@ -24,7 +24,6 @@ if (isset($_POST['operation'])) {
 
     if ($_POST['operation'] == 'update') {
         if (count($data) == 0) {
-            echo "now here";
             $match = "DELETE FROM telegram.partner_category_match WHERE partner_id = :partner_id";
             $stmt = PDO_CONNECTION->prepare($match);
             $stmt->bindParam(':partner_id', $chat_id, PDO::PARAM_INT);
@@ -181,8 +180,8 @@ function partnerExist($id)
 
 function updatePartner($chat_id, $current_cat, $data)
 {
-    $toDelete = array_diff($current_cat, $data);
-    $toAdd = array_diff($data, $current_cat);
+    $toDelete = array_unique(array_diff($current_cat, $data));
+    $toAdd = array_unique(array_diff($data, $current_cat));
 
     if (count($toDelete) > 0) {
         foreach ($toDelete as $id) {
