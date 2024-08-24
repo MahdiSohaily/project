@@ -117,9 +117,14 @@ $factorItems = [];
 
 foreach ($goodDetails as $partNumber => $goodDetail) {
     $ICN = substr($partNumber, 0, 5);
+    $ICN_BIG = substr($partNumber, 0, 6);
     $quantity = 1;
     if (array_key_exists($ICN, $specificItemsQuantity)) {
         $quantity = $specificItemsQuantity[$ICN];
+    } else if (array_key_exists($ICN_BIG, $specificItemsQuantity)) {
+        $quantity = $specificItemsQuantity[$ICN_BIG];
+    } else {
+        $quantity = 1;
     }
     $factorItems[] = [
         "id" => $goodDetail['goods']['id'],
