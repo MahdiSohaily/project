@@ -1,5 +1,5 @@
 const address = "../../app/api/callcenter/TelegramPartnerApi.php";
-const externalAddressPoint = "http://tel.yadak.center/";
+const externalAddressPoint = "http://telegram.yadak.center/";
 
 let localData = [];
 function getInitialData() {
