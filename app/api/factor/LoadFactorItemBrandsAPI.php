@@ -64,21 +64,21 @@ function getDetails($completeCode)
                         array_push($relation_id, $relation_exist);
                         $goodDescription = relations($relation_exist, true);
                         $goodDetails[$code][$item['partnumber']]['goods'] = getIdealGood($goodDescription['goods'], $item['partnumber']);
-                        $goodDetails[$code][$item['partnumber']]['sorted'] = $goodDescription['sorted'];
                         $goodDetails[$code][$item['partnumber']]['existing'] = $goodDescription['existing'];
+                        $goodDetails[$code][$item['partnumber']]['sorted'] = $goodDescription['sorted'];
                         $goodDetails[$code][$item['partnumber']]['givenPrice'] = givenPrice(array_keys($goodDescription['goods']), $relation_exist);
-                        break;
                     }
                 } else {
                     $goodDescription = relations($item['partnumber'], false);
                     $goodDetails[$code][$item['partnumber']]['goods'] = $goodDescription['goods'][$item['partnumber']];
-                    $goodDetails[$code][$item['partnumber']]['sorted'] = $goodDescription['sorted'];
                     $goodDetails[$code][$item['partnumber']]['existing'] = $goodDescription['existing'];
+                    $goodDetails[$code][$item['partnumber']]['sorted'] = $goodDescription['sorted'];
                     $goodDetails[$code][$item['partnumber']]['givenPrice'] = givenPrice(array_keys($goodDescription['goods']));
                 }
             }
         }
     }
+
     // Custom comparison function to sort inner arrays by values in descending order
     function customSort($a, $b)
     {
@@ -104,7 +104,6 @@ function getDetails($completeCode)
             break;
         }
     }
-
 
     $goodDetails = $finalGoods;
 

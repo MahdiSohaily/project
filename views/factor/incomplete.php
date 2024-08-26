@@ -360,52 +360,112 @@ require_once './components/factor.php';
     }
 
     function loadBrands(cell, itemId, value) {
-        const params = new URLSearchParams();
-        params.append('completeCode', value);
-        axios.post(BRANDS_ENDPOINT, params).then(response => {
-            const data = response.data;
-            const key = Object.keys(data)[0];
-            ItemsBrands[key] = data[key]['prices'];
+        const partNumber = filterPartNumber(value);
 
-            const specificItemsQuantity = {
-                "51712": 2,
-                "54813": 2,
-                "55513": 2,
-                "58411": 2,
-                "234102": 4,
-                "230412": 4,
-                "234103": 6,
-                "230413": 6,
-            };
+        if (partNumber.length > 6) {
+            const params = new URLSearchParams();
+            params.append('completeCode', value);
+            axios.post(BRANDS_ENDPOINT, params).then(response => {
+                const data = response.data;
+                const key = Object.keys(data)[0];
+                if (key) {
+                    ItemsBrands[key] = data[key]['prices'];
+                    const specificItemsQuantity = {
+                        "51712": 2,
+                        "54813": 2,
+                        "55513": 2,
+                        "58411": 2,
+                        "234102": 4,
+                        "230412": 4,
+                        "234103": 6,
+                        "230413": 6,
+                    };
 
-            for (let i = 0; i < factorItems.length; i++) {
-                if (factorItems[i].id == itemId) {
+                    for (let i = 0; i < factorItems.length; i++) {
+                        if (factorItems[i].id == itemId) {
 
-                    factorItems[i]['partNumber'] = key;
-                    factorItems[i]['partName'] = data[key]['partName'];
-                    factorItems[i]['price_per'] = data[key]['prices']['اصلی'] ?? 0;
+                            factorItems[i]['partNumber'] = key;
+                            factorItems[i]['partName'] = data[key]['partName'];
+                            factorItems[i]['price_per'] = data[key]['prices']['اصلی'] ?? 0;
 
-                    const ICN = key.substring(0, 5); // Extracts the first 5 characters
-                    const ICN_BIG = key.substring(0, 6); // Extracts the first 6 characters
-                    let quantity = 1;
+                            const ICN = key.substring(0, 5); // Extracts the first 5 characters
+                            const ICN_BIG = key.substring(0, 6); // Extracts the first 6 characters
+                            let quantity = 1;
 
 
-                    // Check if ICN or ICN_BIG exist as keys in the specificItemsQuantity object
-                    if (specificItemsQuantity.hasOwnProperty(ICN)) {
-                        quantity = specificItemsQuantity[ICN];
-                    } else if (specificItemsQuantity.hasOwnProperty(ICN_BIG)) {
-                        quantity = specificItemsQuantity[ICN_BIG];
-                    } else {
-                        quantity = 1;
+                            // Check if ICN or ICN_BIG exist as keys in the specificItemsQuantity object
+                            if (specificItemsQuantity.hasOwnProperty(ICN)) {
+                                quantity = specificItemsQuantity[ICN];
+                            } else if (specificItemsQuantity.hasOwnProperty(ICN_BIG)) {
+                                quantity = specificItemsQuantity[ICN_BIG];
+                            } else {
+                                quantity = 1;
+                            }
+                            factorItems[i]['quantity'] = quantity;
+                            break;
+                        }
                     }
-                    factorItems[i]['quantity'] = quantity;
-                    break;
+                    displayBill();
+                }
+
+            }).catch(error => {
+                console.error(error);
+            });
+        }
+    }
+
+    function filterPartNumber(message) {
+        if (!message) {
+            return "";
+        }
+
+        const codes = message.split("\n");
+
+        const filteredCodes = codes
+            .map(function(code) {
+                code = code.replace(/\[[^\]]*\]/g, "");
+
+                const parts = code.split(/[:,]/, 2);
+
+                // Check if parts[1] contains a forward slash
+                if (parts[1] && parts[1].includes("/")) {
+                    // Remove everything after the forward slash
+                    parts[1] = parts[1].split("/")[0];
+                }
+
+                const rightSide = (parts[1] || "").replace(/[^a-zA-Z0-9 ]/g, "").trim();
+
+                return rightSide ? rightSide : code.replace(/[^a-zA-Z0-9 ]/g, "").trim();
+            })
+            .filter(Boolean);
+
+        const finalCodes = filteredCodes.filter(function(item) {
+            const data = item.split(" ");
+            if (data[0].length > 4) {
+                return item;
+            }
+        });
+
+        const mappedFinalCodes = finalCodes.map(function(item) {
+            const parts = item.split(" ");
+            if (parts.length >= 2) {
+                const partOne = parts[0];
+                const partTwo = parts[1];
+                if (!/[a-zA-Z]{4,}/i.test(partOne) && !/[a-zA-Z]{4,}/i.test(partTwo)) {
+                    return partOne + partTwo;
                 }
             }
-            displayBill();
-        }).catch(error => {
-            console.error(error);
+            return parts[0];
         });
+
+        const nonConsecutiveCodes = mappedFinalCodes.filter(function(item) {
+            const consecutiveChars = /[a-zA-Z]{4,}/i.test(item);
+            return !consecutiveChars;
+        });
+
+        return nonConsecutiveCodes.map(function(item) {
+            return item.split(" ")[0];
+        }).join("\n") + "\n";
     }
 
     // Update the edited item property in the data source
@@ -435,7 +495,6 @@ require_once './components/factor.php';
         updateBillDisplay();
     }
 
-    // Adding item snameElement
     function appendSufix(itemId, suffix) {
         for (let i = 0; i < factorItems.length; i++) {
             if (factorItems[i].id == itemId) {
