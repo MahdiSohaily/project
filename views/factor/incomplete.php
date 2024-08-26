@@ -13,6 +13,7 @@ require_once '../../layouts/callcenter/sidebar.php';
 <link rel="stylesheet" href="./assets/css/bill.css" />
 <link rel="stylesheet" href="./assets/css/incomplete.css" />
 <div id="wholePage" class="bg-rose-300 mb-12">
+    <?php require_once './components/factorSearch.php'; ?>
     <!-- Bill editing and information section -->
     <section class="rtl mb-4 mt-2">
         <!-- bill and customer information table -->
@@ -193,8 +194,7 @@ require_once './components/factor.php';
                     </div>
                 </td>
                 <td class="relative py-3 px-4 w-3/5" >
-                    <input name="itemName" type="text" class="tab-op w-2/4 p-2 border-dotted border-1 text-gray-500 w-42" onchange="editCell(this, 'partName', '${item.id}', '${item.partName}')" value="${item.partName}" />`;
-
+                    <input name="itemName" type="text"class="tab-op w-2/4 p-2 border-dotted border-1 text-gray-500 w-42" onchange="editCell(this, 'partName', '${item.id}', '${item.partName}')" value="${item.partName}" />`;
             if (ItemsBrands[item['partNumber']]) {
                 template += `<div class="absolute left-1/2 top-5 transform -translate-x-1/2 flex flex-wrap gap-1">`;
                 for (const brand of Object.keys(ItemsBrands[item['partNumber']])) {
@@ -336,6 +336,10 @@ require_once './components/factor.php';
         // Update the corresponding item in your data structure (factorItems)
         updateItemProperty(itemId, property, newValue, cell);
 
+        if (property == 'partName') {
+            loadBrands(cell, itemId, newValue);
+        }
+
         if (property == 'quantity' || property == 'price_per') {
             const parentRow = cell.closest('tr');
             const secondToLastTd = parentRow.querySelector('td:nth-last-child(2)');
@@ -353,7 +357,55 @@ require_once './components/factor.php';
                 secondToLastTd.innerHTML = formatAsMoney(Number(totalpriceValue) * value); // Replace 'New Value' with the desired content
             }
         }
+    }
 
+    function loadBrands(cell, itemId, value) {
+        const params = new URLSearchParams();
+        params.append('completeCode', value);
+        axios.post(BRANDS_ENDPOINT, params).then(response => {
+            const data = response.data;
+            const key = Object.keys(data)[0];
+            ItemsBrands[key] = data[key]['prices'];
+
+            const specificItemsQuantity = {
+                "51712": 2,
+                "54813": 2,
+                "55513": 2,
+                "58411": 2,
+                "234102": 4,
+                "230412": 4,
+                "234103": 6,
+                "230413": 6,
+            };
+
+            for (let i = 0; i < factorItems.length; i++) {
+                if (factorItems[i].id == itemId) {
+
+                    factorItems[i]['partNumber'] = key;
+                    factorItems[i]['partName'] = data[key]['partName'];
+                    factorItems[i]['price_per'] = data[key]['prices']['اصلی'] ?? 0;
+
+                    const ICN = key.substring(0, 5); // Extracts the first 5 characters
+                    const ICN_BIG = key.substring(0, 6); // Extracts the first 6 characters
+                    let quantity = 1;
+
+
+                    // Check if ICN or ICN_BIG exist as keys in the specificItemsQuantity object
+                    if (specificItemsQuantity.hasOwnProperty(ICN)) {
+                        quantity = specificItemsQuantity[ICN];
+                    } else if (specificItemsQuantity.hasOwnProperty(ICN_BIG)) {
+                        quantity = specificItemsQuantity[ICN_BIG];
+                    } else {
+                        quantity = 1;
+                    }
+                    factorItems[i]['quantity'] = quantity;
+                    break;
+                }
+            }
+            displayBill();
+        }).catch(error => {
+            console.error(error);
+        });
     }
 
     // Update the edited item property in the data source
@@ -387,10 +439,8 @@ require_once './components/factor.php';
     function appendSufix(itemId, suffix) {
         for (let i = 0; i < factorItems.length; i++) {
             if (factorItems[i].id == itemId) {
-
                 const partName = factorItems[i].partName;
                 let lastIndex = partName.lastIndexOf('-');
-
                 let result = lastIndex !== -1 ? partName.substring(0, lastIndex).trim() : partName.trim();
                 factorItems[i].partName = result.trim() + ' - ' + suffix;
             }
@@ -399,9 +449,7 @@ require_once './components/factor.php';
     }
 
     function adjustPrice(element, itemId, price) {
-
         const priceTages = document.querySelectorAll('.priceTag');
-
         element.classList.remove('bg-sky-600');
         element.classList.add('text-black');
         let itemFound = false;
@@ -623,19 +671,24 @@ require_once './components/factor.php';
 
     function checkIfFactorItemsValid() {
         for (const item of factorItems) {
-            const parandSection = item.partName.split('-');
-            const ItemBrand = parandSection[parandSection.length - 1].trim();
+            let brandSection = item.partName.split('-');
+            brandSection = brandSection.filter((item) => item.trim() != '');
+
+            const ItemBrand = brandSection[brandSection.length - 1].trim();
             AllBrands.push('اصلی', 'چین', 'کره', 'متفرقه', 'تایوان', 'شرکتی');
 
-            if (!AllBrands.includes(ItemBrand.trim())) {
-                return false;
-            }
+            // if (!AllBrands.includes(ItemBrand.trim())) {
+            //     return false;
+            // }
 
-            if (ItemBrand === '' || ItemBrand === null) {
-                return false;
-            }
+            // if (ItemBrand === '' || ItemBrand === null) {
+            //     return false;
+            // }
 
-            if (item.partName === '' || item.price_per === '' || item.quantity === '') {
+            // if (item.partName === '' || item.price_per === '' || item.quantity === '') {
+            //     return false;
+            // }
+            if (brandSection.length < 2) {
                 return false;
             }
             return true;

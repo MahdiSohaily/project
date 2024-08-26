@@ -263,6 +263,7 @@ function addRelatedBrands($brands)
         'DONGNAM' => ['KOREA'],
         'HYUNDAI BRAKE' => ['KOREA'],
         'SAM YUNG' => ['KOREA'],
+        'FAKE MOB' => ['KOREA'],
     ];
 
     // Normalize brand names to uppercase

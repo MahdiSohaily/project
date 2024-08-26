@@ -1,7 +1,4 @@
 <?php
-
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat\Wizard\Number;
-
 if (!isset($dbname)) {
     header("Location: ../../../views/auth/403.php");
 }
@@ -142,6 +139,10 @@ function getFinalPriceBrands($price)
             $complexBrands = explode(' ', $brand)[0];
 
             if (!in_array($brand, $addedBrands) && !empty($brand)) {
+                if ($complexBrands == 'HI') {
+                    $complexBrands = 'HI Q';
+                }
+                
                 $addedBrands[] = $complexBrands;
                 if ($complexBrands == 'MOB' || $complexBrands == 'GEN') {
                     $brandsPrice['اصلی'] = is_numeric($priceSubStr) ? $priceSubStr * 10000 : 0;

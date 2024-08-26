@@ -9,7 +9,7 @@ require_once '../../../database/db_connect.php';
 require_once '../../../utilities/callcenter/DollarRateHelper.php';
 require_once '../../../utilities/callcenter/GivenPriceHelper.php';
 
-if(isset($_POST['completeCode'])) {
+if (isset($_POST['completeCode'])) {
     $completeCode = $_POST['completeCode'];
     $brandsPrices = getDetails($completeCode);
     echo json_encode($brandsPrices);
@@ -63,7 +63,7 @@ function getDetails($completeCode)
                     if (!in_array($relation_exist, $relation_id)) {
                         array_push($relation_id, $relation_exist);
                         $goodDescription = relations($relation_exist, true);
-                        $goodDetails[$code][$item['partnumber']]['goods'] = $goodDescription['goods'][$item['partnumber']];
+                        $goodDetails[$code][$item['partnumber']]['goods'] = getIdealGood($goodDescription['goods'], $item['partnumber']);
                         $goodDetails[$code][$item['partnumber']]['sorted'] = $goodDescription['sorted'];
                         $goodDetails[$code][$item['partnumber']]['existing'] = $goodDescription['existing'];
                         $goodDetails[$code][$item['partnumber']]['givenPrice'] = givenPrice(array_keys($goodDescription['goods']), $relation_exist);
@@ -124,7 +124,8 @@ function getDetails($completeCode)
     $brandsPrices = [];
 
     foreach ($goodDetails as $partNumber => $goodDetail) {
-        $brandsPrices[$partNumber] = getFinalPriceBrands($goodDetail['finalPrice']);
+        $brandsPrices[$partNumber]['prices'] = getFinalPriceBrands($goodDetail['finalPrice']);
+        $brandsPrices[$partNumber]['partName'] = getItemName($goodDetail['goods'], $brandsPrices[$partNumber]['prices']);
     }
 
     return $brandsPrices;
@@ -164,4 +165,35 @@ function getFinalPriceBrands($price)
         }
     }
     return $brandsPrice;
+}
+
+function getItemName($good, $brands)
+{
+    $brands = array_keys($brands);
+    $name = $good['partnumber'];
+
+    if ($good['partName']) {
+        $name .= " (" . $good['partName'] . ")";
+    }
+
+    if (in_array('اصلی', $brands)) {
+        $name .= ' - اصلی';
+    } else if (count($brands) == 1) {
+        $name .= ' - ' . $brands[0];
+    }
+
+    return $name;
+}
+
+function getIdealGood($goods, $partNumber)
+{
+    if (empty($goods[$partNumber]['partName'])) {
+        foreach ($goods as $key => &$good) {
+            if (!empty($good['partName'])) {
+                $good['partnumber'] = $partNumber;
+                return $good;
+            }
+        }
+    }
+    return $goods[$partNumber];
 }

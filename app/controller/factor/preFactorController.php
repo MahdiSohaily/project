@@ -106,6 +106,8 @@ foreach ($goodDetails as $partNumber => $goodDetail) {
 
 $specificItemsQuantity = [
     '51712' => 2,
+    '54813' => 2,
+    '55513' => 2,
     '58411' => 2,
     '234102' => 4,
     '230412' => 4,
