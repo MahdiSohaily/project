@@ -336,9 +336,9 @@ require_once './components/factor.php';
         // Update the corresponding item in your data structure (factorItems)
         updateItemProperty(itemId, property, newValue, cell);
 
-        if (property == 'partName') {
-            loadBrands(cell, itemId, newValue);
-        }
+        // if (property == 'partName') {
+        //     loadBrands(cell, itemId, newValue);
+        // }
 
         if (property == 'quantity' || property == 'price_per') {
             const parentRow = cell.closest('tr');
