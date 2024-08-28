@@ -86,20 +86,21 @@ if ($isValidCustomer) :
                     </thead>
                     <tbody id="priceReport">
                         <?php
+                        $persianName = '';
                         foreach ($explodedCodes as $code) {
                             $relation_id =  array_key_exists($code, $relation_ids) ? $relation_ids[$code] : 'xxx';
                             $max = 0;
-                            $persianName = '';
-                            $finalPrice = '';
                             if (array_key_exists($code, $existing)) {
                                 foreach ($existing[$code] as $item) {
                                     $max += $item['relation']['existingQuantity'];
                                 }
 
-                                foreach (current($existing[$code])['relation']['goods'] as $key => $value) {
-                                    if ($value['partName']) {
-                                        $persianName = $value['partName'];
-                                        break;
+                                if (isset($existing[$code]) && count($existing[$code]) > 0) {
+                                    foreach (current($existing[$code])['relation']['goods'] as $key => $value) {
+                                        if ($value['partName'] != '') {
+                                            $persianName = $value['partName'];
+                                            break;
+                                        }
                                     }
                                 }
                             } ?>
