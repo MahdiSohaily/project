@@ -95,12 +95,12 @@ if ($isValidCustomer) :
                                     $max += $item['relation']['existingQuantity'];
                                 }
 
-                                foreach ($existing[$code][$code]['relation']['goods'] as $key => $value) {
-                                    if ($value['partName']) {
-                                        $persianName = $value['partName'];
-                                        break;
-                                    }
-                                }
+                                // foreach ($existing[$code][$code]['relation']['goods'] as $key => $value) {
+                                //     if ($value['partName']) {
+                                //         $persianName = $value['partName'];
+                                //         break;
+                                //     }
+                                // }
                             } ?>
                             <tr class="border">
                                 <td data-persianName="<?= $persianName ?>" class="px-3 py-2 text-left text-white hover:cursor-pointer" data-move="<?= $code ?>" onclick="onScreen(this)"><?= strtoupper($code) ?></td>
