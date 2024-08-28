@@ -90,6 +90,7 @@ if ($isValidCustomer) :
                             $relation_id =  array_key_exists($code, $relation_ids) ? $relation_ids[$code] : 'xxx';
                             $max = 0;
                             $persianName = '';
+                            $finalPrice = '';
                             if (array_key_exists($code, $existing)) {
                                 foreach ($existing[$code] as $item) {
                                     $max += $item['relation']['existingQuantity'];
