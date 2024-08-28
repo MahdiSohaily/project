@@ -6,8 +6,14 @@ require_once '../../utilities/callcenter/DollarRateHelper.php';
 require_once '../../utilities/callcenter/GivenPriceHelper.php';
 require_once '../../utilities/inventory/ExistingHelper.php';
 require_once '../../app/controller/callcenter/OrderedPriceController.php';
+require_once '../../utilities/inventory/InventoryHelpers.php';
 require_once '../../layouts/callcenter/nav.php';
 require_once '../../layouts/callcenter/sidebar.php';
+$AvailableBrands = getBrands();
+$brandsEnglishName = array_column($AvailableBrands, 'name');
+$brandsPersianName = array_column($AvailableBrands, 'persian_name');
+$customBrands = json_encode(array_combine($brandsEnglishName, $brandsPersianName));
+
 if ($isValidCustomer) :
     if ($finalResult) :
         $explodedCodes = $finalResult['explodedCodes'];
@@ -17,7 +23,8 @@ if ($isValidCustomer) :
         $completeCode = $finalResult['completeCode'];
         $notification = $finalResult['notification'];
         $rates = $finalResult['rates'];
-        $relation_ids = $finalResult['relation_id']; ?>
+        $relation_ids = $finalResult['relation_id'];
+?>
 
         <link href="./assets/css/report.css" rel="stylesheet" />
         <section class="flex gap-8 justify-between">
@@ -68,9 +75,12 @@ if ($isValidCustomer) :
                         <tr class="border">
                             <th class="text-left px-3 py-2 w-24">کد فنی</th>
                             <th class="text-left px-3 py-2">قیمت</th>
-                            <th class="text-left px-3 py-2 w-24" onclick="closeTab()">
-                                <i id="copy_all" title="کاپی کردن مقادیر دارای قیمت" onclick="copyItemsWith(this)" class="pr-1 text-sm material-icons hover:cursor-pointer text-green-500">content_copy</i>
-                                <i id="copy_all" title="کاپی کردن مقادیر" onclick="copyPrice(this)" class="pr-2 text-sm material-icons hover:cursor-pointer text-rose-500">content_copy</i>
+                            <th class="text-left px-3 py-2 flex items-center justify-between gap-2" onclick="closeTab()">
+                                <span>
+                                    <i id="copy_all" title="کاپی کردن مقادیر دارای قیمت" onclick="copyItemsWith(this)" class="text-sm material-icons hover:cursor-pointer text-green-500">content_copy</i>
+                                    <i id="copy_all" title="کاپی کردن مقادیر" onclick="copyPrice(this)" class="text-sm material-icons hover:cursor-pointer text-rose-500">content_copy</i>
+                                </span>
+                                <i id="copy_all" title="کپی توضیحات قارسی" onclick="copyPriceDetails(this)" class="mr-7 text-sm material-icons hover:cursor-pointer text-sky-500">content_copy</i>
                             </th>
                         </tr>
                     </thead>
@@ -79,13 +89,21 @@ if ($isValidCustomer) :
                         foreach ($explodedCodes as $code) {
                             $relation_id =  array_key_exists($code, $relation_ids) ? $relation_ids[$code] : 'xxx';
                             $max = 0;
+                            $persianName = '';
                             if (array_key_exists($code, $existing)) {
                                 foreach ($existing[$code] as $item) {
                                     $max += $item['relation']['existingQuantity'];
                                 }
+
+                                foreach ($existing[$code][$code]['relation']['goods'] as $key => $value) {
+                                    if ($value['partName']) {
+                                        $persianName = $value['partName'];
+                                        break;
+                                    }
+                                }
                             } ?>
                             <tr class="border">
-                                <td class="px-3 py-2 text-left text-white hover:cursor-pointer" data-move="<?= $code ?>" onclick="onScreen(this)"><?= strtoupper($code) ?></td>
+                                <td data-persianName="<?= $persianName ?>" class="px-3 py-2 text-left text-white hover:cursor-pointer" data-move="<?= $code ?>" onclick="onScreen(this)"><?= strtoupper($code) ?></td>
                                 <td class="px-3 py-2 text-left text-white">
                                     <?php
                                     if (in_array($code, $not_exist)) {
@@ -115,6 +133,7 @@ if ($isValidCustomer) :
                                             echo "<p style='direction: ltr !important;' data-relation='" . $relation_id . "' id='" . $code . '-append' . "'>" . 'موجود نیست' . "</p>";
                                         }
                                         ?>
+                                        <span data-description="<?= $finalPrice ?>"></span>
                                 </td>
                                 <td class="text-left py-2" onclick="closeTab()">
                                     <i title="کاپی کردن مقادیر" onclick="copyItemPrice(this)" class="px-4 text-white text-sm material-icons hover:cursor-pointer">content_copy</i>
@@ -201,6 +220,45 @@ if ($isValidCustomer) :
         </a>
         <p id="copied_message" style="display:none;position: fixed; top:50%; left:50%; transform: translate(-50%, -50%); font-size: 60px;font-weight: bold; color:seagreen">کد ها کاپی شدند</p>
         <script src="./assets/js/givePrice.js"></script>
+        <script>
+            const brandTranslations = <?= $customBrands ?>;
+            const brandNames = Object.keys(brandTranslations);
+            const brandPattern = new RegExp(`\\b(${brandNames.join('|')})\\b`, 'g');
+
+            function replaceBrandsWithPersian(input) {
+                const result = input.replace(brandPattern, (match) => {
+                    return brandTranslations[match] || match;
+                });
+                return result;
+            }
+
+            function copyPriceDetails(element) {
+                // Select all elements with data attributes for names and descriptions
+                const names = document.querySelectorAll('[data-persianName]');
+                const descriptions = document.querySelectorAll('[data-description]');
+                const final = [];
+
+                // Loop through each name and corresponding description
+                for (let index = 0; index < names.length; index++) {
+                    // Get Persian name and replace brands in the description
+                    const persianName = names[index].getAttribute('data-persianName');
+                    let description = replaceBrandsWithPersian(descriptions[index].getAttribute('data-description'));
+                    if (description === 'موجود نیست' || description === 'نیاز به بررسی') {
+                        description = '-';
+                    }
+
+                    // Append formatted text to the final array (without HTML tags)
+                    final.push(`${persianName} : ${description}`);
+                }
+
+                // Copy the plain text to clipboard
+                copyToClipboard(final.join('\n'));
+                element.innerHTML = `done`;
+                setTimeout(() => {
+                    element.innerHTML = `content_copy`;
+                }, 1500);
+            }
+        </script>
 <?php
     endif;
 else :

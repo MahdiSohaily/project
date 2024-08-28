@@ -58,6 +58,7 @@ require_once '../../layouts/inventory/sidebar.php';
                 <tr class="bg-gray-800 text-white text-sm">
                     <th class="py-2">#</th>
                     <th class="py-2">برند</th>
+                    <th class="py-2">فارسی</th>
                     <th class="py-2">نمایش</th>
                 </tr>
             </thead>
@@ -65,7 +66,8 @@ require_once '../../layouts/inventory/sidebar.php';
                 <?php foreach ($brands as $key => $brand) : ?>
                     <tr class="text-sm border-b border-gray-200 even:bg-gray-100">
                         <td class="p-3"><?= $key + 1 ?></td>
-                        <td class="p-3" ondblclick="makeEditable('brand',this, 'name', <?= $brand['id'] ?>)"><?= $brand['name'] ?></td>
+                        <td class="p-3 w-24" ondblclick="makeEditable('brand',this, 'name', <?= $brand['id'] ?>)"><?= $brand['name'] ?></td>
+                        <td class="p-3 w-24" ondblclick="makeEditable('brand',this, 'persian_name', <?= $brand['id'] ?>)"><?= $brand['persian_name'] ?></td>
                         <td class="p-3">
                             <input type="checkbox" name="view" onclick="updateView('brand',<?= $brand['id'] ?>)" <?= $brand['views'] ? 'checked' : '' ?>>
                         </td>
