@@ -68,7 +68,7 @@
             "چینی",
             "متفرقه"
         ];
-        
+
         const excludeBrands = [
             "اصلی",
             "GEN",
@@ -86,14 +86,14 @@
 
             let excludeClass = '';
 
-            const brandPattern = new RegExp(`\\b(${excludeBrands.join('|')})\\b`, 'g');
-            if (nameParts[1]) {
-                const brand = nameParts[1].trim();
-                if (!excludeBrands.includes(brand)) {
-                    excludeClass = 'exclude';
-                } else {
+            const brandPattern = new RegExp(`\\b(${excludeBrands.join('|')})\\b`, 'gu');
+            if (nameParts[1].trim() != "اصلی") {
+                if (nameParts[1]) {
+                    const brand = nameParts[1].trim();
+                    console.log(brand);
+
                     if (!brand.match(brandPattern)) {
-                        excludeClass = 'exclude';
+                        excludeClass = "exclude";
                     }
                 }
             }
