@@ -154,14 +154,20 @@ function deleteFactor($factor_id)
 if (isset($_POST['searchForBill'])) {
     $pattern = trim($_POST['pattern']);
     $mode = trim($_POST['mode']);
+    $isPartNumber = trim($_POST['isPartNumber']);
 
-    if (ctype_digit($pattern)) {
-        // If the pattern is all numbers, search by bill number
-        sendResponse(searchByBillNumber($pattern));
+
+    if ($isPartNumber == 'true') {
+        sendResponse(searchByPartNumber($pattern, $mode));
     } else {
-        // Otherwise, search based on customer name or family
-        $customers = getMatchedCustomers($pattern);
-        sendResponse(getMatchedBills($customers, $mode));
+        if (ctype_digit($pattern)) {
+            // If the pattern is all numbers, search by bill number
+            sendResponse(searchByBillNumber($pattern));
+        } else {
+            // Otherwise, search based on customer name or family
+            $customers = getMatchedCustomers($pattern);
+            sendResponse(getMatchedBills($customers, $mode));
+        }
     }
 }
 
@@ -184,6 +190,25 @@ function searchByBillNumber($pattern)
     }
 }
 
+function searchByPartNumber($pattern, $mode)
+{
+    try {
+        $stmt = PDO_CONNECTION->prepare("SELECT customer.name, customer.family, bill.id, bill.bill_number, bill.quantity, bill.bill_date, bill.total,
+                        bill.user_id, bill.partner, bill_details.billDetails
+                    FROM factor.bill
+                    INNER JOIN callcenter.customer ON customer_id = customer.id
+                    INNER JOIN factor.bill_details ON bill.id = bill_details.bill_id
+                    WHERE bill_details.billDetails LIKE :pattern
+                    AND status = :mode");
+        $stmt->bindValue(':pattern', '%' . $pattern . '%', PDO::PARAM_STR);
+        $stmt->bindValue(':mode', $mode, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log('Database error: ' . $e->getMessage());
+        return [];
+    }
+}
 
 function getMatchedCustomers($pattern)
 {
@@ -227,9 +252,11 @@ function getMatchedBills($customers, $mode)
         $placeholders = implode(',', array_fill(0, count($customers), '?'));
 
         // Prepare the SQL statement with placeholders
-        $sql = "SELECT customer.name, customer.family, bill.id, bill.bill_number, bill.bill_date, bill.total, bill.quantity, bill.user_id
+        $sql = "SELECT customer.name, customer.family, bill.id, bill.bill_number, bill.bill_date, bill.total,
+                        bill.quantity, bill.user_id, bill.partner, bill_details.billDetails
                 FROM factor.bill
                 LEFT JOIN callcenter.customer ON customer_id = customer.id
+                INNER JOIN factor.bill_details ON bill.id = bill_details.bill_id
                 WHERE customer_id IN ($placeholders) 
                 AND status = ?
                 ORDER BY bill.created_at DESC";

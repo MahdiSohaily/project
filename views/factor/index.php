@@ -107,8 +107,7 @@ require_once '../../layouts/callcenter/sidebar.php';
     </div>
 </div>
 <div id="success_message" class="transition-all opacity-0 fixed bg-green-600 text-white rounded-md text-sm font-bold bottom-5 right-5 px-5 py-3">
-    پیش فاکتور شما با موفقیت ایجاد شد
-    .
+    پیش فاکتور شما با موفقیت ایجاد شد.
     <a id="factor_link" class="text-blue-800 text-sm px-2 underline" href="">ویرایش فاکتور</a>
 </div>
 <script>
@@ -474,7 +473,8 @@ require_once '../../layouts/callcenter/sidebar.php';
             case 'complete':
                 pattern = document.getElementById('completeBill').value;
                 search(pattern, '1').then(function(factors) {
-                    appendCompleteFactorResults(factors);
+                    const bills = factors;
+                    appendCompleteFactorResults(bills);
                 }).catch(function(error) {
                     console.log(error);
                 });
@@ -483,11 +483,14 @@ require_once '../../layouts/callcenter/sidebar.php';
     }
 
     function search(pattern, mode) {
+        const isPartNumber = filterPartNumber(pattern).length > 6 ? true : false;
+        
         const params = new URLSearchParams();
         params.append('searchForBill', 'searchForBill');
         params.append('pattern', pattern);
         params.append('mode', mode);
-
+        params.append('isPartNumber', isPartNumber);
+        
         return axios.post(factorManagementApi, params)
             .then(function(response) {
                 return response.data;
@@ -515,6 +518,60 @@ require_once '../../layouts/callcenter/sidebar.php';
         setTimeout(() => {
             Image.src = "./assets/img/copy.svg";
         }, 2000);
+    }
+
+    function filterPartNumber(message) {
+        if (!message) {
+            return "";
+        }
+
+        const codes = message.split("\n");
+
+        const filteredCodes = codes
+            .map(function(code) {
+                code = code.replace(/\[[^\]]*\]/g, "");
+
+                const parts = code.split(/[:,]/, 2);
+
+                // Check if parts[1] contains a forward slash
+                if (parts[1] && parts[1].includes("/")) {
+                    // Remove everything after the forward slash
+                    parts[1] = parts[1].split("/")[0];
+                }
+
+                const rightSide = (parts[1] || "").replace(/[^a-zA-Z0-9 ]/g, "").trim();
+
+                return rightSide ? rightSide : code.replace(/[^a-zA-Z0-9 ]/g, "").trim();
+            })
+            .filter(Boolean);
+
+        const finalCodes = filteredCodes.filter(function(item) {
+            const data = item.split(" ");
+            if (data[0].length > 4) {
+                return item;
+            }
+        });
+
+        const mappedFinalCodes = finalCodes.map(function(item) {
+            const parts = item.split(" ");
+            if (parts.length >= 2) {
+                const partOne = parts[0];
+                const partTwo = parts[1];
+                if (!/[a-zA-Z]{4,}/i.test(partOne) && !/[a-zA-Z]{4,}/i.test(partTwo)) {
+                    return partOne + partTwo;
+                }
+            }
+            return parts[0];
+        });
+
+        const nonConsecutiveCodes = mappedFinalCodes.filter(function(item) {
+            const consecutiveChars = /[a-zA-Z]{4,}/i.test(item);
+            return !consecutiveChars;
+        });
+
+        return nonConsecutiveCodes.map(function(item) {
+            return item.split(" ")[0];
+        }).join("\n") + "\n";
     }
 
     bootStrap();
