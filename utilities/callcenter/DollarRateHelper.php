@@ -264,10 +264,12 @@ function addRelatedBrands($brands)
         'HYUNDAI BRAKE' => ['KOREA'],
         'SAM YUNG' => ['KOREA'],
         'FAKE MOB' => ['KOREA'],
+        'BRC' => ['KOREA'],
     ];
 
     // Normalize brand names to uppercase
     $brands = array_map('strtoupper', $brands);
+    $brands = array_map('trim', $brands);
 
     foreach ($brands as $brand) {
         if (isset($brandAssociations[$brand])) {
@@ -291,6 +293,7 @@ function getFinalSanitizedPrice($givenPrices, $existing_brands)
         }
 
         $finalPriceForm = $price['price'];
+
         if (checkDateIfOkay(null, $price['created_at']) && $price['price'] !== 'موجود نیست') {
             $finalPriceForm = applyDollarRate($finalPriceForm, $price['created_at']);
         }
@@ -305,10 +308,11 @@ function getFinalSanitizedPrice($givenPrices, $existing_brands)
                 $priceSubStr = substr($part, 0, $spaceIndex);
                 $brandSubStr = substr($part, $spaceIndex + 1); // Skip the space
                 $brand = trim(explode('(', $brandSubStr)[0]);
-                $complexBrands = explode(' ', $brand)[0];
+                $complexBrands = trim(explode(' ', $brand)[0]);
 
                 if (!in_array($brand, $addedBrands) && !empty($brand)) {
-                    $addedBrands[] = $brand;
+                    $addedBrands[] = trim($brand);
+
                     if (in_array($brand, $existing_brands) || in_array($complexBrands, $existing_brands)) {
                         if ($finalPriceForm !== 'موجود نیست') {
                             $filteredPrices[] = strtoupper($priceSubStr . ' ' . $brandSubStr);
