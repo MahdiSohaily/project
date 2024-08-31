@@ -19,10 +19,9 @@ function displayBill() {
 
     const brandPattern = new RegExp(`\\b(${excludeBrands.join("|")})\\b`, "gu");
 
-    if (nameParts[1].trim() != "اصلی") {
-      if (nameParts[1]) {
+    if (nameParts[1]) {
+      if (nameParts[1].trim() != "اصلی") {
         const brand = nameParts[1].trim();
-        console.log(brand);
 
         if (!brand.match(brandPattern)) {
           excludeClass = "exclude";
