@@ -94,6 +94,8 @@
                 const brand = nameParts[1].trim();
                 if (!brand.match(brandPattern)) {
                     excludeClass = 'exclude';
+                } else if (!excludeBrands.include(brand)) {
+                    excludeClass = 'exclude';
                 }
             }
 

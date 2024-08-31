@@ -21,9 +21,11 @@ function displayBill() {
     if (nameParts[1]) {
       const brand = nameParts[1].trim();
       if (!brand.match(brandPattern)) {
-        excludeClass = "exclude";
+          excludeClass = 'exclude';
+      } else if (!excludeBrands.include(brand)) {
+          excludeClass = 'exclude';
       }
-    }
+  }
 
     template += `
         <tr style="padding: 10px !important;" class="even:bg-gray-100">
