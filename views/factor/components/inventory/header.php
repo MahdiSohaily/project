@@ -89,7 +89,7 @@
             const brandPattern = new RegExp(`\\b(${excludeBrands.join('|')})\\b`, 'g');
             if (nameParts[1]) {
                 const brand = nameParts[1].trim();
-                if (!excludeBrands.include(brand)) {
+                if (!excludeBrands.includes(brand)) {
                     excludeClass = 'exclude';
                 } else {
                     if (!brand.match(brandPattern)) {
