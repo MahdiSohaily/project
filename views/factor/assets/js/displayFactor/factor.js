@@ -20,12 +20,14 @@ function displayBill() {
     const brandPattern = new RegExp(`\\b(${excludeBrands.join("|")})\\b`, "g");
     if (nameParts[1]) {
       const brand = nameParts[1].trim();
-      if (!brand.match(brandPattern)) {
+      if (!excludeBrands.include(brand)) {
+        excludeClass = 'exclude';
+      } else {
+        if (!brand.match(brandPattern)) {
           excludeClass = 'exclude';
-      } else if (!excludeBrands.include(brand)) {
-          excludeClass = 'exclude';
+        }
       }
-  }
+    }
 
     template += `
         <tr style="padding: 10px !important;" class="even:bg-gray-100">
@@ -36,11 +38,10 @@ function displayBill() {
 
     if (factorType == "partner") {
       template += `<span>${nameParts[0]}
-                      ${
-                        nameParts[1]
-                          ? ` - <span class="${excludeClass}">${nameParts[1]}</span>`
-                          : ""
-                      } 
+                      ${nameParts[1]
+          ? ` - <span class="${excludeClass}">${nameParts[1]}</span>`
+          : ""
+        } 
                  </span>`;
     } else {
       template += `<span>${item.partName}</span>`;
