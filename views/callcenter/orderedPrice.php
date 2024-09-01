@@ -143,10 +143,10 @@ if ($isValidCustomer) :
                                         } else if ($max == 0) {
                                             echo "<p style='direction: ltr !important;' data-relation='" . $relation_id . "' id='" . $code . '-append' . "'>" . 'موجود نیست' . "</p>";
                                         }
-                                        if (!strpos(' ', trim($finalPrice)) && $finalPrice !== '') {
+                                        // if (!strpos(' ', trim($finalPrice)) && $finalPrice !== '') {
 
-                                            $finalPrice .= ' اصلی';
-                                        }
+                                        //     $finalPrice .= ' اصلی';
+                                        // }
                                         ?>
                                         <span data-description="<?= $finalPrice ?>"></span>
                                 </td>
