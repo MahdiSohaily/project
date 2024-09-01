@@ -25,7 +25,6 @@ if ($isValidCustomer) :
         $rates = $finalResult['rates'];
         $relation_ids = $finalResult['relation_id'];
 ?>
-
         <link href="./assets/css/report.css" rel="stylesheet" />
         <section class="flex gap-8 justify-between">
             <div class="m-2 bg-gray-700 p-2 w-96">
@@ -90,6 +89,7 @@ if ($isValidCustomer) :
                         foreach ($explodedCodes as $code) {
                             $relation_id =  array_key_exists($code, $relation_ids) ? $relation_ids[$code] : 'xxx';
                             $max = 0;
+                            $finalPrice = '';
                             if (array_key_exists($code, $existing)) {
                                 foreach ($existing[$code] as $item) {
                                     $max += $item['relation']['existingQuantity'];
@@ -105,11 +105,20 @@ if ($isValidCustomer) :
                                 }
                             } ?>
                             <tr class="border">
-                                <td data-persianName="<?= $persianName ?>" class="px-3 py-2 text-left text-white hover:cursor-pointer" data-move="<?= $code ?>" onclick="onScreen(this)"><?= strtoupper($code) ?></td>
+                                <?php
+                                if (in_array($code, $not_exist)) {
+                                ?>
+                                    <td data-persianName="<?= strtoupper($code) ?>" class="px-3 py-2 text-left text-white hover:cursor-pointer" data-move="<?= $code ?>" onclick="onScreen(this)"><?= strtoupper($code) ?></td>
+                                <?php
+                                } else {
+                                ?>
+                                    <td data-persianName="<?= $persianName ?>" class="px-3 py-2 text-left text-white hover:cursor-pointer" data-move="<?= $code ?>" onclick="onScreen(this)"><?= strtoupper($code) ?></td>
+                                <?php } ?>
                                 <td class="px-3 py-2 text-left text-white">
                                     <?php
                                     if (in_array($code, $not_exist)) {
                                         echo "<p class ='text-red-600' data-relation='" . $relation_id . "' id='" . $code . '-append' . "'>کد اشتباه</p>";
+                                        echo "<span data-description='کد اشتباه'></span>";
                                     } else {
                                         if ($max && current($existing[$code])['givenPrice']) {
 
@@ -133,6 +142,10 @@ if ($isValidCustomer) :
                                             echo "<p style='direction: ltr !important;' data-relation='" . $relation_id . "' id='" . $code . '-append' . "'class ='text-green-400'>نیاز به قیمت</p>";
                                         } else if ($max == 0) {
                                             echo "<p style='direction: ltr !important;' data-relation='" . $relation_id . "' id='" . $code . '-append' . "'>" . 'موجود نیست' . "</p>";
+                                        }
+                                        if (!strpos(' ', trim($finalPrice)) && $finalPrice !== '') {
+
+                                            $finalPrice .= ' اصلی';
                                         }
                                         ?>
                                         <span data-description="<?= $finalPrice ?>"></span>
