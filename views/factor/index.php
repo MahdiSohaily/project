@@ -464,13 +464,6 @@ require_once '../../layouts/callcenter/sidebar.php';
         switch (format) {
             case 'incomplete':
                 pattern = document.getElementById('incompleteBill').value;
-                const incomplete_bill = document.getElementById('incomplete_bill');
-                incomplete_bill.innerHTML = `
-                <p class="p-5 rounded shadow">
-                    <img src="../../public/img/loading.png" class="w-8 h-8 mx-auto" alt="loading icon">
-                </p>
-                `;
-
                 search(pattern, '0').then(function(factors) {
                     appendIncompleteFactorResult(factors);
                 }).catch(function(error) {
@@ -479,12 +472,6 @@ require_once '../../layouts/callcenter/sidebar.php';
                 break;
             case 'complete':
                 pattern = document.getElementById('completeBill').value;
-                const completed_bill = document.getElementById('completed_bill');
-                completed_bill.innerHTML = `
-                <p class="p-5 rounded shadow">
-                    <img src="../../public/img/loading.png" class="w-8 h-8 mx-auto" alt="loading icon">
-                </p>
-                `;
                 search(pattern, '1').then(function(factors) {
                     const bills = factors;
                     appendCompleteFactorResults(bills);
@@ -497,12 +484,13 @@ require_once '../../layouts/callcenter/sidebar.php';
 
     function search(pattern, mode) {
         const isPartNumber = filterPartNumber(pattern).length > 6 ? true : false;
+        
         const params = new URLSearchParams();
         params.append('searchForBill', 'searchForBill');
         params.append('pattern', pattern);
         params.append('mode', mode);
         params.append('isPartNumber', isPartNumber);
-
+        
         return axios.post(factorManagementApi, params)
             .then(function(response) {
                 return response.data;
