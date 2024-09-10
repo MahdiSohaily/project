@@ -22,6 +22,16 @@ $fileName = basename($_SERVER['PHP_SELF']);
                 خروج کالا
             </a>
         </li>
+        <?php if ($_SESSION['username'] === 'niyayesh' || $_SESSION['username'] === 'mahdi'): ?>
+            <li class="mx-1 <?= $fileName == 'newSell.php' ? 'bg-gray-400' : 'bg-rose-400' ?> hover:bg-gray-400 text-sm font-bold">
+                <a class="p-2 menu_item flex items-center gap-2" href="newSell.php">
+                    <img src="./assets/icons/subtract.svg" alt="add icon">
+                    خروج کالا جدید
+                </a>
+            </li>
+        <?php
+        endif;
+        ?>
         <li class="dropdown mx-1 <?= $fileName == 'purchaseReport.php' ? 'bg-gray-400' : 'bg-gray-200' ?> hover:bg-gray-400 text-sm font-bold flex gap-2">
             <a class="p-2 menu_item flex items-center gap-2">
                 <img src="./assets/icons/chart.svg" alt="add icon">
