@@ -117,7 +117,8 @@ require_once '../../layouts/inventory/sidebar.php';
 
 <!-- Page logical scripts -->
 <script>
-    const endpointAddress = "../../app/api/inventory/SellApi.php";
+    const SELL_API = "../../app/api/inventory/SellApi.php";
+    const FACTOR_API = "../../app/api/factor/CompleteFactorApi.php";
 
     let billItems = {};
     let billItemOrder = [];
@@ -137,7 +138,9 @@ require_once '../../layouts/inventory/sidebar.php';
         var params = new URLSearchParams();
         params.append('getClientName', 'getClientName');
         params.append('factorNo', factorNo);
-        axios.post(endpointAddress, params)
+
+        // First axios request to get client name
+        axios.post(SELL_API, params)
             .then(function(response) {
                 if (response.data) {
                     setFactorInfo('client', response.data);
@@ -146,14 +149,138 @@ require_once '../../layouts/inventory/sidebar.php';
                     setFactorInfo('client', null);
                     document.getElementById('customer').value = null;
                 }
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
 
+        // Second axios request to get factor items
+        params.append('getFactorItems', 'getFactorItems');
+        const previewContainer = document.getElementById('previewFactor');
+        previewContainer.innerHTML = `<p class="p-2 text-sky-700 text-center text-sm font-semibold shadow">
+        لطفا صبور باشید ...
+        <img class="w-8 h-8 mx-auto my-2" src="../../public/img/loading.png" />
+        </p>`;
+        axios.post(FACTOR_API, params)
+            .then(async function(response) {
+                if (response.data) {
+                    const factorItems = response.data;
+                    billItems = {};
+                    for (const item of factorItems) {
+                        try {
+                            const GOOD_NAME_BRAND = item.partName.split('-')[1].trim();
+                            const ALLOWED_BRANDS = [];
+                            ALLOWED_BRANDS.push(GOOD_NAME_BRAND);
+
+                            if (GOOD_NAME_BRAND == 'اصلی') {
+                                ALLOWED_BRANDS.push('GEN');
+                                ALLOWED_BRANDS.push('MOB');
+                            }
+
+                            if (GOOD_NAME_BRAND == 'شرکتی') {
+                                ALLOWED_BRANDS.push('IRAN');
+                            }
+
+                            if (GOOD_NAME_BRAND == 'متفرقه' || GOOD_NAME_BRAND == 'چین') {
+                                ALLOWED_BRANDS.push('CHINA');
+                            }
+
+                            if (GOOD_NAME_BRAND == 'کره' || GOOD_NAME_BRAND == 'کره ای') {
+                                ALLOWED_BRANDS.push('KOREA');
+                            }
+
+                            const goods = await getGoods(item.partNumber);
+
+                            goods.sort((a, b) => b.quantity - a.quantity);
+
+                            const SHOP_STOCK = goods.filter(good => good.stockId == 9);
+                            const INVENTORY_STOCK = goods.filter(good => good.stockId != 9);
+
+                            const INVENTORY_GOODS = [...SHOP_STOCK, ...INVENTORY_STOCK];
+                            let billItemQuantity = item.quantity;
+                            let counter = 1;
+                            const totalQuantity = getTotalQuantity(INVENTORY_GOODS, ALLOWED_BRANDS);
+
+                            for (const good of INVENTORY_GOODS) {
+                                if (ALLOWED_BRANDS.includes(good.brandName)) {
+
+
+                                    if (totalQuantity >= billItemQuantity) {
+
+                                        sellQuantity = billItemQuantity;
+
+                                        if (billItemQuantity >= Number(good.remaining_qty)) {
+                                            sellQuantity = Number(good.remaining_qty);
+                                            billItemQuantity -= Number(good.remaining_qty);
+
+                                            addToBillItems(good, sellQuantity);
+
+                                        } else {
+                                            sellQuantity = item.quantity;
+                                            addToBillItems(good, sellQuantity);
+                                            break;
+
+                                        }
+
+                                    } else {
+                                        console.log('Not enough quantity in stock');
+                                    }
+                                }
+                                counter++;
+                            }
+
+                        } catch (error) {
+                            console.log(error);
+                        }
+                    }
+                    previewFactor(); // Call previewFactor after processing all items
+                } else {
+                    previewContainer.innerHTML = `<p class="p-2 text-sky-700 text-center text-sm font-semibold shadow">
+                    برای افزودن اقلام به فاکتور، لطفا شماره فاکتور درست را وارد کنید یا از جستجو استفاده کنید.
+                    </p>`;
+                }
             })
             .catch(function(error) {
                 console.log(error);
             });
     }
 
-    function searchGoods(pattern) {
+    function getTotalQuantity(goods = [], brandsName = []) {
+        let totalQuantity = 0;
+        for (const item of goods) {
+            if (brandsName.includes(item.brandName)) {
+                totalQuantity += Number(item.remaining_qty);
+            }
+        }
+        return totalQuantity;
+    }
+
+    function addToBillItems(good, quantity) {
+
+        if (billItems.hasOwnProperty(good.quantityId)) {
+            // If the item already exists, sum the quantities
+            billItems[good.quantityId].quantity += quantity;
+        } else {
+            // If the item does not exist, add it to billItems
+            billItems[good.quantityId] = {
+                quantityId: good.quantityId,
+                id: billItemOrder.length + 1, // Generate a new id based on the number of items
+                goodId: good.goodId,
+                partNumber: good.partNumber,
+                stockId: good.stockId,
+                stockName: good.stockName,
+                brandName: good.brandName,
+                sellerName: good.sellerName,
+                quantity: quantity
+            };
+
+            if (!billItemOrder.includes(good.quantityId)) {
+                billItemOrder.push(good.quantityId);
+            }
+        }
+    }
+
+    async function searchGoods(pattern) {
         pattern = pattern.trim().replace(/\s+/g, '');
         if (pattern.length < 7) {
             return;
@@ -162,38 +289,47 @@ require_once '../../layouts/inventory/sidebar.php';
         const resultBox = document.getElementById('resultBox');
         resultBox.innerHTML = '<img class="w-8 h-8 mx-auto" src="../../public/img/loading.png" />';
 
-        var pattern = document.getElementById('searchGoods').value;
-        var params = new URLSearchParams();
+        try {
+            const goods = await getGoods(pattern); // Await the result from getGoods
+            displayGoods(goods); // Pass the goods to displayGoods function
+        } catch (error) {
+            console.error('Error fetching goods:', error);
+        }
+    }
+
+    async function getGoods(pattern) {
+        const params = new URLSearchParams();
         params.append('searchGoods', 'searchGoods');
         params.append('pattern', pattern);
-        axios.post(endpointAddress, params)
-            .then(function(response) {
-                let goods = Object.values(response.data);
-                resultBox.innerHTML = '';
-                goods = (sanitizeData(goods));
-            })
-            .catch(function(error) {
-                console.log(error);
-            });
+
+        try {
+            const response = await axios.post(SELL_API, params); // Await the axios response
+            let goods = Object.values(response.data);
+            goods = sanitizeData(goods); // Sanitize the goods data
+            return goods; // Return the sanitized goods
+        } catch (error) {
+            console.error('Error during API call:', error);
+            throw error; // Rethrow error to handle it in searchGoods
+        }
     }
 
     function sanitizeData(goods) {
         goods = goods.map(good => {
             if (billItems[good.quantityId]) {
-                good.remaining_qty -= billItems[good.quantityId].quantity;
+                Number(good.remaining_qty) -= billItems[good.quantityId].quantity;
             }
             return good;
         });
 
-        goods = goods.filter(good => good.remaining_qty > 0);
-
-        displayGoods(goods);
+        goods = goods.filter(good => Number(good.remaining_qty) > 0);
+        return goods;
     }
 
     function displayGoods(goods) {
         const resultBox = document.getElementById('resultBox');
         const bgColors = ['bg-red-600', 'bg-orange-600', 'bg-lime-700', 'bg-emerald-600', 'bg-teal-600', 'bg-cyan-600', 'bg-sky-600', 'bg-indigo-700', 'bg-pink-600'];
 
+        resultBox.innerHTML = '';
         if (goods.length > 0) {
             for (good of goods) {
                 resultBox.innerHTML += `
@@ -208,7 +344,7 @@ require_once '../../layouts/inventory/sidebar.php';
                     <table style="direction: ltr !important;" class="w-full border border-x-2 border-gray-800">
                         <tbody>
                             <tr>
-                                <td class="p-2 text-center text-gray-800 font-semibold text-sm quantity">${good.remaining_qty}</td>
+                                <td class="p-2 text-center text-gray-800 font-semibold text-sm quantity">${Number(good.remaining_qty)}</td>
                                 <td class="p-2 text-center text-gray-800 font-semibold text-sm brandName">${good.brandName}</td>
                                 <td class="p-2 text-center text-gray-800 font-semibold text-sm sellerName">${good.sellerName}</td>
                                 <td class="px-1 text-center text-gray-800 font-semibold text-xs stockName">
@@ -222,7 +358,7 @@ require_once '../../layouts/inventory/sidebar.php';
                     </table>
                 </div>
                     <div class="px-2 py-1 bg-gray-800">
-                        <input class="px-2 py-1 w-20 rounded text-sm text-center font-semibold" placeholder="تعداد" type="number" value="1" min="1" max="${good.remaining_qty}">
+                        <input class="px-2 py-1 w-20 rounded text-sm text-center font-semibold" placeholder="تعداد" type="number" value="1" min="1" max="${Number(good.remaining_qty)}">
                         <button onclick="addToFactor(this)"
                         data-partNumber = "${good.partNumber}"
                         data-quantityId = "${good.quantityId}"
@@ -233,7 +369,7 @@ require_once '../../layouts/inventory/sidebar.php';
                         data-sellerName = "${good.sellerName}"
                         data-brandId = "${good.brandId}"
                         data-sellerId = "${good.sellerId}"
-                        data-quantity = "${good.remaining_qty}"
+                        data-quantity = "${Number(good.remaining_qty)}"
                         class="bg-rose-500 hover:bg-rose-600 text-white px-3 py-1 rounded text-sm">افزودن</button>
                     </div>
                 </div>
@@ -434,7 +570,7 @@ require_once '../../layouts/inventory/sidebar.php';
         params.append('saveFactor', 'saveFactor');
         params.append('billItems', JSON.stringify(billItems));
         params.append('factorInfo', JSON.stringify(factor_info));
-        axios.post(endpointAddress, params)
+        axios.post(SELL_API, params)
             .then(function(response) {
                 if (response.data == 'success') {
                     document.getElementById('operation_message').classList.remove('hidden');

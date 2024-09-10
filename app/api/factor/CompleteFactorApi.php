@@ -88,6 +88,45 @@ if (isset($_POST['updateCompleteFactor'])) {
     }
 }
 
+if (isset($_POST['getFactorItems'])) {
+    $billId = $_POST['factorNo'];
+    $factorID = getCompletedFactorId($billId);
+    
+    if (!$factorID) {
+        return false;
+    }
+    
+    $factorDetails = getFactorDetails($factorID);
+
+    header('Content-Type: application/json');
+    echo $factorDetails['billDetails'];
+}
+
+function getFactorDetails($billId)
+{
+    $sql = "SELECT * FROM factor.bill_details WHERE bill_id = :billId";
+    $stmt = PDO_CONNECTION->prepare($sql);
+    $stmt->bindParam(':billId', $billId, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result;
+}
+
+function getCompletedFactorId($billId)
+{
+    $sql = "SELECT id, status FROM factor.bill WHERE bill_number = :billId LIMIT 1";
+    $stmt = PDO_CONNECTION->prepare($sql);
+    $stmt->bindParam(':billId', $billId, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$result) {
+        return false;
+    }
+
+    return $result['id'];
+}
+
 function getCustomerId($customer)
 {
     $sql = "SELECT id FROM callcenter.customer WHERE phone = :phone ORDER BY id DESC LIMIT 1";
