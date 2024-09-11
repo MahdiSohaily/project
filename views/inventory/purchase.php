@@ -508,7 +508,7 @@ require_once '../../layouts/inventory/sidebar.php';
                 partNumber: partNumber.value,
                 part_id: partNumberId,
                 brand_id: brandId,
-                brand: brand.value,
+                brand: brand.value.toUpperCase(),
                 quantity: quantity.value,
                 position1: position1.value,
                 position2: position2.value,
@@ -518,8 +518,8 @@ require_once '../../layouts/inventory/sidebar.php';
             // Clear the input fields
             partNumber.value = '';
             partNumber.setAttribute('data-id', '');
-            brand.value = '';
-            brand.setAttribute('data-id', '');
+            // brand.value = '';
+            // brand.setAttribute('data-id', '');
             quantity.value = '';
             position1.value = '';
             position2.value = '';

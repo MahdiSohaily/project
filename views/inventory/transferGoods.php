@@ -44,6 +44,26 @@ require_once '../../layouts/inventory/sidebar.php';
                     <tr>
                         <td class="py-2">
                             <p class="text-sm font-semibold">
+                                راهرو
+                            </p>
+                        </td>
+                        <td class="py-2">
+                            <input class="border-2 p-2 w-full" onchange="setFactorInfo('pos1',this.value)" type="text" name="pos1" id="pos1">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="py-2">
+                            <p class="text-sm font-semibold">
+                                قفسه
+                            </p>
+                        </td>
+                        <td class="py-2">
+                            <input class="border-2 p-2 w-full" onchange="setFactorInfo('pos2',this.value)" type="text" name="pos2" id="pos2">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="py-2">
+                            <p class="text-sm font-semibold">
                                 <i class="text-rose-600">*</i>
                                 تحویل گیرنده
                             </p>
@@ -125,6 +145,8 @@ require_once '../../layouts/inventory/sidebar.php';
         receiver: null,
         date: null,
         collector: null,
+        pos1: null,
+        pos2: null,
         description: null,
         user: <?= $_SESSION['id'] ?>,
         quantity: 0
@@ -431,6 +453,8 @@ require_once '../../layouts/inventory/sidebar.php';
             number: null,
             date: ($("#invoice_time").val()),
             client: null,
+            pos1: null,
+            pos2: null,
             receiver: null,
             collector: null,
             description: null,

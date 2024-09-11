@@ -25,7 +25,7 @@ if (isset($_POST['saveFactor'])) {
 
             $exitId = insertSellsRecord($factorInfo, $item, $stock);
             $info = getEnteredInfo($qtyId);
-            $bankId = saveNewEntrance($info, $stockId, $quantity, $description);
+            $bankId = saveNewEntrance($info, $stockId, $quantity, $description, $factorInfo);
             recordTransaction($qtyId, $bankId, $exitId, $prevQty, $quantity, $stockId);
         }
         PDO_CONNECTION->commit();
@@ -83,21 +83,25 @@ function getEnteredInfo($qtyId)
 }
 
 // Function to save new entrance
-function saveNewEntrance($info, $stockId, $quantity, $description)
+function saveNewEntrance($info, $stockId, $quantity, $description, $item)
 {
     global $stock;
     $userId = $_SESSION['id'];
     $description = $description ?? $info['des'];
+    $pos1 = $item['pos1'] ?? '';
+    $pos2 = $item['pos2'] ?? '';
 
     $statement = PDO_CONNECTION->prepare("INSERT INTO $stock.qtybank (codeid, brand, qty, pos1, pos2,
                                             des, seller, deliverer, invoice, anbarenter, user, invoice_number,
                                             stock_id, invoice_date, is_transfered)
-                                            VALUES (:codeid, :brand, :quantity, '', '', :description, :seller,
+                                            VALUES (:codeid, :brand, :quantity, :pos1, :pos2, :description, :seller,
                                             :deliverer, :invoice, :anbarenter, :user, :invoice_number, :stock_id, :invoice_date, 1)");
 
     $statement->bindParam(':codeid', $info['codeid']);
     $statement->bindParam(':brand', $info['brand']);
     $statement->bindParam(':quantity', $quantity);
+    $statement->bindParam(':pos1', $pos1);
+    $statement->bindParam(':pos2', $pos2);
     $statement->bindParam(':description', $description);
     $statement->bindParam(':seller', $info['seller']);
     $statement->bindParam(':deliverer', $info['deliverer']);

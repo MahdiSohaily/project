@@ -171,7 +171,10 @@ require_once '../../layouts/inventory/sidebar.php';
                     billItems = {};
                     for (const item of factorItems) {
                         try {
-                            const GOOD_NAME_BRAND = item.partName.split('-')[1].trim();
+                            const FACTOR_ITEM = item.partName.split('-');
+                            const GOOD_NAME_BRAND = FACTOR_ITEM[1].trim();
+                            const GOOD_NAME_PART = FACTOR_ITEM[0].split(' ')[0].trim();
+                            
                             let ALLOWED_BRANDS = [];
 
                             ALLOWED_BRANDS.push(GOOD_NAME_BRAND);
@@ -194,11 +197,7 @@ require_once '../../layouts/inventory/sidebar.php';
                             }
 
                             ALLOWED_BRANDS = [...new Set(ALLOWED_BRANDS)];
-
-
-                            const goods = await getGoods(item.partName.split('-')[0].trim());
-
-
+                            const goods = await getGoods(GOOD_NAME_PART);
                             goods.sort((a, b) => b.quantity - a.quantity);
 
                             const SHOP_STOCK = goods.filter(good => good.stockId == 9);
@@ -212,7 +211,7 @@ require_once '../../layouts/inventory/sidebar.php';
                             if (INVENTORY_GOODS.length == 0) {
                                 ERROR_BOX.innerHTML += `<p class="p-2 text-red-500 text-xs font-semibold shadow">
                                 کالای 
-                                <span class="text-blue-600 underline cursor-pointer" onclick= "searchGoods('${item.partName.split('-')[0].trim()}')">${item.partName.split('-')[0].trim()}</span>
+                                <span class="text-blue-600 underline cursor-pointer" onclick= "searchGoods('${GOOD_NAME_PART}')">${GOOD_NAME_PART}</span>
                                  در انبار موجود نیست.
                                 </p>`;
                                 previewFactor();
@@ -238,7 +237,7 @@ require_once '../../layouts/inventory/sidebar.php';
                                 } else {
                                     ERROR_BOX.innerHTML += `<p class="p-2 text-red-500 text-xs font-semibold shadow">
                                     برند ${GOOD_NAME_BRAND} برای کالای 
-                                    <span class="text-blue-600 underline cursor-pointer" onclick= "searchGoods('${item.partName.split('-')[0].trim()}')">${item.partName.split('-')[0].trim()}</span>
+                                    <span class="text-blue-600 underline cursor-pointer" onclick= "searchGoods('${GOOD_NAME_PART}')">${GOOD_NAME_PART}</span>
                                      در انبار موجود نیست.
                                     </p>`;
                                     break;
