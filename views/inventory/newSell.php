@@ -169,10 +169,11 @@ require_once '../../layouts/inventory/sidebar.php';
                     for (const item of factorItems) {
                         try {
                             const GOOD_NAME_BRAND = item.partName.split('-')[1].trim();
-                            const ALLOWED_BRANDS = [];
+                            let ALLOWED_BRANDS = [];
+
                             ALLOWED_BRANDS.push(GOOD_NAME_BRAND);
 
-                            if (GOOD_NAME_BRAND == 'اصلی') {
+                            if (GOOD_NAME_BRAND == 'اصلی' || GOOD_NAME_BRAND == 'GEN' || GOOD_NAME_BRAND == 'MOB') {
                                 ALLOWED_BRANDS.push('GEN');
                                 ALLOWED_BRANDS.push('MOB');
                             }
@@ -189,7 +190,11 @@ require_once '../../layouts/inventory/sidebar.php';
                                 ALLOWED_BRANDS.push('KOREA');
                             }
 
-                            const goods = await getGoods(item.partNumber);
+                            ALLOWED_BRANDS = [...new Set(ALLOWED_BRANDS)];
+
+
+                            const goods = await getGoods(item.partName.split('-')[0].trim());
+
 
                             goods.sort((a, b) => b.quantity - a.quantity);
 
@@ -205,7 +210,7 @@ require_once '../../layouts/inventory/sidebar.php';
                                 if (ALLOWED_BRANDS.includes(good.brandName)) {
 
 
-                                    if (totalQuantity >= billItemQuantity) {
+                                    if (totalQuantity >= billItemQuantity && billItemQuantity > 0) {
 
                                         sellQuantity = billItemQuantity;
 
