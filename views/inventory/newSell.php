@@ -15,6 +15,7 @@ require_once '../../layouts/inventory/sidebar.php';
         <div class="p-4" id="resultBox">
             <!-- matched goods with the pattern will be presented here -->
         </div>
+        <div id="error_box" class="fixed bg-gray-300/70 rounded text-sm flex flex-wrap flex-col gap-2" style="bottom: 60px; right: 20px; z-index: 200000;"></div>
     </div>
     <div class="min-h-screen bg-white shadow rounded-md overflow-hidden">
         <div class="bg-gray-800 p-4 h-20 flex items-center justify-center">
@@ -119,6 +120,7 @@ require_once '../../layouts/inventory/sidebar.php';
 <script>
     const SELL_API = "../../app/api/inventory/SellApi.php";
     const FACTOR_API = "../../app/api/factor/CompleteFactorApi.php";
+    const ERROR_BOX = document.getElementById('error_box');
 
     let billItems = {};
     let billItemOrder = [];
@@ -164,6 +166,7 @@ require_once '../../layouts/inventory/sidebar.php';
         axios.post(FACTOR_API, params)
             .then(async function(response) {
                 if (response.data) {
+                    ERROR_BOX.innerHTML = '';
                     const factorItems = response.data;
                     billItems = {};
                     for (const item of factorItems) {
@@ -206,30 +209,39 @@ require_once '../../layouts/inventory/sidebar.php';
                             let counter = 1;
                             const totalQuantity = getTotalQuantity(INVENTORY_GOODS, ALLOWED_BRANDS);
 
+                            if (INVENTORY_GOODS.length == 0) {
+                                ERROR_BOX.innerHTML += `<p class="p-2 text-red-500 text-xs font-semibold shadow">
+                                کالای 
+                                <span class="text-blue-600 underline cursor-pointer" onclick= "searchGoods('${item.partName.split('-')[0].trim()}')">${item.partName.split('-')[0].trim()}</span>
+                                 در انبار موجود نیست.
+                                </p>`;
+                                previewFactor();
+                            }
+
                             for (const good of INVENTORY_GOODS) {
                                 if (ALLOWED_BRANDS.includes(good.brandName)) {
-
-
                                     if (totalQuantity >= billItemQuantity && billItemQuantity > 0) {
-
                                         sellQuantity = billItemQuantity;
-
                                         if (billItemQuantity >= Number(good.remaining_qty)) {
                                             sellQuantity = Number(good.remaining_qty);
                                             billItemQuantity -= Number(good.remaining_qty);
-
                                             addToBillItems(good, sellQuantity);
-
                                         } else {
                                             sellQuantity = item.quantity;
                                             addToBillItems(good, sellQuantity);
                                             break;
-
                                         }
 
                                     } else {
                                         console.log('Not enough quantity in stock');
                                     }
+                                } else {
+                                    ERROR_BOX.innerHTML += `<p class="p-2 text-red-500 text-xs font-semibold shadow">
+                                    برند ${GOOD_NAME_BRAND} برای کالای 
+                                    <span class="text-blue-600 underline cursor-pointer" onclick= "searchGoods('${item.partName.split('-')[0].trim()}')">${item.partName.split('-')[0].trim()}</span>
+                                     در انبار موجود نیست.
+                                    </p>`;
+                                    break;
                                 }
                                 counter++;
                             }
@@ -286,6 +298,7 @@ require_once '../../layouts/inventory/sidebar.php';
     }
 
     async function searchGoods(pattern) {
+        document.getElementById('searchGoods').value = pattern;
         pattern = pattern.trim().replace(/\s+/g, '');
         if (pattern.length < 7) {
             return;

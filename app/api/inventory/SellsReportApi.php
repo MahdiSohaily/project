@@ -12,7 +12,7 @@ require_once '../../../utilities/inventory/InventoryHelpers.php';
 // Helper function to check if a POST value is 'null' and return null if so
 function getPostValue($key)
 {
-    return (isset($_POST[$key]) && $_POST[$key] !== 'null') ? $_POST[$key] : null;
+    return (isset($_POST[$key]) && $_POST[$key] !== 'null') ? trim($_POST[$key]) : null;
 }
 
 // Retrieve POST values
