@@ -266,8 +266,10 @@ function addRelatedBrands($brands)
         'FAKE MOB' => ['KOREA'],
         'BRC' => ['KOREA'],
         'FAKE GEN' => ['CHINA'],
+        'OEMAX' => ['CHINA'],
         'FAKE GEN' => ['KOREA'],
         'GEO SUNG' => ['KOREA'],
+        'YULIM' => ['KOREA'],
     ];
 
     // Normalize brand names to uppercase

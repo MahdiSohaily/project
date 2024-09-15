@@ -76,16 +76,17 @@ if ($isValidCustomer) :
                             <th class="text-left px-3 py-2">قیمت</th>
                             <th class="text-left px-3 py-2 flex items-center justify-between gap-2" onclick="closeTab()">
                                 <span>
-                                    <i id="copy_all" title="کاپی کردن مقادیر دارای قیمت" onclick="copyItemsWith(this)" class="text-sm material-icons hover:cursor-pointer text-green-500">content_copy</i>
+                                    <i id="copy_all_with_price" title="کاپی کردن مقادیر دارای قیمت" onclick="copyItemsWith(this)" class="text-sm material-icons hover:cursor-pointer text-green-500">content_copy</i>
                                     <i id="copy_all" title="کاپی کردن مقادیر" onclick="copyPrice(this)" class="text-sm material-icons hover:cursor-pointer text-rose-500">content_copy</i>
                                 </span>
-                                <i id="copy_all" title="کپی توضیحات قارسی" onclick="copyPriceDetails(this)" class="mr-7 text-sm material-icons hover:cursor-pointer text-sky-500">content_copy</i>
+                                <i id="copy_all" title="کپی توضیحات فارسی" onclick="copyPriceDetails(this)" class="mr-7 text-sm material-icons hover:cursor-pointer text-sky-500">content_copy</i>
                             </th>
                         </tr>
                     </thead>
                     <tbody id="priceReport">
                         <?php
                         $persianName = '';
+                        $isDisplayAllowed = false;
                         foreach ($explodedCodes as $code) {
                             $relation_id =  array_key_exists($code, $relation_ids) ? $relation_ids[$code] : 'xxx';
                             $max = 0;
@@ -133,6 +134,10 @@ if ($isValidCustomer) :
                                             if (!$finalPrice) {
                                                 $finalPrice = 'موجود نیست';
                                             }
+
+                                            if (!$isDisplayAllowed && $finalPrice != 'موجود نیست') {
+                                                $isDisplayAllowed = true;
+                                            }
                                     ?>
                                             <p style='direction: ltr !important;' data-relation='<?= $relation_id ?>' id='<?= $code ?>-append' class="<?= $finalPrice !== 'موجود نیست' ? '' : 'text-yellow-400' ?>">
                                                 <?= $finalPrice !== 'موجود نیست' ? $finalPrice : 'نیاز به بررسی' ?>
@@ -143,10 +148,7 @@ if ($isValidCustomer) :
                                         } else if ($max == 0) {
                                             echo "<p style='direction: ltr !important;' data-relation='" . $relation_id . "' id='" . $code . '-append' . "'>" . 'موجود نیست' . "</p>";
                                         }
-                                        // if (!strpos(' ', trim($finalPrice)) && $finalPrice !== '') {
 
-                                        //     $finalPrice .= ' اصلی';
-                                        // }
                                         ?>
                                         <span data-description="<?= $finalPrice ?>"></span>
                                 </td>
@@ -163,6 +165,15 @@ if ($isValidCustomer) :
                     </tbody>
                 </table>
             </div>
+            <?php
+            if (!$isDisplayAllowed):
+            ?>
+                <script>
+                    document.getElementById('copy_all_with_price').style.display = 'none';
+                </script>
+            <?php
+            endif;
+            ?>
         </section>
         <section class="accordion mb-10">
             <?php foreach ($explodedCodes as $code_index => $code) {
