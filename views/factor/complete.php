@@ -11,6 +11,14 @@ require_once '../../layouts/callcenter/sidebar.php'; ?>
 
 <link rel="stylesheet" href="./assets/css/bill.css" />
 <link rel="stylesheet" href="./assets/css/incomplete.css" />
+<style>
+    .exclude {
+        border-radius: 5px;
+        background: #000000;
+        padding: 0 5px;
+        color: white;
+    }
+</style>
 <div id="wholePage">
     <?php require_once './components/factorSearch.php'; ?>
     <!-- Bill editing and information section -->

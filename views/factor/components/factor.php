@@ -158,70 +158,7 @@
 </div>
 <script>
     const factorInfo = <?= json_encode($factorInfo); ?>;
-
-    function changeLayout(layout) {
-        const logo_element = document.getElementById('factor_logo')
-        const yadak_logo = './assets/img/logo.png';
-        const insurance_logo = './assets/img/insurance.png';
-        const partner_logo = './assets/img/partner.jpg';
-        const korea_logo = './assets/img/korea.jpg';
-
-        switch (layout) {
-            case 'yadak':
-                logo_element.src = yadak_logo;
-                document.getElementById('factor_heading').innerHTML = 'پیش فاکتور یدک شاپ';
-                document.getElementById('factor_description').style.display = 'block';
-                document.getElementById('factor_address').style.display = 'block';
-                document.getElementById('factor_phone').innerHTML = `<span style="direction: ltr !important;">
-                                                                        ۰۲۱ - ۳۳ ۹۷ ۹۳ ۷۰
-                                                                    </span>
-                                                                    <span style="direction: ltr !important;">
-                                                                        ۰۲۱ - ۳۳ ۹۴ ۶۷ ۸۸
-                                                                    </span>
-                                                                    <span style="direction: ltr !important;">
-                                                                        ۰۹۱۲ - ۰۸۱ ۸۳ ۵۵
-                                                                    </span>`;
-                break;
-            case 'insurance':
-                logo_element.src = insurance_logo;
-                document.getElementById('factor_heading').innerHTML = 'شرق یدک';
-                document.getElementById('factor_description').style.display = 'none';
-                document.getElementById('factor_address').style.display = 'none';
-                document.getElementById('factor_phone').innerHTML = `<span>
-                                                                        ۷۷۵۴۸۹۴۶ - ۰۲۱
-                                                                    </span>`;
-                break;
-            case 'partner':
-                logo_element.src = partner_logo;
-                document.getElementById('factor_heading').innerHTML = 'فاکتور فروش همکار';
-                document.getElementById('factor_description').style.display = 'block';
-                document.getElementById('factor_address').style.display = 'block';
-                document.getElementById('factor_phone').innerHTML = `<span style="direction: ltr !important;">
-                                                                        ۰۲۱ - ۳۳ ۹۸ ۷۲ ۳۲
-                                                                    </span>
-                                                                    <span style="direction: ltr !important;">
-                                                                        ۰۲۱ - ۳۳ ۹۸ ۷۲ ۳۳
-                                                                    </span>
-                                                                    <span style="direction: ltr !important;">
-                                                                        ۰۲۱ - ۳۳ ۹۸ ۷۲ ۳۴
-                                                                    </span>`;
-                break;
-                break;
-            case 'korea':
-                logo_element.src = korea_logo;
-                document.getElementById('factor_heading').innerHTML = 'بازرگانی کره اتوپارت';
-                document.getElementById('factor_description').style.display = 'block';
-                document.getElementById('factor_address').style.display = 'block';
-                document.getElementById('factor_phone').innerHTML = `<span>
-                                                                        ۰۲۱ - ۳۳ ۹۲ ۵۴ ۱۱
-                                                                    </span>
-                                                                    <span>
-                                                                        ۰۹۳۰ - ۳۱۵ ۰۶ ۹۴
-                                                                    </span>`;
-                break;
-                break;
-        }
-    }
+    let displayLayout = null;
 
     document.getElementById('download').addEventListener('click', function() {
         html2canvas(document.querySelector("#capture")).then(canvas => {
@@ -234,9 +171,7 @@
             link.click();
         });
     });
-    if (factorInfo.partner !== 0) {
-        changeLayout('partner');
-    }
+
 </script>
 <style>
     #previewBill {
