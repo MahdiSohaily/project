@@ -22,7 +22,7 @@ $fileName = basename($_SERVER['PHP_SELF']);
                 خروج کالا
             </a>
         </li>
-        <?php if ($_SESSION['username'] === 'niyayesh' || $_SESSION['username'] === 'mahdi'): ?>
+        <?php if ($_SESSION['username'] === 'niyayesh' || $_SESSION['username'] === 'mahdi' || $_SESSION['username'] === 'aliakbar') : ?>
             <li class="mx-1 <?= $fileName == 'newSell.php' ? 'bg-gray-400' : 'bg-rose-400' ?> hover:bg-gray-400 text-sm font-bold">
                 <a class="p-2 menu_item flex items-center gap-2" href="newSell.php">
                     <img src="./assets/icons/subtract.svg" alt="add icon">
