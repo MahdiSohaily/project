@@ -154,7 +154,8 @@ require_once '../../layouts/inventory/sidebar.php';
     }
 
     function searchGoods(pattern) {
-        pattern = pattern.trim().replace(/\s+/g, '');
+        pattern = pattern.trim();
+        pattern = pattern.replace(/\s+/g, '');
         if (pattern.length < 7) {
             return;
         }

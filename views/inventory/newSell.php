@@ -15,7 +15,7 @@ require_once '../../layouts/inventory/sidebar.php';
         <div class="p-4" id="resultBox">
             <!-- matched goods with the pattern will be presented here -->
         </div>
-        <div id="error_box" class="fixed bg-gray-300/70 rounded text-sm flex flex-wrap flex-col gap-2" style="bottom: 60px; right: 20px; z-index: 200000;"></div>
+        <div id="error_box" class="fixed bg-gray-300/70 rounded text-sm flex flex-wrap flex-col gap-2" style="bottom: 60px; left:50%; transform: translateX(-50%); z-index: 200000;"></div>
     </div>
     <div class="min-h-screen bg-white shadow rounded-md overflow-hidden">
         <div class="bg-gray-800 p-4 h-20 flex items-center justify-center">
@@ -172,9 +172,10 @@ require_once '../../layouts/inventory/sidebar.php';
                     for (const item of factorItems) {
                         try {
                             const FACTOR_ITEM = item.partName.split('-');
+                            
                             const GOOD_NAME_BRAND = FACTOR_ITEM[1].trim();
                             const GOOD_NAME_PART = FACTOR_ITEM[0].split(' ')[0].trim();
-                            
+
                             let ALLOWED_BRANDS = [];
 
                             ALLOWED_BRANDS.push(GOOD_NAME_BRAND);

@@ -9,7 +9,7 @@ require_once '../../../database/db_connect.php';
 require_once '../../../utilities/inventory/ExistingHelper.php';
 
 if (isset($_POST['searchGoods'])) {
-    $pattern = $_POST['pattern'];
+    $pattern = trim($_POST['pattern']);
     $purchasedGoods = getPurchaseReport($pattern);
 
     echo json_encode($purchasedGoods);
