@@ -53,6 +53,7 @@ function getMatchedCustomers($pattern)
         $customersId = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
         return $customersId;
+        
     } catch (PDOException $e) {
         error_log('Database error: ' . $e->getMessage());
         return [];

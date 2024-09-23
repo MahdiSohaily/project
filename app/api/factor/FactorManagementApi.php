@@ -199,7 +199,7 @@ function searchByPartNumber($pattern, $mode)
                     INNER JOIN callcenter.customer ON customer_id = customer.id
                     INNER JOIN factor.bill_details ON bill.id = bill_details.bill_id
                     WHERE bill_details.billDetails LIKE :pattern
-                    AND status = :mode");
+                    AND status = :mode ORDER BY bill.created_at DESC");
         $stmt->bindValue(':pattern', '%' . $pattern . '%', PDO::PARAM_STR);
         $stmt->bindValue(':mode', $mode, PDO::PARAM_INT);
         $stmt->execute();

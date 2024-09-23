@@ -15,7 +15,7 @@ require_once '../../layouts/inventory/sidebar.php';
         <div class="p-4" id="resultBox">
             <!-- matched goods with the pattern will be presented here -->
         </div>
-        <div id="error_box" class="fixed bg-gray-300/70 rounded text-sm flex flex-wrap flex-col gap-2" style="bottom: 60px; left:50%; transform: translateX(-50%); z-index: 200000; max-height: 400px;"></div>
+        <div id="error_box" class="fixed rounded text-sm flex flex-wrap flex-col gap-2" style="bottom: 60px; left:50%; transform: translateX(-50%); z-index: 200000; max-height: 150px;"></div>
     </div>
     <div class="min-h-screen bg-white shadow rounded-md overflow-hidden">
         <div class="bg-gray-800 p-4 h-20 flex items-center justify-center">
@@ -173,7 +173,7 @@ require_once '../../layouts/inventory/sidebar.php';
                         try {
                             const FACTOR_ITEM = item.partName.split('-');
 
-                            const GOOD_NAME_BRAND = FACTOR_ITEM[1].trim();
+                            let GOOD_NAME_BRAND = FACTOR_ITEM[1].trim();
                             const GOOD_NAME_PART = FACTOR_ITEM[0].split(' ')[0].trim();
 
                             let ALLOWED_BRANDS = [];
@@ -197,8 +197,10 @@ require_once '../../layouts/inventory/sidebar.php';
                                 ALLOWED_BRANDS.push('KOREA');
                             }
 
-                            ALLOWED_BRANDS = [...new Set(ALLOWED_BRANDS)];
+                            ALLOWED_BRANDS = [...ALLOWED_BRANDS];
                             const goods = await getGoods(GOOD_NAME_PART);
+                            const ALL_ALLOWED_BRANDS = [...ALLOWED_BRANDS, ...getRelatedBrandsByKeywords(ALLOWED_BRANDS)];
+
                             goods.sort((a, b) => b.quantity - a.quantity);
 
                             const SHOP_STOCK = goods.filter(good => good.stockId == 9);
@@ -207,7 +209,7 @@ require_once '../../layouts/inventory/sidebar.php';
                             const INVENTORY_GOODS = [...SHOP_STOCK, ...INVENTORY_STOCK];
                             let billItemQuantity = item.quantity;
                             let counter = 1;
-                            const totalQuantity = getTotalQuantity(INVENTORY_GOODS, ALLOWED_BRANDS);
+                            const totalQuantity = getTotalQuantity(INVENTORY_GOODS, ALL_ALLOWED_BRANDS);
 
                             if (INVENTORY_GOODS.length == 0) {
                                 ERROR_BOX.innerHTML += `<p class="p-2 text-red-500 text-xs font-semibold shadow">
@@ -217,9 +219,9 @@ require_once '../../layouts/inventory/sidebar.php';
                                 </p>`;
                                 previewFactor();
                             }
-
+                            let index = 0; // Counter to track the current index
                             for (const good of INVENTORY_GOODS) {
-                                if (ALLOWED_BRANDS.includes(good.brandName)) {
+                                if (ALL_ALLOWED_BRANDS.includes(good.brandName)) {
                                     if (totalQuantity >= billItemQuantity && billItemQuantity > 0) {
                                         sellQuantity = billItemQuantity;
                                         if (billItemQuantity >= Number(good.remaining_qty)) {
@@ -236,14 +238,22 @@ require_once '../../layouts/inventory/sidebar.php';
                                         console.log('Not enough quantity in stock');
                                     }
                                 } else {
-                                    ERROR_BOX.innerHTML += `<p class="p-2 text-red-500 text-xs font-semibold shadow">
-                                    برند ${GOOD_NAME_BRAND} برای کالای 
-                                    <span class="text-blue-600 underline cursor-pointer" onclick= "searchGoods('${GOOD_NAME_PART}')">${GOOD_NAME_PART}</span>
-                                     در انبار موجود نیست.
-                                    </p>`;
-                                    break;
+
+                                    if (GOOD_NAME_BRAND == 'اصلی') {
+                                        GOOD_NAME_BRAND = 'GEN یا MOB';
+                                    }
+
+                                    if (index === INVENTORY_GOODS.length - 1) {
+
+                                        ERROR_BOX.innerHTML += `<p class="p-2 text-red-500 text-xs font-semibold shadow">
+                                            برند ${GOOD_NAME_BRAND} برای کالای 
+                                            <span class="text-blue-600 underline cursor-pointer" onclick= "searchGoods('${GOOD_NAME_PART}')">${GOOD_NAME_PART}</span>
+                                            در انبار موجود نیست.
+                                            </p>`;
+                                    }
                                 }
                                 counter++;
+                                index++;
                             }
 
                         } catch (error) {
@@ -329,6 +339,61 @@ require_once '../../layouts/inventory/sidebar.php';
             console.error('Error during API call:', error);
             throw error; // Rethrow error to handle it in searchGoods
         }
+    }
+
+    function getRelatedBrandsByKeywords(keywords) {
+        // Map of brands to their related brands
+        const brandAssociations = {
+            'HI Q': ['HIQ', 'HI'],
+            'MOB': ['MOB', 'GEN'],
+            'GEN': ['MOB', 'GEN'],
+            'OEMAX': ['CHINA'],
+            'JYR': ['CHINA'],
+            'RB2': ['CHINA'],
+            'IRAN': ['CHINA'],
+            'FAKE MOB': ['CHINA', 'KOREA'],
+            'DOOWON': ['HCC', 'HANON', 'DOOWON'],
+            'HANON': ['HCC', 'HANON', 'DOOWON'],
+            'HCC': ['HCC', 'HANON', 'DOOWON'],
+            'YONG': ['KOREA'],
+            'YONG HOO': ['KOREA'],
+            'OEM': ['KOREA'],
+            'ONNURI': ['KOREA'],
+            'GY': ['KOREA'],
+            'MIDO': ['KOREA'],
+            'MIRE': ['KOREA'],
+            'CARDEX': ['KOREA'],
+            'MANDO': ['KOREA'],
+            'OSUNG': ['KOREA'],
+            'DONGNAM': ['KOREA'],
+            'HYUNDAI BRAKE': ['KOREA'],
+            'SAM YUNG': ['KOREA'],
+            'BRC': ['KOREA'],
+            'FAKE GEN': ['CHINA', 'KOREA'],
+            'OE MAX': ['CHINA'],
+            'MAXFIT': ['CHINA'],
+            'GEO SUNG': ['KOREA'],
+            'YULIM': ['KOREA'],
+            'CARTECH': ['KOREA'],
+            'HSC': ['KOREA'],
+            'KOREA STAR': ['KOREA'],
+        };
+
+        // Normalize keywords to uppercase
+        keywords = keywords.map(keyword => keyword.trim().toUpperCase());
+
+        // Collect brands that are linked to any of the keywords
+        let relatedBrands = [];
+
+        // Iterate through brandAssociations to find matches
+        for (let brand in brandAssociations) {
+            // Check if any of the keywords exist in the associated brands
+            if (brandAssociations[brand].some(keyword => keywords.includes(keyword))) {
+                relatedBrands.push(brand);
+            }
+        }
+
+        return relatedBrands;
     }
 
     function sanitizeData(goods) {

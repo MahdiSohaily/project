@@ -15,6 +15,70 @@ if (isset($_POST['searchGoods'])) {
     echo json_encode($purchasedGoods);
 }
 
+if (isset($_POST['getAllowedBrands'])) {
+    $brands = trim($_POST['brands']);
+    $purchasedGoods = getAllowedBrands($brands);
+    echo "Hello";
+
+    echo json_encode($purchasedGoods);
+}   
+
+function getAllowedBrands($brands)
+{
+    // Map of brands to their related brands
+    $brandAssociations = [
+        'HI Q' => ['HIQ', 'HI'],
+        'MOB' => ['MOB', 'GEN'],
+        'GEN' => ['MOB', 'GEN'],
+        'OEMAX' => ['CHINA'],
+        'JYR' => ['CHINA'],
+        'RB2' => ['CHINA'],
+        'IRAN' => ['CHINA'],
+        'FAKE MOB' => ['CHINA'],
+        'DOOWON' => ['HCC', 'HANON', 'DOOWON'],
+        'HANON' => ['HCC', 'HANON', 'DOOWON'],
+        'HCC' => ['HCC', 'HANON', 'DOOWON'],
+        'YONG' => ['KOREA'],
+        'YONG HOO' => ['KOREA'],
+        'OEM' => ['KOREA'],
+        'ONNURI' => ['KOREA'],
+        'GY' => ['KOREA'],
+        'MIDO' => ['KOREA'],
+        'MIRE' => ['KOREA'],
+        'CARDEX' => ['KOREA'],
+        'MANDO' => ['KOREA'],
+        'OSUNG' => ['KOREA'],
+        'DONGNAM' => ['KOREA'],
+        'HYUNDAI BRAKE' => ['KOREA'],
+        'SAM YUNG' => ['KOREA'],
+        'FAKE MOB' => ['KOREA'],
+        'BRC' => ['KOREA'],
+        'FAKE GEN' => ['CHINA'],
+        'OEMAX' => ['CHINA'],
+        'OE MAX' => ['CHINA'],
+        'MAXFIT ' => ['CHINA'],
+        'FAKE GEN' => ['KOREA'],
+        'GEO SUNG' => ['KOREA'],
+        'YULIM' => ['KOREA'],
+        'CARTECH' => ['KOREA'],
+        'HSC' => ['KOREA'],
+        'KOREA STAR' => ['KOREA'],
+    ];
+
+    // Normalize brand names to uppercase
+    $brands = array_map('strtoupper', $brands);
+    $brands = array_map('trim', $brands);
+
+    foreach ($brands as $brand) {
+        if (isset($brandAssociations[$brand])) {
+            $brands = array_merge($brands, $brandAssociations[$brand]);
+        }
+    }
+
+    // Remove duplicates and return the result
+    return array_unique($brands);
+}
+
 if (isset($_POST['saveFactor'])) {
     $billItems = json_decode($_POST['billItems'], true);
     $factorInfo = json_decode($_POST['factorInfo'], true);

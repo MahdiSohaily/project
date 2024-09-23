@@ -99,7 +99,6 @@ function getSpecification($explodedCodes)
         return ($sumA > $sumB) ? -1 : 1;
     }
 
-
     foreach ($goodDetails as &$record) {
         uasort($record, 'customSort'); // Sort the inner array by values
     }
