@@ -221,6 +221,10 @@ require_once '../../layouts/inventory/sidebar.php';
                             }
                             let index = 0; // Counter to track the current index
                             for (const good of INVENTORY_GOODS) {
+                                if (billItemQuantity == 0) {
+                                    break;
+                                }
+
                                 if (ALL_ALLOWED_BRANDS.includes(good.brandName)) {
                                     if (totalQuantity >= billItemQuantity && billItemQuantity > 0) {
                                         sellQuantity = billItemQuantity;
@@ -229,22 +233,24 @@ require_once '../../layouts/inventory/sidebar.php';
                                             billItemQuantity -= Number(good.remaining_qty);
                                             addToBillItems(good, sellQuantity);
                                         } else {
-                                            sellQuantity = item.quantity;
+                                            sellQuantity = billItemQuantity;
                                             addToBillItems(good, sellQuantity);
                                             break;
                                         }
 
                                     } else {
-                                        console.log('Not enough quantity in stock');
+                                        ERROR_BOX.innerHTML += `<p class="p-2 text-red-500 text-xs font-semibold shadow">
+                                            برای کالای 
+                                            <span class="text-blue-600 underline cursor-pointer" onclick= "searchGoods('${GOOD_NAME_PART}')">${GOOD_NAME_PART}</span>
+                                            در انبار مقدار کافی موجود نیست.
+                                            مقدار موجود: ${totalQuantity}
+                                            </p>`;
                                     }
                                 } else {
-
-                                    if (GOOD_NAME_BRAND == 'اصلی') {
-                                        GOOD_NAME_BRAND = 'GEN یا MOB';
-                                    }
-
                                     if (index === INVENTORY_GOODS.length - 1) {
-
+                                        if (GOOD_NAME_BRAND == 'اصلی') {
+                                            GOOD_NAME_BRAND = 'GEN یا MOB';
+                                        }
                                         ERROR_BOX.innerHTML += `<p class="p-2 text-red-500 text-xs font-semibold shadow">
                                             برند ${GOOD_NAME_BRAND} برای کالای 
                                             <span class="text-blue-600 underline cursor-pointer" onclick= "searchGoods('${GOOD_NAME_PART}')">${GOOD_NAME_PART}</span>
@@ -399,7 +405,7 @@ require_once '../../layouts/inventory/sidebar.php';
     function sanitizeData(goods) {
         goods = goods.map(good => {
             if (billItems[good.quantityId]) {
-                Number(good.remaining_qty) -= billItems[good.quantityId].quantity;
+                good.remaining_qty -= Number(billItems[good.quantityId].quantity);
             }
             return good;
         });
