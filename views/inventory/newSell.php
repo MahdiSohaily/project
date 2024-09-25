@@ -407,7 +407,6 @@ require_once '../../layouts/inventory/sidebar.php';
             'FAKE GEN': ['CHINA', 'KOREA'],
             'OE MAX': ['CHINA'],
             'MAXFIT': ['CHINA'],
-            'HOH': ['CHINA'],
             'GEO SUNG': ['KOREA'],
             'YULIM': ['KOREA'],
             'CARTECH': ['KOREA'],

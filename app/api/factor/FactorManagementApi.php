@@ -192,7 +192,6 @@ function searchByBillNumber($pattern)
 
 function searchByPartNumber($pattern, $mode)
 {
-    $pattern = trim(strtoupper($pattern));
     try {
         $stmt = PDO_CONNECTION->prepare("SELECT customer.name, customer.family, bill.id, bill.bill_number, bill.quantity, bill.bill_date, bill.total,
                         bill.user_id, bill.partner, bill_details.billDetails
