@@ -16,6 +16,7 @@ require_once '../../layouts/inventory/sidebar.php';
             <!-- matched goods with the pattern will be presented here -->
         </div>
         <div id="error_box" class="fixed rounded text-sm flex flex-wrap flex-col gap-2" style="bottom: 60px; left:50%; transform: translateX(-50%); z-index: 200000; max-height: 150px;"></div>
+        <div id="similar_box" class="fixed rounded text-sm flex flex-wrap flex-col gap-2 bg-gray-500/50 p-2" style="bottom: 60px; left:30px; z-index: 200000; max-height: 150px;"></div>
     </div>
     <div class="min-h-screen bg-white shadow rounded-md overflow-hidden">
         <div class="bg-gray-800 p-4 h-20 flex items-center justify-center">
@@ -119,6 +120,7 @@ require_once '../../layouts/inventory/sidebar.php';
 <!-- Page logical scripts -->
 <script>
     const SELL_API = "../../app/api/inventory/SellApi.php";
+    const RelatedGoodsAPI = "../../app/api/utilities/RelatedGoodsAPI.php";
     const FACTOR_API = "../../app/api/factor/CompleteFactorApi.php";
     const ERROR_BOX = document.getElementById('error_box');
 
@@ -214,7 +216,7 @@ require_once '../../layouts/inventory/sidebar.php';
                             if (INVENTORY_GOODS.length == 0) {
                                 ERROR_BOX.innerHTML += `<p class="p-2 text-red-500 text-xs font-semibold shadow">
                                 کالای 
-                                <span class="text-blue-600 underline cursor-pointer" onclick= "searchGoods('${GOOD_NAME_PART}')">${GOOD_NAME_PART}</span>
+                                <span class="text-blue-600 underline cursor-pointer" onclick= "getSimilarCodes('${GOOD_NAME_PART}','${ALL_ALLOWED_BRANDS}')">${GOOD_NAME_PART}</span>
                                  در انبار موجود نیست.
                                 </p>`;
                                 previewFactor();
@@ -241,7 +243,7 @@ require_once '../../layouts/inventory/sidebar.php';
                                     } else {
                                         ERROR_BOX.innerHTML += `<p class="p-2 text-red-500 text-xs font-semibold shadow">
                                             برای کالای 
-                                            <span class="text-blue-600 underline cursor-pointer" onclick= "searchGoods('${GOOD_NAME_PART}')">${GOOD_NAME_PART}</span>
+                                            <span class="text-blue-600 underline cursor-pointer" onclick= "getSimilarCodes('${GOOD_NAME_PART}','${ALL_ALLOWED_BRANDS}')">${GOOD_NAME_PART}</span>
                                             در انبار مقدار کافی موجود نیست.
                                             مقدار موجود: ${totalQuantity}
                                             </p>`;
@@ -253,7 +255,7 @@ require_once '../../layouts/inventory/sidebar.php';
                                         }
                                         ERROR_BOX.innerHTML += `<p class="p-2 text-red-500 text-xs font-semibold shadow">
                                             برند ${GOOD_NAME_BRAND} برای کالای 
-                                            <span class="text-blue-600 underline cursor-pointer" onclick= "searchGoods('${GOOD_NAME_PART}')">${GOOD_NAME_PART}</span>
+                                            <span class="text-blue-600 underline cursor-pointer" onclick= "getSimilarCodes('${GOOD_NAME_PART}','${ALL_ALLOWED_BRANDS}')">${GOOD_NAME_PART}</span>
                                             در انبار موجود نیست.
                                             </p>`;
                                     }
@@ -329,6 +331,33 @@ require_once '../../layouts/inventory/sidebar.php';
         } catch (error) {
             console.error('Error fetching goods:', error);
         }
+    }
+
+    function getSimilarCodes(partNumber, allowedBrands) {
+        const params = new URLSearchParams();
+        params.append('getSimilarCodes', 'getSimilarCodes');
+        params.append('partNumber', partNumber);
+        params.append('allowedBrands', allowedBrands);
+
+        const container = document.getElementById('similar_box');
+
+        // First axios request to get client name
+        axios.post(RelatedGoodsAPI, params)
+            .then(function(response) {
+                const similarCodes = response.data;
+                container.innerHTML = '';
+                if (similarCodes) {
+                    similarCodes.forEach(code => {
+                        container.innerHTML += `<p onclick="searchGoods('${code}')" class="cursor-pointer p-2 text-xs font-semibold text-white bg-gray-800 rounded">${code}</p>`;
+                    });
+                } else {
+                    container.innerHTML = '<p class="p-2 text-xs font-semibold text-white bg-gray-800 rounded">هیچ کدی یافت نشد</p>';
+                }
+
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
     }
 
     async function getGoods(pattern) {

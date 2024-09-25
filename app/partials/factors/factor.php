@@ -64,8 +64,8 @@ function displayUI($factors, $countFactorByUser)
                     <th class="p-3 text-sm font-semibold">خریدار</th>
                     <th class="p-3 text-sm font-semibold">کاربر</th>
                     <?php
-                        $isAdmin = $_SESSION['username'] === 'niyayesh' || $_SESSION['username'] === 'mahdi' || $_SESSION['username'] === 'babak' ? true : false;
-                        if ($isAdmin) : ?>
+                    $isAdmin = $_SESSION['username'] === 'niyayesh' || $_SESSION['username'] === 'mahdi' || $_SESSION['username'] === 'babak' ? true : false;
+                    if ($isAdmin) : ?>
                         <th class="p-3 text-sm font-semibold hide_while_print" class="edit">ویرایش</th>
                     <?php endif; ?>
                 </tr>
@@ -95,13 +95,14 @@ function displayUI($factors, $countFactorByUser)
                             </td>
 
                             <?php
+                            $isAdmin = $_SESSION['username'] === 'niyayesh' || $_SESSION['username'] === 'mahdi' || $_SESSION['username'] === 'babak' ? true : false;
                             if ($isAdmin) : ?>
                                 <td class="text-center align-middle hide_while_print">
-                                    <a onclick="toggleModal(this); edit(this)" 
-                                    data-factor="<?= $factor["id"] ?>" 
-                                    data-user="<?= $factor['user']; ?>" 
-                                    data-billNO="<?= $factor['shomare'] ?>" 
-                                    data-user-info="<?= getUserInfo($factor['user']) ?>" data-customer="<?= $factor['kharidar'] ?>" class="text-xs bg-cyan-500 text-white cursor-pointer px-2 py-1 rounded">
+                                    <a onclick="toggleModal(this); edit(this)"
+                                        data-factor="<?= $factor["id"] ?>"
+                                        data-user="<?= $factor['user']; ?>"
+                                        data-billNO="<?= $factor['shomare'] ?>"
+                                        data-user-info="<?= getUserInfo($factor['user']) ?>" data-customer="<?= $factor['kharidar'] ?>" class="text-xs bg-cyan-500 text-white cursor-pointer px-2 py-1 rounded">
                                         ویرایش
                                     </a>
                                 </td>

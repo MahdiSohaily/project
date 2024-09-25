@@ -2,6 +2,8 @@
 $pageTitle = "تنظیم فاکتور پیش فروش";
 $iconUrl = 'sell.svg';
 require_once './components/header.php';
+require_once '../../utilities/callcenter/GivenPriceHelper.php';
+require_once '../../utilities/callcenter/DollarRateHelper.php';
 require_once '../../app/controller/factor/CompleteFactorController.php';
 require_once '../../app/controller/factor/preSellFactorController.php';
 require_once '../../layouts/callcenter/nav.php';

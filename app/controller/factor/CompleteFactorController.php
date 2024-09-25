@@ -69,6 +69,8 @@ if (isset($_GET['factor_number']) && is_numeric($_GET['factor_number'])) {
     die("Invalid factor number");
 }
 
+
+
 function getFactorInfo($billId)
 {
     $sql = "SELECT * FROM factor.bill WHERE id = :id";
