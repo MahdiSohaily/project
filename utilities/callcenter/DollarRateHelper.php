@@ -269,6 +269,7 @@ function addRelatedBrands($brands)
         'OEMAX' => ['CHINA'],
         'OE MAX' => ['CHINA'],
         'MAXFIT ' => ['CHINA'],
+        'HOH ' => ['CHINA'],
         'FAKE GEN' => ['KOREA'],
         'GEO SUNG' => ['KOREA'],
         'YULIM' => ['KOREA'],
