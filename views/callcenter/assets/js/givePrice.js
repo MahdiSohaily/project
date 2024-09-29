@@ -238,9 +238,9 @@ function copyPrice(elem) {
     }
     copyToClipboard(text.trim());
     // Alert the copied text
-    elem.innerHTML = `done`;
+    elem.src = `./assets/img/complete.svg`;
     setTimeout(() => {
-      elem.innerHTML = `content_copy`;
+      elem.src = `./assets/img/all.svg`;
     }, 1500);
   } catch (e) {
     console.log(e);
@@ -350,7 +350,7 @@ function deleteGivenPrice(element) {
   const code = element.getAttribute("data-code");
   const resultBox = document.getElementById("price-" + partNumber);
   // Defining a params instance to be attached to the axios request
-  
+
   const params = new URLSearchParams();
   params.append("delete_price", "delete_price");
   params.append("partNumber", partNumber);

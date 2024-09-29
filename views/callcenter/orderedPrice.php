@@ -56,16 +56,20 @@ if ($isValidCustomer) :
                 </table>
             </div>
             <div class="m-2 p-2 bg-gray-700  w-96">
-                <form class="h-full border border-white flex gap-2 p-2 " target="_blank" action="./orderedPrice.php" method="post">
-                    <div class="w-5/6 h-full">
+                <form class="h-full border border-white flex flex-col gap-2 p-2 " target="_blank" action="./orderedPrice.php" method="post">
+                    <div class="h-full">
                         <input type="text" name="givenPrice" value="givenPrice" id="form" hidden>
                         <input type="text" name="user" value="<?= $_SESSION["id"] ?>" hidden>
                         <input type="text" name="customer" value="1" id="target_customer" hidden>
-                        <textarea style="direction: ltr !important;" onchange="filterCode(this)" id="code" name="code" required class="h-full bg-transparent w-full p-3 text-white placeholder-white" placeholder="لطفا کد های مورد نظر خود را در خط های مجزا قرار دهید"></textarea>
+                        <textarea style="direction: ltr !important;" onchange="filterCode(this)" id="code" name="code" required class="h-full bg-transparent w-full p-2 text-white placeholder-white outline-none focus:border-white" placeholder="لطفا کد های مورد نظر خود را در خط های مجزا قرار دهید"></textarea>
                     </div>
-                    <button type="type" class="inline-flex self-end p-3 bg-indigo-500 border-indigo-700  rounded-md font-semibold text-xs text-white hover:bg-indigo-700">
-                        جستجو
-                    </button>
+                    <span>
+                        <button type="type" class="inline-flex self-end p-2 bg-indigo-500 border-indigo-700 font-semibold text-xs text-white hover:bg-indigo-700">
+                          جستجو اقلام
+                        </button>
+                        <button type="submit" formaction="../factor/createPreCompleteBill.php" class="inline-flex self-end items-center px-5 py-2 bg-sky-600 font-semibold text-xs text-white hover:bg-sky-700 focus:bg-sky-700 active:bg-sky-900 focus:outline-none"> ایجاد فاکتور
+                        </button>
+                    </span>
                 </form>
             </div>
             <div class="m-2 p-2 bg-gray-700  w-4/12">
@@ -75,9 +79,9 @@ if ($isValidCustomer) :
                             <th class="text-left px-3 py-2 w-24">کد فنی</th>
                             <th class="text-left px-3 py-2">قیمت</th>
                             <th class="text-left px-3 py-2 flex items-center justify-between gap-2" onclick="closeTab()">
-                                <span>
+                                <span class="flex gap-1">
                                     <i id="copy_all_with_price" title="کاپی کردن مقادیر دارای قیمت" onclick="copyItemsWith(this)" class="text-sm material-icons hover:cursor-pointer text-green-500">content_copy</i>
-                                    <i id="copy_all" title="کاپی کردن مقادیر" onclick="copyPrice(this)" class="text-sm material-icons hover:cursor-pointer text-rose-500">content_copy</i>
+                                    <img class="inline cursor-pointer" id="copy_all" title="کاپی کردن مقادیر" onclick="copyPrice(this)" src="./assets/img/all.svg" alt="copy all items">
                                 </span>
                                 <i id="copy_all" title="کپی توضیحات فارسی" onclick="copyPriceDetails(this)" class="mr-7 text-sm material-icons hover:cursor-pointer text-sky-500">content_copy</i>
                             </th>
