@@ -241,7 +241,8 @@ function stockInfo($id, $brand)
     }
 
     // Fetch stock information
-    $qtybank_sql = "SELECT qtybank.id, qtybank.qty, seller.name FROM {$stock}.qtybank 
+    $qtybank_sql = "SELECT qtybank.id, qtybank.qty, seller.name
+                    FROM {$stock}.qtybank 
                     INNER JOIN yadakshop.seller ON qtybank.seller = seller.id 
                     WHERE codeid = :id AND brand = :brand_id";
     $stmt_qtybank = PDO_CONNECTION->prepare($qtybank_sql);
@@ -291,11 +292,13 @@ function exist($ids)
 
     // Prepare the base SQL query with LEFT JOIN to exitrecord and necessary calculations
     $base_sql = "SELECT qtybank.id AS quantityId, codeid AS goodId, brand.name AS brandName, qtybank.qty AS quantity,
-                    create_time AS invoice_date, seller.name AS seller_name, brand.id AS brandId,
-                    IFNULL(SUM(exitrecord.qty), 0) AS total_sold,
+                    create_time AS invoice_date, seller.name AS seller_name, brand.id AS brandId, stock.id AS stockId,
+                    qtybank.des AS purchase_Description,
+                    stock.name AS stockName, IFNULL(SUM(exitrecord.qty), 0) AS total_sold,
                     qtybank.qty - IFNULL(SUM(exitrecord.qty), 0) AS remaining_qty
                 FROM {$stock}.qtybank
                 LEFT JOIN yadakshop.brand ON brand.id = qtybank.brand
+                LEFT JOIN yadakshop.stock ON stock.id = qtybank.stock_id
                 LEFT JOIN yadakshop.seller ON seller.id = qtybank.seller
                 LEFT JOIN $stock.exitrecord ON qtybank.id = exitrecord.qtyid";
 
@@ -421,4 +424,3 @@ function overallSpecification($id, $type)
 
     return $allLimit;
 }
-

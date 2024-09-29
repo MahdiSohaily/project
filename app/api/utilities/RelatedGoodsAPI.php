@@ -12,10 +12,12 @@ require_once '../../../utilities/inventory/ExistingHelper.php';
 
 if (isset($_POST['getSimilarCodes'])) {
     $completeCode = trim($_POST['partNumber']);
-    $allowedBrands = array_map('trim', explode(',', $_POST['allowedBrands']));
+    $fullCode = trim($_POST['fullCode']);
+    $allowedBrands = array_unique(array_map('trim', explode(',', $_POST['allowedBrands'])));
 
     $similarCodes = setup_loading($completeCode);
-    $relatedGoods = current(current($similarCodes['existing'])) ?? [];
+
+    $relatedGoods =  $similarCodes['existing'] ? current(current($similarCodes['existing'])) : [];
 
     if ($relatedGoods) {
         $stockInfo = $relatedGoods['relation']['stockInfo'];
@@ -24,21 +26,72 @@ if (isset($_POST['getSimilarCodes'])) {
             return count($item) > 0;
         });
 
-        $codesWithSpecificBrand = [];
+        $MatchedGoods = getCodesWithInfo($existingGoods, $allowedBrands, $completeCode, $fullCode);
 
-        foreach ($existingGoods as $key => $code) {
-            foreach ($code as $item) {
-                if (in_array($item['brandName'], $allowedBrands)) {
-                    array_push($codesWithSpecificBrand, $key);
-                }
-            }
-        }
-
-        echo json_encode((array_unique($codesWithSpecificBrand)));
+        echo json_encode($MatchedGoods);
     } else {
         echo json_encode(null);
     }
+} else {
+    echo "Not defined";
 }
+
+
+function getCodesWithInfo($existingGoods, $allowedBrands, $completeCode, $returnFullCode = false)
+{
+    $CODES_INFORMATION = [
+        'goods' => [],
+        'codes' => []
+    ];
+
+    $specifiedCode = [];
+    $similarCodes = [];
+
+    foreach ($existingGoods as $key => $code) {
+        foreach ($code as $item) {
+            if (in_array(trim($item['brandName']), $allowedBrands)) {
+                $item['partNumber'] = $key;
+                if ($key == $completeCode) {
+                    $specifiedCode[] = $item;
+                } else {
+                    $similarCodes[] = $item;
+                }
+                $CODES_INFORMATION['codes'][] = $key;
+                $CODES_INFORMATION['codes'] = array_unique($CODES_INFORMATION['codes']);
+            }
+        }
+    }
+
+    // Merge specified and similar codes
+    $sortedGoodBaseOnCode = array_merge($specifiedCode, $similarCodes);
+
+    $YadakShopInventory = [];
+    $otherInventory = [];
+
+    foreach ($sortedGoodBaseOnCode as $good) {
+        if ($good['stockId'] == 9) {
+            $YadakShopInventory[] = $good;
+        } else {
+            $otherInventory[] = $good;
+        }
+    }
+
+    // Merge inventories
+    $CODES_INFORMATION['goods'] = array_merge($YadakShopInventory, $otherInventory);
+
+    // No need to filter empty goods, all goods will have data
+    $CODES_INFORMATION['goods'] = array_filter($CODES_INFORMATION['goods'], function ($item) {
+        return !empty($item); // Ensuring that goods are non-empty
+    });
+
+    if ($returnFullCode) {
+        return $CODES_INFORMATION;
+    }
+
+    // Return unique codes instead of array keys
+    return array_unique($CODES_INFORMATION['codes']);
+}
+
 
 
 function setup_loading($completeCode)

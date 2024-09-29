@@ -147,8 +147,9 @@ require_once '../../layouts/inventory/sidebar.php';
         axios.post(SELL_API, params)
             .then(function(response) {
                 if (response.data) {
-                    setFactorInfo('client', response.data);
-                    document.getElementById('customer').value = response.data;
+                    const customerName = response.data.trim();
+                    setFactorInfo('client', customerName);
+                    document.getElementById('customer').value = customerName;
                 } else {
                     setFactorInfo('client', null);
                     document.getElementById('customer').value = null;
@@ -160,17 +161,21 @@ require_once '../../layouts/inventory/sidebar.php';
 
         // Second axios request to get factor items
         params.append('getFactorItems', 'getFactorItems');
+
         const previewContainer = document.getElementById('previewFactor');
         previewContainer.innerHTML = `<p class="p-2 text-sky-700 text-center text-sm font-semibold shadow">
-        لطفا صبور باشید ...
-        <img class="w-8 h-8 mx-auto my-2" src="../../public/img/loading.png" />
-        </p>`;
+                                            لطفا صبور باشید ...
+                                            <img class="w-8 h-8 mx-auto my-2" src="../../public/img/loading.png" />
+                                        </p>`;
+
         axios.post(FACTOR_API, params)
             .then(async function(response) {
                 if (response.data) {
+
                     ERROR_BOX.innerHTML = '';
                     const factorItems = response.data;
                     billItems = {};
+
                     for (const item of factorItems) {
                         try {
                             const FACTOR_ITEM = item.partName.split('-');
@@ -178,37 +183,12 @@ require_once '../../layouts/inventory/sidebar.php';
                             let GOOD_NAME_BRAND = FACTOR_ITEM[1].trim();
                             const GOOD_NAME_PART = FACTOR_ITEM[0].split(' ')[0].trim();
 
-                            let ALLOWED_BRANDS = [];
+                            const ALL_ALLOWED_BRANDS = getFinalBrands(GOOD_NAME_BRAND);
+                            const goods = await getSimilarCodes(GOOD_NAME_PART, ALL_ALLOWED_BRANDS, true);
 
-                            ALLOWED_BRANDS.push(GOOD_NAME_BRAND);
+                            const INVENTORY_GOODS = goods ? goods['goods'] : [];
+                            const INVENTORY_CODES = goods ? goods['codes'] : [];
 
-                            if (GOOD_NAME_BRAND == 'اصلی' || GOOD_NAME_BRAND == 'GEN' || GOOD_NAME_BRAND == 'MOB') {
-                                ALLOWED_BRANDS.push('GEN');
-                                ALLOWED_BRANDS.push('MOB');
-                            }
-
-                            if (GOOD_NAME_BRAND == 'شرکتی') {
-                                ALLOWED_BRANDS.push('IRAN');
-                            }
-
-                            if (GOOD_NAME_BRAND == 'متفرقه' || GOOD_NAME_BRAND == 'چین') {
-                                ALLOWED_BRANDS.push('CHINA');
-                            }
-
-                            if (GOOD_NAME_BRAND == 'کره' || GOOD_NAME_BRAND == 'کره ای') {
-                                ALLOWED_BRANDS.push('KOREA');
-                            }
-
-                            ALLOWED_BRANDS = [...ALLOWED_BRANDS];
-                            const goods = await getGoods(GOOD_NAME_PART);
-                            const ALL_ALLOWED_BRANDS = [...ALLOWED_BRANDS, ...getRelatedBrandsByKeywords(ALLOWED_BRANDS)];
-
-                            goods.sort((a, b) => b.quantity - a.quantity);
-
-                            const SHOP_STOCK = goods.filter(good => good.stockId == 9);
-                            const INVENTORY_STOCK = goods.filter(good => good.stockId != 9);
-
-                            const INVENTORY_GOODS = [...SHOP_STOCK, ...INVENTORY_STOCK];
                             let billItemQuantity = item.quantity;
                             let counter = 1;
                             const totalQuantity = getTotalQuantity(INVENTORY_GOODS, ALL_ALLOWED_BRANDS);
@@ -219,8 +199,16 @@ require_once '../../layouts/inventory/sidebar.php';
                                 <span class="text-blue-600 underline cursor-pointer" onclick= "getSimilarCodes('${GOOD_NAME_PART}','${ALL_ALLOWED_BRANDS}')">${GOOD_NAME_PART}</span>
                                  در انبار موجود نیست.
                                 </p>`;
-                                previewFactor();
                             }
+
+                            if (!INVENTORY_CODES.includes(GOOD_NAME_PART) && INVENTORY_GOODS.length != 0) {
+                                ERROR_BOX.innerHTML += `<p class="p-2 text-green-500 text-xs font-semibold shadow">
+                                کد مشابه 
+                                <span class="text-blue-400 underline cursor-pointer" onclick= "getSimilarCodes('${GOOD_NAME_PART}','${ALL_ALLOWED_BRANDS}')">${GOOD_NAME_PART}</span>
+                                 در فاکتور استفاده گردید.
+                                </p>`;
+                            }
+
                             let index = 0; // Counter to track the current index
                             for (const good of INVENTORY_GOODS) {
                                 if (billItemQuantity == 0) {
@@ -280,11 +268,41 @@ require_once '../../layouts/inventory/sidebar.php';
             });
     }
 
+    function getFinalBrands(GOOD_NAME_BRAND) {
+        let ALLOWED_BRANDS = [];
+
+        ALLOWED_BRANDS.push(GOOD_NAME_BRAND);
+
+        if (GOOD_NAME_BRAND == 'اصلی' || GOOD_NAME_BRAND == 'GEN' || GOOD_NAME_BRAND == 'MOB') {
+            ALLOWED_BRANDS.push('GEN');
+            ALLOWED_BRANDS.push('MOB');
+        }
+
+        if (GOOD_NAME_BRAND == 'شرکتی') {
+            ALLOWED_BRANDS.push('IRAN');
+        }
+
+        if (GOOD_NAME_BRAND == 'متفرقه' || GOOD_NAME_BRAND == 'چین') {
+            ALLOWED_BRANDS.push('CHINA');
+        }
+
+        if (GOOD_NAME_BRAND == 'کره' || GOOD_NAME_BRAND == 'کره ای') {
+            ALLOWED_BRANDS.push('KOREA');
+        }
+
+        ALLOWED_BRANDS = [...ALLOWED_BRANDS];
+
+        const ALL_ALLOWED_BRANDS = [...ALLOWED_BRANDS, ...getRelatedBrandsByKeywords(ALLOWED_BRANDS)];
+
+        return ALL_ALLOWED_BRANDS;
+    }
+
     function getTotalQuantity(goods = [], brandsName = []) {
         let totalQuantity = 0;
-        for (const item of goods) {
-            if (brandsName.includes(item.brandName)) {
-                totalQuantity += Number(item.remaining_qty);
+
+        for (const good of goods) {
+            if (brandsName.includes(good.brandName)) {
+                totalQuantity += Number(good.remaining_qty);
             }
         }
         return totalQuantity;
@@ -303,9 +321,10 @@ require_once '../../layouts/inventory/sidebar.php';
                 goodId: good.goodId,
                 partNumber: good.partNumber,
                 stockId: good.stockId,
+                purchase_Description: good.purchase_Description,
                 stockName: good.stockName,
                 brandName: good.brandName,
-                sellerName: good.sellerName,
+                sellerName: good.seller_name,
                 quantity: quantity
             };
 
@@ -333,31 +352,76 @@ require_once '../../layouts/inventory/sidebar.php';
         }
     }
 
-    function getSimilarCodes(partNumber, allowedBrands) {
+    async function getSimilarCodes(partNumber, allowedBrands, fullCode = false) {
         const params = new URLSearchParams();
         params.append('getSimilarCodes', 'getSimilarCodes');
         params.append('partNumber', partNumber);
         params.append('allowedBrands', allowedBrands);
+        params.append('fullCode', fullCode);
+
+        try {
+            // Wait for the axios request to resolve
+            const response = await axios.post(RelatedGoodsAPI, params);
+            const similarCodes = response.data;
+
+            // If fullCode is true, return the similar codes
+            if (fullCode) {
+                return similarCodes;
+            }
+
+            // Otherwise, display the similar codes
+            displaySimilarCods(similarCodes);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async function findSimilarCodes(partNumber, allowedBrands, fullCode = false) {
+        const params = new URLSearchParams();
+        params.append('getSimilarCodes', 'getSimilarCodes');
+        params.append('partNumber', partNumber);
+        params.append('allowedBrands', allowedBrands);
+        params.append('fullCode', fullCode);
+
+        try {
+            // Wait for the axios request to resolve
+            const response = await axios.post(RelatedGoodsAPI, params);
+            const similarCodes = response.data;
+
+            // If fullCode is true, return the similar codes
+            if (fullCode) {
+                return similarCodes;
+            }
+
+            // Otherwise, display the similar codes
+            displaySimilarCods(similarCodes);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+
+    function displaySimilarCods(similarCodes) {
+
+        similarCodes = similarCodes ? similarCodes['codes'] : [];
 
         const container = document.getElementById('similar_box');
+        if (!container) return; // Check if the container exists
 
-        // First axios request to get client name
-        axios.post(RelatedGoodsAPI, params)
-            .then(function(response) {
-                const similarCodes = response.data;
-                container.innerHTML = '';
-                if (similarCodes) {
-                    similarCodes.forEach(code => {
-                        container.innerHTML += `<p onclick="searchGoods('${code}')" class="cursor-pointer p-2 text-xs font-semibold text-white bg-gray-800 rounded">${code}</p>`;
-                    });
-                } else {
-                    container.innerHTML = '<p class="p-2 text-xs font-semibold text-white bg-gray-800 rounded">هیچ کدی یافت نشد</p>';
-                }
+        container.innerHTML = ''; // Clear the container
 
-            })
-            .catch(function(error) {
-                console.log(error);
-            });
+        if (Array.isArray(similarCodes) && similarCodes.length > 0) {
+            // Create the HTML for all codes and update innerHTML once
+            const codeHTML = similarCodes.map(code =>
+                `<p onclick="searchGoods('${code}')" class="cursor-pointer p-2 text-xs font-semibold text-white bg-gray-800 rounded">
+                ${code}
+            </p>`
+            ).join('');
+            container.innerHTML = codeHTML;
+        } else {
+            // If no similar codes, show the fallback message
+            container.innerHTML = '<p class="p-2 text-xs font-semibold text-white bg-gray-800 rounded">هیچ کدی یافت نشد</p>';
+        }
     }
 
     async function getGoods(pattern) {
@@ -596,6 +660,7 @@ require_once '../../layouts/inventory/sidebar.php';
                                         <p class="${bgColors[item.stockId - 1]} text-white py-1 px-2 w-20 text-xs rounded text-center">
                                             ${item.stockName}
                                         </p>
+                                        <p class="text-xs text-red-500 text-center p-1">${item.purchase_Description ?? ''}</p>
                                     </td>
                                     <td class="p-3 text-left text-gray-800 font-semibold text-sm" onclick="deleteItem(${item.quantityId})">
                                         <img class="cursor-pointer" src="./assets/icons/delete.svg" alt="delete">
@@ -617,6 +682,9 @@ require_once '../../layouts/inventory/sidebar.php';
         const parentElement = document.getElementById('item-' + quantityId);
         parentElement.remove();
         delete billItems[quantityId];
+        const itemIndex = billItemOrder.indexOf(quantityId);
+        billItemOrder.splice(itemIndex, 1);
+
         previewFactor();
     }
 
