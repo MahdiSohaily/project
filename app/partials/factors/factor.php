@@ -73,7 +73,7 @@ function displayUI($factors, $countFactorByUser)
             <tbody>
                 <?php if (count($factors)) :
                     foreach ($factors as $factor) : ?>
-                        <tr class="even:bg-gray-100">
+                        <tr class="even:bg-gray-100 factor_row" data-total="<?= $factor['total'] ?? 'xxx' ?>" data-partner="<?= $factor['status'] ?? 'xxx' ?>">
                             <td class="text-center align-middle">
                                 <span class="flex justify-center items-center gap-2 bg-blue-500 rounded-sm text-white w-24 py-2 mx-auto cursor-pointer" title="کپی کردن شماره فاکتور" data-billNumber="<?= $factor['shomare'] ?>" onClick="copyBillNumberSingle(this)">
                                     <?= $factor['shomare'] ?>

@@ -25,7 +25,49 @@
                             $user = $_SESSION['username']; ?>
                             <p onclick="copyPartNumber(this, '<?= strtoupper($goods[$index]['partnumber']) ?>')" class="text-center bold bg-gray-600 <?= $not_registered ? 'text-white' : 'text-green-500' ?>  px-2 py-3">
                                 <?php
-                                echo strtoupper($goods[$index]['partnumber']); ?>
+                                echo strtoupper($goods[$index]['partnumber']);
+                                // Calculate initial price and weight
+                                $price = floatval($item['price']);
+                                $avgPrice = round(($price * 110) / 243.5);
+                                $weight = round(floatval($item['weight']), 2);
+
+                                // Convert mobis and korea to floats
+                                $mobis = floatval($item['mobis']);
+                                $korea = floatval($item['korea']);
+
+                                // Determine status based on mobis
+                                $status = null;
+                                switch ($mobis) {
+                                    case 0.00:
+                                        $status = "NO-Price";
+                                        break;
+                                    case "-":
+                                        $status = "NO-Mobis";
+                                        break;
+                                    case NULL:
+                                        $status = "Request";
+                                        break;
+                                    default:
+                                        $status = "YES-Mobis";
+                                        break;
+                                }
+
+                                // Calculate basePrice and tenPercent for avgPrice
+                                $basePrice = round($avgPrice * 1.1);
+                                $tenPercent = round($avgPrice * 1.2);
+
+                                // Calculate mobis and mobisTenPercent
+                                $mobisAvgPrice = round(($mobis * 110) / 243.5);
+                                $mobisTenPercent = round($mobisAvgPrice * 1.1);
+
+                                // Calculate korea and koreaTenPercent
+                                $koreaAvgPrice = round(($korea * 110) / 243.5);
+                                $koreaTenPercent = round($koreaAvgPrice * 1.1);
+
+                                // Assign updated values to mobis and korea
+                                $mobis = $mobisAvgPrice;
+                                $korea = $koreaAvgPrice;
+                                ?>
                             </p>
                             <div class="ordered-price-tooltip2" id="<?= $goods[$index]['partnumber'] . '-google' ?>">
                                 <a target='_blank' href='https://www.google.com/search?tbm=isch&q=<?= $goods[$index]['partnumber'] ?>'>
@@ -39,6 +81,17 @@
                                 </a>
                                 <a title="گزارش تقاضای بازار" target='_blank' href='../telegram/requests.php?type=hour&code=<?= $goods[$index]['partnumber'] ?>'>
                                     <img src="./assets/img/chart.svg" class="w-5 h-auto" alt="">
+                                </a>
+                                <a title="گزارش دلار "
+                                    onclick="openDollarModal(
+                                '<?= $basePrice ?>',
+                                '<?= $tenPercent ?>',
+                                '<?= $mobis ?>',
+                                '<?= $mobisTenPercent ?>',
+                                '<?= $korea ?>',
+                                '<?= $koreaTenPercent ?>',
+                                )">
+                                    <img src="./assets/img/information.svg" class="w-5 h-auto" alt="">
                                 </a>
                                 <?php
                                 if ($user == 'niyayesh' || $user == 'mahdi') {
@@ -119,7 +172,7 @@
                             <thead class="font-medium">
                                 <tr>
                                     <?php foreach ($rates as $rate) : ?>
-                                        <th v-for="rate in rates" scope="col" class="text-white text-center py-2 <?= $rate['status'] !== 'N' ? $rate['status'] : 'bg-green-700' ?>">
+                                        <th class="text-white text-center py-2 <?= $rate['status'] !== 'N' ? $rate['status'] : 'bg-green-700' ?>">
                                             <?= $rate['amount'] ?>
                                         </th>
                                     <?php endforeach; ?>

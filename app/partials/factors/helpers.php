@@ -10,15 +10,19 @@ if (!isset($dbname)) {
 function getFactors($start, $end, $user = null)
 {
     $query = "SELECT
-        shomarefaktor.*,
-        bill.id as bill_id,
-        CASE WHEN bill.bill_number IS NOT NULL THEN TRUE ELSE FALSE END AS exists_in_bill
-        FROM
-        factor.shomarefaktor
-        LEFT JOIN
-        factor.bill ON shomarefaktor.shomare = bill.bill_number
-        WHERE
-        shomarefaktor.time < '$end' AND shomarefaktor.time >= '$start'";
+    shomarefaktor.*,
+    bill.id AS bill_id,
+    CASE WHEN bill.bill_number IS NOT NULL THEN TRUE ELSE FALSE END AS exists_in_bill,
+    bill.total,
+    bill.partner as status
+FROM
+    factor.shomarefaktor
+LEFT JOIN
+    factor.bill ON shomarefaktor.shomare = bill.bill_number
+WHERE
+    shomarefaktor.time < '$end' 
+    AND shomarefaktor.time >= '$start';
+";
 
     if ($user !== null) {
         $query .= " AND shomarefaktor.user = '$user'";

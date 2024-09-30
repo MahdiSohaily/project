@@ -92,7 +92,7 @@ if (isset($_POST['pattern'])) {
                 $avgPrice = round(($price * 110) / 243.5); ?>
                 <tr class='mobis transition duration-400 ease-in-out hover:bg-neutral-500'>
                     <td class='text-white font-bold pr-12'><?= $partNumber ?>-M</td>
-                    <td class='font-bold whitespace-nowrap text-sm font-semibold text-center px-3 py-3'><?= round($avgPrice) ?></td>
+                    <td class='whitespace-nowrap text-sm font-semibold text-center px-3 py-3'><?= round($avgPrice) ?></td>
                     <td class='whitespace-nowrap text-sm font-semibold px-3 py-3 text-center border-black border-l-2'><?= round($avgPrice * 1.1) ?></td>
                     <?php
                     if (count($rates) > 0) :
@@ -114,7 +114,7 @@ if (isset($_POST['pattern'])) {
                 $avgPrice = round(($price * 110) / 243.5); ?>
                 <tr class='mobis transition duration-400 ease-in-out bg-amber-600'>
                     <td class='text-white font-bold pl-12'> <?= $partNumber ?>K</td>
-                    <td class='font-bold whitespace-nowrap text-sm font-semibold text-center px-3 py-3'><?= round($avgPrice) ?></td>
+                    <td class='whitespace-nowrap text-sm font-semibold text-center px-3 py-3'><?= round($avgPrice) ?></td>
                     <td class='whitespace-nowrap text-sm font-semibold px-3 py-3 text-center border-black border-l-2'><?= round($avgPrice * 1.1) ?></td>
                     <?php if (count($rates) > 0) :
                         foreach ($rates as $rate) : ?>

@@ -62,13 +62,10 @@ function getCodesWithInfo($existingGoods, $allowedBrands, $completeCode, $return
         }
     }
 
-    // Merge specified and similar codes
-    $sortedGoodBaseOnCode = array_merge($specifiedCode, $similarCodes);
-
     $YadakShopInventory = [];
     $otherInventory = [];
 
-    foreach ($sortedGoodBaseOnCode as $good) {
+    foreach ($similarCodes as $good) {
         if ($good['stockId'] == 9) {
             $YadakShopInventory[] = $good;
         } else {
@@ -77,7 +74,7 @@ function getCodesWithInfo($existingGoods, $allowedBrands, $completeCode, $return
     }
 
     // Merge inventories
-    $CODES_INFORMATION['goods'] = array_merge($YadakShopInventory, $otherInventory);
+    $CODES_INFORMATION['goods'] = array_merge($specifiedCode, $YadakShopInventory, $otherInventory);
 
     // No need to filter empty goods, all goods will have data
     $CODES_INFORMATION['goods'] = array_filter($CODES_INFORMATION['goods'], function ($item) {

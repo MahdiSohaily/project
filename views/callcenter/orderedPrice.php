@@ -63,11 +63,11 @@ if ($isValidCustomer) :
                         <input type="text" name="customer" value="1" id="target_customer" hidden>
                         <textarea style="direction: ltr !important;" onchange="filterCode(this)" id="code" name="code" required class="h-full bg-transparent w-full p-2 text-white placeholder-white outline-none focus:border-white" placeholder="لطفا کد های مورد نظر خود را در خط های مجزا قرار دهید"></textarea>
                     </div>
-                    <span>
-                        <button type="type" class="inline-flex self-end p-2 bg-indigo-500 border-indigo-700 font-semibold text-xs text-white hover:bg-indigo-700">
-                          جستجو اقلام
+                    <span class="flex justify-between">
+                        <button type="submit" formaction="../factor/createPreCompleteBill.php" class="inline-flex self-end items-center px-5 py-2 bg-sky-400 font-semibold text-xs text-white hover:bg-sky-700 focus:bg-sky-700 active:bg-sky-900 focus:outline-none"> ایجاد فاکتور
                         </button>
-                        <button type="submit" formaction="../factor/createPreCompleteBill.php" class="inline-flex self-end items-center px-5 py-2 bg-sky-600 font-semibold text-xs text-white hover:bg-sky-700 focus:bg-sky-700 active:bg-sky-900 focus:outline-none"> ایجاد فاکتور
+                        <button type="type" class="inline-flex self-end p-2 bg-indigo-500 border-indigo-700 font-semibold text-xs text-white hover:bg-indigo-700">
+                            جستجو اقلام
                         </button>
                     </span>
                 </form>
@@ -245,6 +245,26 @@ if ($isValidCustomer) :
                 ذخیره سازی اطلاعات ناموفق بود!
             </p>
         </section>
+        <div onclick="toggleDollarModal()" id="dollarContainerModal" class="hidden fixed flex inset-0 bg-gray-900/75 justify-center items-center">
+            <div class="bg-white p-4 rounded min-w-96">
+                <div class="flex justify-between items-center">
+                    <h2 class="font-semibold text-xl mb-2">گزارش دلار پایه و 10%</h2>
+                    <img class="cursor-pointer" src="./assets/img/close.svg" alt="close icon">
+                </div>
+                <table class="w-full">
+                    <thead class="bg-green-500">
+                        <tr>
+                            <th class="p-2">#</th>
+                            <th class="p-2">دلار پایه</th>
+                            <th class="p-2">دلار ۱۰٪</th>
+                        </tr>
+                    </thead>
+                    <tbody id="Modal">
+                        <!-- Results will be appended here async -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
         <a class="toTop" href="#">
             <i class="material-icons">arrow_drop_up</i>
         </a>
@@ -254,6 +274,7 @@ if ($isValidCustomer) :
             const brandTranslations = <?= $customBrands ?>;
             const brandNames = Object.keys(brandTranslations);
             const brandPattern = new RegExp(`\\b(${brandNames.join('|')})\\b`, 'g');
+            const dollarContainerModal = document.getElementById('dollarContainerModal');
 
             function replaceBrandsWithPersian(input) {
                 const result = input.replace(brandPattern, (match) => {
@@ -287,6 +308,41 @@ if ($isValidCustomer) :
                 setTimeout(() => {
                     element.innerHTML = `content_copy`;
                 }, 1500);
+            }
+
+            function openDollarModal(basePrice, tenPercent, mobis, mobisTenPercent, korea, koreaTenPercent, ) {
+                const container = document.getElementById('Modal');
+                toggleDollarModal();
+                container.innerHTML = '';
+
+                container.innerHTML += `
+                        <tr class="bg-sky-200">
+                            <td class="p-2 font-semibold text-xs text-center">قیمت پایه</td>
+                            <td class="p-2 font-semibold text-xs text-center">${basePrice}</td>
+                            <td class="p-2 font-semibold text-xs text-center">${tenPercent}</td>
+                        </tr>`;
+                if (mobis != 0) {
+                    container.innerHTML += `
+                        <tr class="bg-gry-200">
+                            <td class="p-2 font-semibold text-xs text-center">قیمت موبیز</td>
+                            <td class="p-2 font-semibold text-xs text-center">${mobis}</td>
+                            <td class="p-2 font-semibold text-xs text-center">${mobisTenPercent}</td>
+                        </tr>`;
+                }
+
+                if (korea != 0) {
+                    container.innerHTML += `
+                        <tr class="bg-sky-200">
+                            <td class="p-2 font-semibold text-xs text-center">قیمت کورآ</td>
+                            <td class="p-2 font-semibold text-xs text-center">${korea}</td>
+                            <td class="p-2 font-semibold text-xs text-center">${koreaTenPercent}</td>
+                        </tr>`;
+                }
+
+            }
+
+            function toggleDollarModal() {
+                dollarContainerModal.classList.toggle('hidden');
             }
         </script>
 <?php

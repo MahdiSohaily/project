@@ -97,6 +97,7 @@ require_once '../../layouts/callcenter/sidebar.php';
             <a title="چاپ کردن گزارش" class="bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded-md cursor-pointer" onClick="window.print()">
                 <img src="./assets/img/print.svg" alt="print icon" />
             </a>
+            <img onclick="calculateTotal()" title="گزارش فروشات امروز" class="w-12 h-11 cursor-pointer" src="./assets/img/chasier.svg" alt="chasier icon">
         </div>
     </div>
 
@@ -129,10 +130,10 @@ require_once '../../layouts/callcenter/sidebar.php';
                 <tbody>
                     <?php if (count($factors)) :
                         foreach ($factors as $factor) : ?>
-                            <tr class="even:bg-gray-100">
+                            <tr class="even:bg-gray-100 factor_row" data-total="<?= $factor['total'] ?? 'xxx' ?>" data-status="<?= $factor['status'] ?? 'xxx' ?>">
                                 <td class="text-center align-middle">
                                     <span class="flex justify-center items-center gap-2 bg-blue-500 rounded-sm text-white w-24 py-2 mx-auto cursor-pointer" title="کپی کردن شماره فاکتور" data-billNumber="<?= $factor['shomare'] ?>" onClick="copyBillNumberSingle(this)">
-                                        <?= $factor['shomare'] ?>
+                                        <span class="factorNumberContainer"><?= $factor['shomare'] ?></span>
                                         <img src="./assets/img/copy.svg" alt="copy icon" />
                                     </span>
                                 </td>
@@ -292,6 +293,35 @@ require_once '../../layouts/callcenter/sidebar.php';
                 </li>
             </ul>
         </div>
+    </div>
+</div>
+
+<div onclick="toggleDollarModal()" id="dollarContainerModal" class="hidden fixed flex inset-0 bg-gray-900/75 justify-center items-center">
+    <div class="bg-white p-4 rounded min-w-96">
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl mb-2">گزارش مجموع فروشات روزانه</h2>
+            <img class="cursor-pointer" src="./assets/img/close.svg" alt="close icon">
+        </div>
+        <table class="w-full">
+            <tbody>
+                <tr>
+                    <td class="p-2 bg-sky-800 text-white font-semibold text-xs">جمع کل :</td>
+                    <td id="total_price" class="p-2 bg-sky-800 text-white font-semibold text-xs"></td>
+                </tr>
+                <tr>
+                    <td class="p-2 bg-sky-800 text-white font-semibold text-xs">جمع همکار :</td>
+                    <td id="total_partner" class="p-2 bg-sky-800 text-white font-semibold text-xs"></td>
+                </tr>
+                <tr>
+                    <td class="p-2 bg-sky-800 text-white font-semibold text-xs">جمع مصرف کننده :</td>
+                    <td id="total_consumer" class="p-2 bg-sky-800 text-white font-semibold text-xs"></td>
+                </tr>
+                <tr>
+                    <td class="p-2 bg-sky-800 text-white font-semibold text-xs"> شماره فاکتور های لحاظ نشده :</td>
+                    <td id="total_notIncluded" class="p-2 bg-sky-800 text-white font-semibold text-xs"></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -489,6 +519,67 @@ require_once '../../layouts/callcenter/sidebar.php';
             .catch(function(error) {
                 console.log(error);
             });
+    }
+
+    function calculateTotal() {
+        toggleDollarModal();
+        try {
+            const factor_rows = document.getElementsByClassName('factor_row');
+            const notCounted = [];
+            const partner = [];
+            const regular = [];
+            for (row of factor_rows) {
+                const total = row.getAttribute('data-total');
+                const status = row.getAttribute('data-status');
+
+                if (status == 'xxx') {
+                    const shomare = row.getElementsByClassName('factorNumberContainer')[0].innerHTML;
+                    notCounted.push(shomare);
+                } else if (status == 1) {
+                    partner.push(total / 10000);
+                } else {
+                    regular.push(total / 10000);
+                }
+            }
+
+            let total = 0;
+            let partnerTotal = 0;
+            let reguarTotal = 0;
+            for (price of partner) {
+                partnerTotal += Number(price);
+            }
+
+            for (price of regular) {
+                reguarTotal += Number(price);
+            }
+
+            total = partnerTotal + reguarTotal;
+
+            document.getElementById('total_price').innerHTML = displayAsMoney(total);
+            document.getElementById('total_partner').innerHTML = displayAsMoney(partnerTotal);
+            document.getElementById('total_consumer').innerHTML = displayAsMoney(reguarTotal);
+            document.getElementById('total_notIncluded').innerHTML = notCounted.join(' , ').trim();
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
+
+    function displayAsMoney(inputInstance) {
+        inputInstance += "";
+        // Get the original value from the input and remove non-digit characters
+        let originalValue = inputInstance.replace(/\D/g, "");
+        originalValue = originalValue.replace(/^0+/, "");
+
+        // Use regex to insert commas every three digits
+        let formattedValue = originalValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+        // Update the input value with the formatted value
+        return formattedValue ? formattedValue + " ریال" : '';
+    }
+
+    function toggleDollarModal() {
+        dollarContainerModal.classList.toggle('hidden');
     }
 
     document.addEventListener('keydown', function(event) {
