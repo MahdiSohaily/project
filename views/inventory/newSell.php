@@ -55,10 +55,9 @@ require_once '../../layouts/inventory/sidebar.php';
                             <select class="border-2 p-2 w-full" name="receiver" id="receiver" onchange="setFactorInfo('receiver',this.value)">
                                 <option value="">انتخاب تحویل گیرنده</option>
                                 <?php
-                                foreach ($receivers as $receiver) {
-                                    echo '<option value="' . $receiver['id'] . '">' . $receiver['name'] . '</option>';
-                                }
-                                ?>
+                                foreach ($receivers as $receiver): ?>
+                                    <option <?= $receiver['id'] == 6 ? 'selected' : ''  ?> value="<?= $receiver['id'] ?>"><?= $receiver['name'] ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </td>
                     </tr>
@@ -131,7 +130,7 @@ require_once '../../layouts/inventory/sidebar.php';
         number: null,
         date: null,
         client: null,
-        receiver: null,
+        receiver: 6,
         collector: null,
         description: null,
         user: <?= $_SESSION['id'] ?>,
@@ -142,6 +141,7 @@ require_once '../../layouts/inventory/sidebar.php';
         var params = new URLSearchParams();
         params.append('getClientName', 'getClientName');
         params.append('factorNo', factorNo);
+        document.getElementById('similar_box').innerHTML = '';
 
         // First axios request to get client name
         axios.post(SELL_API, params)
@@ -399,7 +399,6 @@ require_once '../../layouts/inventory/sidebar.php';
             console.log(error);
         }
     }
-
 
     function displaySimilarCods(similarCodes) {
 

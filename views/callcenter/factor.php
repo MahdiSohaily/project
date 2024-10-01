@@ -536,9 +536,9 @@ require_once '../../layouts/callcenter/sidebar.php';
                     const shomare = row.getElementsByClassName('factorNumberContainer')[0].innerHTML;
                     notCounted.push(shomare);
                 } else if (status == 1) {
-                    partner.push(total / 10000);
+                    partner.push(total);
                 } else {
-                    regular.push(total / 10000);
+                    regular.push(total);
                 }
             }
 
