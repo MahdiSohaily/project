@@ -27,13 +27,12 @@
                                 <?php
                                 echo strtoupper($goods[$index]['partnumber']);
                                 // Calculate initial price and weight
-                                $price = floatval($item['price']);
+                                $price = floatval($item['price'] ?? 0);
                                 $avgPrice = round(($price * 110) / 243.5);
-                                $weight = round(floatval($item['weight']), 2);
 
                                 // Convert mobis and korea to floats
-                                $mobis = floatval($item['mobis']);
-                                $korea = floatval($item['korea']);
+                                $mobis = floatval($item['mobis'] ?? 0);
+                                $korea = floatval($item['korea'] ?? 0);
 
                                 // Determine status based on mobis
                                 $status = null;
