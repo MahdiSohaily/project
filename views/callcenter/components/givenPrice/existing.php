@@ -26,13 +26,14 @@
                             <p onclick="copyPartNumber(this, '<?= strtoupper($goods[$index]['partnumber']) ?>')" class="text-center bold bg-gray-600 <?= $not_registered ? 'text-white' : 'text-green-500' ?>  px-2 py-3">
                                 <?php
                                 echo strtoupper($goods[$index]['partnumber']);
+
                                 // Calculate initial price and weight
-                                $price = floatval($item['price'] ?? 0);
+                                $price = floatval($goods[$index]['price'] ?? 0);
                                 $avgPrice = round(($price * 110) / 243.5);
 
                                 // Convert mobis and korea to floats
-                                $mobis = floatval($item['mobis'] ?? 0);
-                                $korea = floatval($item['korea'] ?? 0);
+                                $mobis = floatval($goods[$index]['mobis'] ?? 0);
+                                $korea = floatval($goods[$index]['korea'] ?? 0);
 
                                 // Determine status based on mobis
                                 $status = null;
