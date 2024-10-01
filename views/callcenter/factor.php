@@ -97,7 +97,7 @@ require_once '../../layouts/callcenter/sidebar.php';
             <a title="چاپ کردن گزارش" class="bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded-md cursor-pointer" onClick="window.print()">
                 <img src="./assets/img/print.svg" alt="print icon" />
             </a>
-            <img onclick="calculateTotal()" title="گزارش فروشات امروز" class="w-12 h-11 cursor-pointer" src="./assets/img/chasier.svg" alt="chasier icon">
+            <!-- <img onclick="calculateTotal()" title="گزارش فروشات امروز" class="w-12 h-11 cursor-pointer" src="./assets/img/chasier.svg" alt="chasier icon"> -->
         </div>
     </div>
 
