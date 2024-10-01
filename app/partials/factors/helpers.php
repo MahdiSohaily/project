@@ -21,8 +21,7 @@ LEFT JOIN
     factor.bill ON shomarefaktor.shomare = bill.bill_number
 WHERE
     shomarefaktor.time < '$end' 
-    AND shomarefaktor.time >= '$start';
-";
+    AND shomarefaktor.time >= '$start'";
 
     if ($user !== null) {
         $query .= " AND shomarefaktor.user = '$user'";
