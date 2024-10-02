@@ -304,6 +304,8 @@ require_once '../../layouts/callcenter/sidebar.php'; ?>
 
         // Update the preview
         previewFactor(index);
+        console.log(billItems);
+
     }
 
     function previewFactor(index) {

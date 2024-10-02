@@ -6,7 +6,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 require_once '../../../config/constants.php';
 require_once '../../../database/db_connect.php';
-require_once '../../../app/api/utilities/RelatedGoodsAPI.php';
+require_once '../../../utilities/callcenter/DollarRateHelper.php';
+require_once '../../../utilities/callcenter/GivenPriceHelper.php';
+require_once '../../../app/partials/inventory/similarGoods.php';
+
 
 
 // START ------------------ UPDATE THE COMPLETE BILL -----------------------------
@@ -17,7 +20,7 @@ if (isset($_POST['GenerateCompleteFactor'])) {
 
     $customer_id = getCustomerId($customerInfo) ? getCustomerId($customerInfo) : null;
     $success = true; // Initialize success variable
-
+    
     try {
         PDO_CONNECTION->beginTransaction();
         if (!$customer_id) {
@@ -25,16 +28,17 @@ if (isset($_POST['GenerateCompleteFactor'])) {
         } else {
             updateCustomer($customerInfo, $customer_id);
         }
-
+        
         if ($customer_id == null) {
             throw new Exception("Customer ID is null");
         }
-
+        
         $factorNumber = getFactorNumber();
         registerFactorNumber($factorNumber, $customerInfo);
-
+        
         CreateCompleteBill($factorInfo, $customer_id, $factorNumber);
         CreateBillItems($factorInfo, $factorItems);
+        getSimilarGoods($factorItems, $factorInfo->id);
         PDO_CONNECTION->commit();
     } catch (Exception $e) {
         // An error occurred, rollback the transaction

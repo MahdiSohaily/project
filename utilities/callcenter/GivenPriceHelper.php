@@ -293,7 +293,7 @@ function exist($ids)
     // Prepare the base SQL query with LEFT JOIN to exitrecord and necessary calculations
     $base_sql = "SELECT qtybank.id AS quantityId, codeid AS goodId, brand.name AS brandName, qtybank.qty AS quantity,
                     create_time AS invoice_date, seller.name AS seller_name, brand.id AS brandId, stock.id AS stockId,
-                    qtybank.des AS purchase_Description,
+                    qtybank.des AS purchase_Description, qtybank.pos1, qtybank.pos2,
                     stock.name AS stockName, IFNULL(SUM(exitrecord.qty), 0) AS total_sold,
                     qtybank.qty - IFNULL(SUM(exitrecord.qty), 0) AS remaining_qty
                 FROM {$stock}.qtybank
