@@ -184,9 +184,8 @@
                                         $price = doubleval($goods[$index]['price']);
                                         $price = str_replace(",", "", $price);
                                         $avgPrice = round(($price * 110) / 243.5);
-                                        $finalPrice = round($avgPrice * $rate['amount'] * 1.2 * 1.2 * 1.3);
-                                    ?>
-                                        <td class="text-bold whitespace-nowrap px-3 py-2 text-center hover:cursor-pointer <?= $rate['status'] !== 'N' ? $rate['status'] : 'bg-gray-50' ?>" onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $finalPrice ?>" data-part="<?= $partNumber ?>">
+                                        $finalPrice = round($avgPrice * $rate['amount'] * 1.2 * 1.2 * 1.3); ?>
+                                        <td class="text-bold whitespace-nowrap px-3 py-2 text-center hover:cursor-pointer <?= $rate['status'] !== 'N' ? $rate['status'] : 'bg-gray-200' ?>" onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $finalPrice ?>" data-part="<?= $partNumber ?>">
                                             <?= $finalPrice ?>
                                         </td>
                                     <?php endforeach; ?>
@@ -197,8 +196,7 @@
                                             $price = doubleval($goods[$index]['mobis']);
                                             $price = str_replace(",", "", $price);
                                             $avgPrice = round(($price * 110) / 243.5);
-                                            $finalPrice = round($avgPrice * $rate['amount'] * 1.25 * 1.3);
-                                        ?>
+                                            $finalPrice = round($avgPrice * $rate['amount'] * 1.25 * 1.3); ?>
                                             <td class="text-bold whitespace-nowrap px-3 text-center py-2 hover:cursor-pointer" onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $finalPrice ?>" data-part="<?= $partNumber ?>">
                                                 <?= $finalPrice ?>
                                             </td>
@@ -207,13 +205,12 @@
                                 <?php endif; ?>
 
                                 <?php if ($goods[$index]['korea'] > 0 && $goods[$index]['mobis'] !== '-') : ?>
-                                    <tr class="bg-amber-600" v-if="props.relation.goods[key].korea > 0">
+                                    <tr class="bg-amber-600">
                                         <?php foreach ($rates as $rate) :
                                             $price = doubleval($goods[$index]['korea']);
                                             $price = str_replace(",", "", $price);
                                             $avgPrice = round(($price * 110) / 243.5);
-                                            $finalPrice = round($avgPrice * $rate['amount'] * 1.25 * 1.3);
-                                        ?>
+                                            $finalPrice = round($avgPrice * $rate['amount'] * 1.25 * 1.3); ?>
                                             <td class="text-bold whitespace-nowrap px-3 text-center py-2 hover:cursor-pointer" onclick="setPrice(this)" data-target="<?= $relation_id ?>" data-code="<?= $code ?>" data-price="<?= $finalPrice ?>" data-part="<?= $partNumber ?>">
                                                 <?= $finalPrice ?>
                                             </td>

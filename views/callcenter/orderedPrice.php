@@ -64,7 +64,7 @@ if ($isValidCustomer) :
                         <textarea style="direction: ltr !important;" onchange="filterCode(this)" id="code" name="code" required class="h-full bg-transparent w-full p-2 text-white placeholder-white outline-none focus:border-white" placeholder="لطفا کد های مورد نظر خود را در خط های مجزا قرار دهید"></textarea>
                     </div>
                     <span class="flex justify-between">
-                        <button type="submit" formaction="../factor/createPreCompleteBill.php" class="inline-flex self-end items-center px-5 py-2 bg-sky-400 font-semibold text-xs text-white hover:bg-sky-700 focus:bg-sky-700 active:bg-sky-900 focus:outline-none"> ایجاد فاکتور
+                        <button type="submit" formaction="../factor/createPreCompleteBill.php" class="inline-flex self-end items-center px-5 py-2 bg-gray-700 font-semibold text-xs text-white hover:bg-sky-700 focus:bg-sky-700 active:bg-sky-900 focus:outline-none"> ایجاد فاکتور
                         </button>
                         <button type="type" class="inline-flex self-end p-2 bg-indigo-500 border-indigo-700 font-semibold text-xs text-white hover:bg-indigo-700">
                             جستجو اقلام
@@ -254,9 +254,9 @@ if ($isValidCustomer) :
                 <table class="w-full">
                     <thead class="bg-green-500">
                         <tr>
-                            <th class="p-2">#</th>
-                            <th class="p-2">دلار پایه</th>
                             <th class="p-2">دلار ۱۰٪</th>
+                            <th class="p-2">دلار پایه</th>
+                            <th class="p-2">شاخص</th>
                         </tr>
                     </thead>
                     <tbody id="Modal">
@@ -317,25 +317,25 @@ if ($isValidCustomer) :
 
                 container.innerHTML += `
                         <tr class="bg-sky-200">
+                        <td class="p-2 font-semibold text-xs text-center">${tenPercent}</td>
+                        <td class="p-2 font-semibold text-xs text-center">${basePrice}</td>
                             <td class="p-2 font-semibold text-xs text-center">قیمت پایه</td>
-                            <td class="p-2 font-semibold text-xs text-center">${basePrice}</td>
-                            <td class="p-2 font-semibold text-xs text-center">${tenPercent}</td>
                         </tr>`;
                 if (mobis != 0) {
                     container.innerHTML += `
                         <tr class="bg-gry-200">
+                        <td class="p-2 font-semibold text-xs text-center">${mobisTenPercent}</td>
+                        <td class="p-2 font-semibold text-xs text-center">${mobis}</td>
                             <td class="p-2 font-semibold text-xs text-center">قیمت موبیز</td>
-                            <td class="p-2 font-semibold text-xs text-center">${mobis}</td>
-                            <td class="p-2 font-semibold text-xs text-center">${mobisTenPercent}</td>
                         </tr>`;
                 }
 
                 if (korea != 0) {
                     container.innerHTML += `
                         <tr class="bg-sky-200">
+                        <td class="p-2 font-semibold text-xs text-center">${koreaTenPercent}</td>
+                        <td class="p-2 font-semibold text-xs text-center">${korea}</td>
                             <td class="p-2 font-semibold text-xs text-center">قیمت کورآ</td>
-                            <td class="p-2 font-semibold text-xs text-center">${korea}</td>
-                            <td class="p-2 font-semibold text-xs text-center">${koreaTenPercent}</td>
                         </tr>`;
                 }
 

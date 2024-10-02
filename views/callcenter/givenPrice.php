@@ -21,9 +21,9 @@ require_once '../../layouts/callcenter/sidebar.php';
         </div>
 
         <div class="flex items-center justify-between py-3 text-right sm:rounded-bl-md sm:rounded-br-md">
-            <button type="submit" class="inline-flex items-center px-5 py-3 bg-gray-800 font-semibold text-xs text-white hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none"> جستجو
+            <button type="submit" formaction="../factor/createPreCompleteBill.php" class="inline-flex items-center px-5 py-3 bg-gray-200 shadow font-semibold text-xs text-black hover:bg-gray-700 hover:text-white text-md focus:bg-gray-700 active:bg-gray-900 focus:outline-none"> ایجاد فاکتور
             </button>
-            <button type="submit" formaction="../factor/createPreCompleteBill.php" class="inline-flex items-center px-5 py-3 bg-sky-800 font-semibold text-xs text-white hover:bg-sky-700 focus:bg-sky-700 active:bg-sky-900 focus:outline-none"> ایجاد فاکتور
+            <button type="submit" class="inline-flex items-center px-5 py-3 bg-gray-800 font-semibold text-xs text-white hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none"> جستجو
             </button>
         </div>
     </form>

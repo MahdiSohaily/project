@@ -10,24 +10,24 @@ if (!isset($dbname)) {
 function getFactors($start, $end, $user = null)
 {
     $query = "SELECT
-    shomarefaktor.*,
-    bill.id AS bill_id,
-    CASE WHEN bill.bill_number IS NOT NULL THEN TRUE ELSE FALSE END AS exists_in_bill,
-    bill.total,
-    bill.partner as status
-FROM
-    factor.shomarefaktor
-LEFT JOIN
-    factor.bill ON shomarefaktor.shomare = bill.bill_number
-WHERE
-    shomarefaktor.time < '$end' 
-    AND shomarefaktor.time >= '$start'";
+                shomarefaktor.*,
+                bill.id AS bill_id,
+                CASE WHEN bill.bill_number IS NOT NULL THEN TRUE ELSE FALSE END AS exists_in_bill,
+                bill.total,
+                bill.partner as isPartner
+            FROM
+                factor.shomarefaktor
+            LEFT JOIN
+                factor.bill ON shomarefaktor.shomare = bill.bill_number
+            WHERE
+                shomarefaktor.time < '$end' 
+                AND shomarefaktor.time >= '$start' ";
 
     if ($user !== null) {
         $query .= " AND shomarefaktor.user = '$user'";
     }
 
-    $query .= " ORDER BY shomarefaktor.time DESC";
+    $query .= " ORDER BY shomarefaktor.shomare DESC";
     $statement = PDO_CONNECTION->prepare($query);
     $statement->execute();
     $result = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -101,4 +101,22 @@ function getRankingBadge($ranking)
             break;
     }
     return $badge;
+}
+
+function displayAsMoney($inputInstance)
+{
+    // Convert input to string
+    $inputInstance = (string) $inputInstance;
+
+    // Remove non-digit characters
+    $originalValue = preg_replace("/\D/", "", $inputInstance);
+
+    // Remove leading zeros
+    $originalValue = ltrim($originalValue, '0');
+
+    // Insert commas every three digits
+    $formattedValue = preg_replace("/\B(?=(\d{3})+(?!\d))/", ",", $originalValue);
+
+    // Return formatted value with "ریال" or an empty string if no value
+    return $formattedValue ? $formattedValue . " ریال" : '';
 }

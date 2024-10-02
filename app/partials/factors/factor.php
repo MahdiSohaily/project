@@ -72,7 +72,23 @@ function displayUI($factors, $countFactorByUser)
             </thead>
             <tbody>
                 <?php if (count($factors)) :
-                    foreach ($factors as $factor) : ?>
+                    $TOTAL = 0;
+                    $PARTNER = 0;
+                    $REGULAR = 0;
+                    $NOT_INCLUDED = [];
+                    foreach ($factors as $factor) :
+
+                        if (!$factor['exists_in_bill']) {
+                            array_push($NOT_INCLUDED, $factor['shomare']);
+                        }
+                        $TOTAL += $factor['total'];
+
+                        if ($factor['isPartner']) {
+                            $PARTNER += $factor['total'];
+                        } else {
+                            $REGULAR += $factor['total'];
+                        }
+                ?>
                         <tr class="even:bg-gray-100 factor_row" data-total="<?= $factor['total'] ?? 'xxx' ?>" data-partner="<?= $factor['status'] ?? 'xxx' ?>">
                             <td class="text-center align-middle">
                                 <span class="flex justify-center items-center gap-2 bg-blue-500 rounded-sm text-white w-24 py-2 mx-auto cursor-pointer" title="کپی کردن شماره فاکتور" data-billNumber="<?= $factor['shomare'] ?>" onClick="copyBillNumberSingle(this)">
@@ -168,6 +184,42 @@ function displayUI($factors, $countFactorByUser)
                 </div>
             <?php endif;
             ?>
+        </div>
+    </div>
+    <div onclick="toggleDollarModal()" id="dollarContainerModal" class="hide_while_print hidden fixed flex inset-0 bg-gray-900/75 justify-center items-center">
+        <div class="bg-white p-4 rounded w-96 ">
+            <div class="flex justify-between items-center">
+                <h2 class="font-semibold text-xl mb-2">گزارش مجموع فروشات روزانه</h2>
+                <img class="cursor-pointer" src="./assets/img/close.svg" alt="close icon">
+            </div>
+            <table class="w-full">
+                <tbody>
+                    <tr>
+                        <td class="p-2 bg-sky-800 text-white font-semibold text-xs">جمع کل :</td>
+                        <td id="total_price" class="p-2 bg-sky-800 text-white font-semibold text-xs">
+                            <?= displayAsMoney($TOTAL); ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 bg-sky-800 text-white font-semibold text-xs">جمع همکار :</td>
+                        <td id="total_partner" class="p-2 bg-sky-800 text-white font-semibold text-xs">
+                            <?= displayAsMoney($PARTNER); ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 bg-sky-800 text-white font-semibold text-xs">جمع مصرف کننده :</td>
+                        <td id="total_consumer" class="p-2 bg-sky-800 text-white font-semibold text-xs">
+                            <?= displayAsMoney($REGULAR); ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 bg-sky-800 text-white font-semibold text-xs"> شماره فاکتور های لحاظ نشده :</td>
+                        <td id="total_notIncluded" class="p-2 bg-sky-800 text-white font-semibold text-xs">
+                            <?= implode(' , ', $NOT_INCLUDED); ?>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 <?php

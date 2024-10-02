@@ -4,8 +4,7 @@ $iconUrl = 'bill.png';
 require_once './components/header.php';
 require_once '../../app/controller/callcenter/FactorController.php';
 require_once '../../layouts/callcenter/nav.php';
-require_once '../../layouts/callcenter/sidebar.php';
-?>
+require_once '../../layouts/callcenter/sidebar.php';?>
 <!-- COMPONENT STYLES -->
 <style>
     #editFactorModal {
@@ -129,7 +128,21 @@ require_once '../../layouts/callcenter/sidebar.php';
                 </thead>
                 <tbody>
                     <?php if (count($factors)) :
-                        foreach ($factors as $factor) : ?>
+                        $TOTAL = 0;
+                        $PARTNER = 0;
+                        $REGULAR = 0;
+                        $NOT_INCLUDED = [];
+                        foreach ($factors as $factor) :
+                            if (!$factor['exists_in_bill']) {
+                                array_push($NOT_INCLUDED, $factor['shomare']);
+                            }
+                            $TOTAL += $factor['total'];
+
+                            if ($factor['isPartner']) {
+                                $PARTNER += $factor['total'];
+                            } else {
+                                $REGULAR += $factor['total'];
+                            } ?>
                             <tr class="even:bg-gray-100 factor_row" data-total="<?= $factor['total'] ?? 'xxx' ?>" data-status="<?= $factor['status'] ?? 'xxx' ?>">
                                 <td class="text-center align-middle">
                                     <span class="flex justify-center items-center gap-2 bg-blue-500 rounded-sm text-white w-24 py-2 mx-auto cursor-pointer" title="کپی کردن شماره فاکتور" data-billNumber="<?= $factor['shomare'] ?>" onClick="copyBillNumberSingle(this)">
@@ -221,6 +234,42 @@ require_once '../../layouts/callcenter/sidebar.php';
                 <?php endif; ?>
             </div>
         </div>
+        <div onclick="toggleDollarModal()" id="dollarContainerModal" class="hide_while_print hidden fixed flex inset-0 bg-gray-900/75 justify-center items-center">
+            <div class="bg-white p-4 rounded w-96">
+                <div class="flex justify-between items-center">
+                    <h2 class="font-semibold text-xl mb-2">گزارش مجموع فروشات روزانه</h2>
+                    <img class="cursor-pointer" src="./assets/img/close.svg" alt="close icon">
+                </div>
+                <table class="w-full">
+                    <tbody>
+                        <tr>
+                            <td class="p-2 bg-sky-800 text-white font-semibold text-xs">جمع کل :</td>
+                            <td id="total_price" class="p-2 bg-sky-800 text-white font-semibold text-xs">
+                                <?= displayAsMoney($TOTAL); ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="p-2 bg-sky-800 text-white font-semibold text-xs">جمع همکار :</td>
+                            <td id="total_partner" class="p-2 bg-sky-800 text-white font-semibold text-xs">
+                                <?= displayAsMoney($PARTNER); ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="p-2 bg-sky-800 text-white font-semibold text-xs">جمع مصرف کننده :</td>
+                            <td id="total_consumer" class="p-2 bg-sky-800 text-white font-semibold text-xs">
+                                <?= displayAsMoney($REGULAR); ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="p-2 bg-sky-800 text-white font-semibold text-xs"> شماره فاکتور های لحاظ نشده :</td>
+                            <td id="total_notIncluded" class="p-2 bg-sky-800 text-white font-semibold text-xs">
+                                <?= implode(' , ', $NOT_INCLUDED); ?>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </section>
 
@@ -293,35 +342,6 @@ require_once '../../layouts/callcenter/sidebar.php';
                 </li>
             </ul>
         </div>
-    </div>
-</div>
-
-<div onclick="toggleDollarModal()" id="dollarContainerModal" class="hidden fixed flex inset-0 bg-gray-900/75 justify-center items-center">
-    <div class="bg-white p-4 rounded min-w-96">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl mb-2">گزارش مجموع فروشات روزانه</h2>
-            <img class="cursor-pointer" src="./assets/img/close.svg" alt="close icon">
-        </div>
-        <table class="w-full">
-            <tbody>
-                <tr>
-                    <td class="p-2 bg-sky-800 text-white font-semibold text-xs">جمع کل :</td>
-                    <td id="total_price" class="p-2 bg-sky-800 text-white font-semibold text-xs"></td>
-                </tr>
-                <tr>
-                    <td class="p-2 bg-sky-800 text-white font-semibold text-xs">جمع همکار :</td>
-                    <td id="total_partner" class="p-2 bg-sky-800 text-white font-semibold text-xs"></td>
-                </tr>
-                <tr>
-                    <td class="p-2 bg-sky-800 text-white font-semibold text-xs">جمع مصرف کننده :</td>
-                    <td id="total_consumer" class="p-2 bg-sky-800 text-white font-semibold text-xs"></td>
-                </tr>
-                <tr>
-                    <td class="p-2 bg-sky-800 text-white font-semibold text-xs"> شماره فاکتور های لحاظ نشده :</td>
-                    <td id="total_notIncluded" class="p-2 bg-sky-800 text-white font-semibold text-xs"></td>
-                </tr>
-            </tbody>
-        </table>
     </div>
 </div>
 
@@ -523,59 +543,6 @@ require_once '../../layouts/callcenter/sidebar.php';
 
     function calculateTotal() {
         toggleDollarModal();
-        try {
-            const factor_rows = document.getElementsByClassName('factor_row');
-            const notCounted = [];
-            const partner = [];
-            const regular = [];
-            for (row of factor_rows) {
-                const total = row.getAttribute('data-total');
-                const status = row.getAttribute('data-status');
-
-                if (status == 'xxx') {
-                    const shomare = row.getElementsByClassName('factorNumberContainer')[0].innerHTML;
-                    notCounted.push(shomare);
-                } else if (status == 1) {
-                    partner.push(total);
-                } else {
-                    regular.push(total);
-                }
-            }
-
-            let total = 0;
-            let partnerTotal = 0;
-            let reguarTotal = 0;
-            for (price of partner) {
-                partnerTotal += Number(price);
-            }
-
-            for (price of regular) {
-                reguarTotal += Number(price);
-            }
-
-            total = partnerTotal + reguarTotal;
-
-            document.getElementById('total_price').innerHTML = displayAsMoney(total);
-            document.getElementById('total_partner').innerHTML = displayAsMoney(partnerTotal);
-            document.getElementById('total_consumer').innerHTML = displayAsMoney(reguarTotal);
-            document.getElementById('total_notIncluded').innerHTML = notCounted.join(' , ').trim();
-        } catch (error) {
-            console.log(error);
-        }
-
-    }
-
-    function displayAsMoney(inputInstance) {
-        inputInstance += "";
-        // Get the original value from the input and remove non-digit characters
-        let originalValue = inputInstance.replace(/\D/g, "");
-        originalValue = originalValue.replace(/^0+/, "");
-
-        // Use regex to insert commas every three digits
-        let formattedValue = originalValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-        // Update the input value with the formatted value
-        return formattedValue ? formattedValue + " ریال" : '';
     }
 
     function toggleDollarModal() {
