@@ -36,7 +36,6 @@ if (isset($_POST['getSimilarCodes'])) {
     echo "Not defined";
 }
 
-
 function getCodesWithInfo($existingGoods, $allowedBrands, $completeCode, $returnFullCode = false)
 {
     $CODES_INFORMATION = [
@@ -73,6 +72,21 @@ function getCodesWithInfo($existingGoods, $allowedBrands, $completeCode, $return
         }
     }
 
+    usort($specifiedCode, function ($a, $b) {
+        // Convert date strings to timestamps for comparison
+        return strtotime($a['invoice_date']) - strtotime($b['invoice_date']);
+    });
+
+    usort($YadakShopInventory, function ($a, $b) {
+        // Convert date strings to timestamps for comparison
+        return strtotime($b['invoice_date']) - strtotime($a['invoice_date']);
+    });
+
+    usort($otherInventory, function ($a, $b) {
+        // Convert date strings to timestamps for comparison
+        return strtotime($b['invoice_date']) - strtotime($a['invoice_date']);
+    });
+
     // Merge inventories
     $CODES_INFORMATION['goods'] = array_merge($specifiedCode, $YadakShopInventory, $otherInventory);
 
@@ -88,8 +102,6 @@ function getCodesWithInfo($existingGoods, $allowedBrands, $completeCode, $return
     // Return unique codes instead of array keys
     return array_unique($CODES_INFORMATION['codes']);
 }
-
-
 
 function setup_loading($completeCode)
 {

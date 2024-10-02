@@ -186,6 +186,8 @@ require_once '../../layouts/inventory/sidebar.php';
                             const ALL_ALLOWED_BRANDS = getFinalBrands(GOOD_NAME_BRAND);
                             const goods = await getSimilarCodes(GOOD_NAME_PART, ALL_ALLOWED_BRANDS, true);
 
+                            console.log(goods);
+
                             const INVENTORY_GOODS = goods ? goods['goods'] : [];
                             const INVENTORY_CODES = goods ? goods['codes'] : [];
 
