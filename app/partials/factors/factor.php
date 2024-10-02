@@ -54,6 +54,10 @@ if (filter_has_var(INPUT_POST, 'getReport')) {
 
 function displayUI($factors, $countFactorByUser)
 {
+    $TOTAL = 0;
+    $PARTNER = 0;
+    $REGULAR = 0;
+    $NOT_INCLUDED = [];
 ?>
     <div class="col-span-6">
         <table class="w-full">
@@ -72,10 +76,6 @@ function displayUI($factors, $countFactorByUser)
             </thead>
             <tbody>
                 <?php if (count($factors)) :
-                    $TOTAL = 0;
-                    $PARTNER = 0;
-                    $REGULAR = 0;
-                    $NOT_INCLUDED = [];
                     foreach ($factors as $factor) :
 
                         if (!$factor['exists_in_bill']) {

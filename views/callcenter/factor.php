@@ -4,7 +4,11 @@ $iconUrl = 'bill.png';
 require_once './components/header.php';
 require_once '../../app/controller/callcenter/FactorController.php';
 require_once '../../layouts/callcenter/nav.php';
-require_once '../../layouts/callcenter/sidebar.php';?>
+require_once '../../layouts/callcenter/sidebar.php';
+$TOTAL = 0;
+$PARTNER = 0;
+$REGULAR = 0;
+$NOT_INCLUDED = []; ?>
 <!-- COMPONENT STYLES -->
 <style>
     #editFactorModal {
@@ -128,10 +132,6 @@ require_once '../../layouts/callcenter/sidebar.php';?>
                 </thead>
                 <tbody>
                     <?php if (count($factors)) :
-                        $TOTAL = 0;
-                        $PARTNER = 0;
-                        $REGULAR = 0;
-                        $NOT_INCLUDED = [];
                         foreach ($factors as $factor) :
                             if (!$factor['exists_in_bill']) {
                                 array_push($NOT_INCLUDED, $factor['shomare']);
