@@ -6,6 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 require_once '../../../config/constants.php';
 require_once '../../../database/db_connect.php';
+require_once '../../../app/api/utilities/RelatedGoodsAPI.php';
 
 
 // START ------------------ UPDATE THE COMPLETE BILL -----------------------------
@@ -91,11 +92,11 @@ if (isset($_POST['updateCompleteFactor'])) {
 if (isset($_POST['getFactorItems'])) {
     $billId = $_POST['factorNo'];
     $factorID = getCompletedFactorId($billId);
-    
+
     if (!$factorID) {
         return false;
     }
-    
+
     $factorDetails = getFactorDetails($factorID);
 
     header('Content-Type: application/json');
