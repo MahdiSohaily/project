@@ -135,3 +135,4 @@ function setup_loading($customer, $completeCode, $notification = null)
         'relation_id' => $codeRelationId
     ]);
 }
+

@@ -130,7 +130,7 @@ require_once '../../layouts/callcenter/sidebar.php'; ?>
     <?php if ($_SESSION["financialYear"] == '1403') : ?>
         <div class="fixed flex justify-between items-center min-w-full h-12 bottom-0 bg-gray-800 px-3">
             <ul class="flex gap-3">
-                <?php if ($date_difference_days <= 1 || $_SESSION['id'] == 1 || $_SESSION['id'] == 5) : ?>
+                <?php if ($date_difference_days <= 1 || $_SESSION['id'] == 1 || $_SESSION['id'] == 5 || $_SESSION['id'] == 6) : ?>
                     <li>
                         <button onclick="updateCompleteFactor()" id="incomplete_save_button" class="bg-white rounded text-gray-800 px-3 py-1 cursor-pointer">
                             ویرایش

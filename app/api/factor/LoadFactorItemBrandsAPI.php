@@ -130,39 +130,67 @@ function getDetails($completeCode)
     return $brandsPrices;
 }
 
+
 function getFinalPriceBrands($price)
 {
     $brandsPrice = [];
     $addedBrands = [];
 
+    // Return empty array if price is not available or is 'موجود نیست'
     if (empty($price) || $price == 'موجود نیست') {
         return $brandsPrice;
     }
 
+    // Split the price string into parts by '/'
     $pricesParts = explode('/', $price);
     $pricesParts = array_map('trim', $pricesParts);
     $pricesParts = array_map('strtoupper', $pricesParts);
 
+    // Create a mapping for complex brand names
+    $complexBrandMap = [
+        'HI' => 'HI Q',
+        'HYUNDAI' => 'HYUNDAI BREAK',
+        'MB' => 'MB KOREA',
+        'OE' => 'OE MAX',
+        'SAM' => 'SAM YUNG',
+        'GEO' => 'GEO SUNG',
+        'FAKE' => 'FAKE MOB',
+        'YOUNG' => 'YOUNG SHIN'
+    ];
+
     foreach ($pricesParts as $part) {
         $spaceIndex = strpos($part, ' ');
         if ($spaceIndex !== false) {
-            $priceSubStr = substr($part, 0, $spaceIndex);
-            $brandSubStr = substr($part, $spaceIndex + 1); // Skip the space
-            $brand = trim(explode('(', $brandSubStr)[0]);
-            $complexBrands = explode(' ', $brand)[0];
+            $priceSubStr = substr($part, 0, $spaceIndex); // Extract price part
+            $brandSubStr = substr($part, $spaceIndex + 1); // Extract brand part
+            $brand = trim(explode('(', $brandSubStr)[0]); // Handle '('
+            $complexBrands = explode(' ', $brand)[0]; // Extract main brand word
 
-            if (!in_array($brand, $addedBrands) && !empty($brand)) {
+            // Map complex brands if needed
+            if (isset($complexBrandMap[$complexBrands])) {
+                $complexBrands = $complexBrandMap[$complexBrands];
+            }
+
+            // Add brand and price if it hasn't been added yet
+            if (!in_array($complexBrands, $addedBrands) && !empty($complexBrands)) {
                 $addedBrands[] = $complexBrands;
+                $priceValue = is_numeric($priceSubStr) ? $priceSubStr * 10000 : 0;
+
+                // Special case for 'MOB' and 'GEN' brands
                 if ($complexBrands == 'MOB' || $complexBrands == 'GEN') {
-                    $brandsPrice['اصلی'] = is_numeric($priceSubStr) ? $priceSubStr * 10000 : 0;
+                    $brandsPrice['اصلی'] = $priceValue;
                     continue;
                 }
-                $brandsPrice[$complexBrands] = is_numeric($priceSubStr) ? $priceSubStr * 10000 : 0;
+
+                // Add price for other brands
+                $brandsPrice[$complexBrands] = $priceValue;
             }
         } else {
+            // Handle case where no space is found (assume it's only the price)
             $brandsPrice['اصلی'] = is_numeric($part) ? $part * 10000 : 0;
         }
     }
+
     return $brandsPrice;
 }
 

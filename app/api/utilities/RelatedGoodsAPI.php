@@ -64,6 +64,19 @@ function getCodesWithInfo($existingGoods, $allowedBrands, $completeCode, $return
     $YadakShopInventory = [];
     $otherInventory = [];
 
+    foreach ($specifiedCode as $good) {
+        if ($good['stockId'] == 9) {
+            $YadakShopInventory[] = $good;
+        } else {
+            $otherInventory[] = $good;
+        }
+    }
+
+    $specifiedCode = array_merge($YadakShopInventory, $otherInventory);
+
+    $YadakShopInventory = [];
+    $otherInventory = [];
+
     foreach ($similarCodes as $good) {
         if ($good['stockId'] == 9) {
             $YadakShopInventory[] = $good;
@@ -72,20 +85,20 @@ function getCodesWithInfo($existingGoods, $allowedBrands, $completeCode, $return
         }
     }
 
-    usort($specifiedCode, function ($a, $b) {
-        // Convert date strings to timestamps for comparison
-        return strtotime($a['invoice_date']) - strtotime($b['invoice_date']);
-    });
+    // usort($specifiedCode, function ($a, $b) {
+    //     // Convert date strings to timestamps for comparison
+    //     return strtotime($a['invoice_date']) - strtotime($b['invoice_date']);
+    // });
 
-    usort($YadakShopInventory, function ($a, $b) {
-        // Convert date strings to timestamps for comparison
-        return strtotime($b['invoice_date']) - strtotime($a['invoice_date']);
-    });
+    // usort($YadakShopInventory, function ($a, $b) {
+    //     // Convert date strings to timestamps for comparison
+    //     return strtotime($b['invoice_date']) - strtotime($a['invoice_date']);
+    // });
 
-    usort($otherInventory, function ($a, $b) {
-        // Convert date strings to timestamps for comparison
-        return strtotime($b['invoice_date']) - strtotime($a['invoice_date']);
-    });
+    // usort($otherInventory, function ($a, $b) {
+    //     // Convert date strings to timestamps for comparison
+    //     return strtotime($b['invoice_date']) - strtotime($a['invoice_date']);
+    // });
 
     // Merge inventories
     $CODES_INFORMATION['goods'] = array_merge($specifiedCode, $YadakShopInventory, $otherInventory);
