@@ -275,7 +275,6 @@ function addRelatedBrands($brands)
         'CARTECH' => ['KOREA'],
         'HSC' => ['KOREA'],
         'KOREA STAR' => ['KOREA'],
-        'GMB' => ['KOREA'],
     ];
 
     // Normalize brand names to uppercase
