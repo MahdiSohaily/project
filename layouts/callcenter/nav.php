@@ -50,6 +50,12 @@ $append = ($parentDirectory === 'callcenter') ? './' : '../callcenter/';
                         </a>
                     </li>
                     <li class="hover:bg-gray-900 text-white text-sm font-bold">
+                        <a class="p-3 hover:bg-gray-900 flex items-center gap-2" href="<?= $append ?>saveBazarPrice.php">
+                            <img src="../../layouts/callcenter/icons/auto.svg" alt="add icon">
+                             ثبت قیمت بازار
+                        </a>
+                    </li>
+                    <li class="hover:bg-gray-900 text-white text-sm font-bold">
                         <a class="p-3 hover:bg-gray-900 flex items-center gap-2" href="<?= $append ?>last-calling-time.php">
                             <img src="../../layouts/callcenter/icons/latest.svg" alt="add icon">
                             آخرین تماس ها
