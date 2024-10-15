@@ -70,41 +70,78 @@
                                 ?>
                             </p>
                             <div class="ordered-price-tooltip2" id="<?= $goods[$index]['partnumber'] . '-google' ?>">
-                                <a target='_blank' href='https://www.google.com/search?tbm=isch&q=<?= $goods[$index]['partnumber'] ?>'>
-                                    <img class="w-5 h-auto" src="../../public/img/google.png" alt="google">
-                                </a>
-                                <a target='_blank' href='https://partsouq.com/en/search/all?q=<?= $goods[$index]['partnumber'] ?>'>
-                                    <img class="w-5 h-auto" src="../../public/img/part.png" alt="part">
-                                </a>
-                                <a title="بررسی تک آیتم" target='_blank' href='../inventory/singleItemReport.php?code=<?= $goods[$index]['partnumber'] ?>'>
-                                    <img src="../../public/img/singleItem.svg" class="w-5 h-auto" alt="">
-                                </a>
-                                <a title="گزارش تقاضای بازار" target='_blank' href='../telegram/requests.php?type=hour&code=<?= $goods[$index]['partnumber'] ?>'>
-                                    <img src="./assets/img/chart.svg" class="w-5 h-auto" alt="">
-                                </a>
-                                <a title="گزارش دلار "
-                                    onclick="openDollarModal(
-                                '<?= $basePrice ?>',
-                                '<?= $tenPercent ?>',
-                                '<?= $mobis ?>',
-                                '<?= $mobisTenPercent ?>',
-                                '<?= $korea ?>',
-                                '<?= $koreaTenPercent ?>',
-                                )">
-                                    <img src="./assets/img/information.svg" class="w-5 h-auto" alt="">
-                                </a>
-                                <?php
-                                if ($user == 'niyayesh' || $user == 'mahdi') {
-                                    if ($not_registered) { ?>
-                                        <a title="افزودن به لیست پیام خودکار" onclick="addSelectedGood('<?= $goods[$index]['partnumber'] ?>', this)">
-                                            <img src="./assets/img/add_good.svg" class="w-5 h-auto" alt="">
+                                <div>
+                                    <div>
+                                        <a class="flex items-center gap-2 mb-2" target='_blank' href='https://www.google.com/search?tbm=isch&q=<?= $goods[$index]['partnumber'] ?>'>
+                                            <img class="w-4 h-auto" src="../../public/img/google.png" alt="google">
+                                            <p class="text-white text-xs">
+                                                جستجو در گوگل
+                                            </p>
                                         </a>
-                                    <?php } else { ?>
-                                        <a title="حذف از لیست پیام خودکار" onclick="deleteGood('<?= $goods[$index]['partnumber'] ?>', this)">
-                                            <img src="./assets/img/deleteBill.svg" class="w-5 h-auto" alt="">
+                                    </div>
+                                    <div>
+                                        <a class="flex items-center gap-2 mb-2" target='_blank' href='https://partsouq.com/en/search/all?q=<?= $goods[$index]['partnumber'] ?>'>
+                                            <img class="w-4 h-auto" src="../../public/img/part.png" alt="part">
+                                            <p class="text-white text-xs">
+                                                جستجو پارت
+                                            </p>
                                         </a>
-                                <?php }
-                                } ?>
+                                    </div>
+                                    <div>
+                                        <a class="flex items-center gap-2 mb-2" title="بررسی تک آیتم" target='_blank' href='../inventory/singleItemReport.php?code=<?= $goods[$index]['partnumber'] ?>'>
+                                            <img src="../../public/img/singleItem.svg" class="w-4 h-auto" alt="">
+                                            <p class="text-white text-xs">
+                                                بررسی تک آیتم
+                                            </p>
+                                        </a>
+                                    </div>
+                                    <div>
+                                        <a class="flex items-center gap-2 mb-2" title="گزارش تقاضای بازار" target='_blank' href='../telegram/requests.php?type=hour&code=<?= $goods[$index]['partnumber'] ?>'>
+                                            <img src="./assets/img/chart.svg" class="w-4 h-auto" alt="">
+                                            <p class="text-white text-xs">
+                                                گزارش بازار
+                                            </p>
+                                        </a>
+                                    </div>
+                                    <div>
+                                        <a title="گزارش دلار "
+                                            class="flex items-center gap-2 mb-2"
+                                            onclick="openDollarModal(
+                                                    '<?= $basePrice ?>',
+                                                    '<?= $tenPercent ?>',
+                                                    '<?= $mobis ?>',
+                                                    '<?= $mobisTenPercent ?>',
+                                                    '<?= $korea ?>',
+                                                    '<?= $koreaTenPercent ?>',
+                                                    )">
+                                            <img src="./assets/img/information.svg" class="w-4 h-auto" alt="">
+                                            <p class="text-white text-xs">
+                                                گزارش دلار
+                                            </p>
+                                        </a>
+                                    </div>
+                                    <div>
+                                        <?php
+                                        if ($user == 'niyayesh' || $user == 'mahdi') {
+                                            if ($not_registered) { ?>
+
+                                                <a class="flex items-center gap-2 mb-2" title="افزودن به لیست پیام خودکار" onclick="addSelectedGood('<?= $goods[$index]['partnumber'] ?>', this)">
+                                                    <img src="./assets/img/add_good.svg" class="w-4 h-auto" alt="">
+                                                    <p class="text-white text-xs">
+                                                        لیست پیام
+                                                    </p>
+                                                </a>
+                                            <?php } else { ?>
+                                                <a class="flex items-center gap-2 mb-2" title="حذف از لیست پیام خودکار" onclick="deleteGood('<?= $goods[$index]['partnumber'] ?>', this)">
+                                                    <img src="./assets/img/deleteBill.svg" class="w-4 h-auto" alt="">
+                                                    <p class="text-white text-xs">
+                                                        لیست پیام
+                                                    </p>
+                                                </a>
+                                        <?php }
+                                        } ?>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </td>

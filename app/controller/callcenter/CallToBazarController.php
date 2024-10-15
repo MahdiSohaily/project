@@ -7,7 +7,7 @@ $allSellers = getSellers();
 
 function getSellers()
 {
-    $sql = "SELECT * FROM seller WHERE view IS NULL AND phone IS NOT NULL AND phone !='' ORDER  BY sortestelam DESC";
+    $sql = "SELECT id , name FROM seller WHERE view IS NULL AND phone IS NOT NULL AND phone !='' ORDER  BY sort";
     $stmt = PDO_CONNECTION->prepare($sql);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);

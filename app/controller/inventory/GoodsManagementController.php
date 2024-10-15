@@ -8,7 +8,7 @@ $brands = getBrands();
 
 function getSellers()
 {
-    $statement = PDO_CONNECTION->prepare("SELECT id, name, latinName, phone, address, views , kind FROM seller");
+    $statement = PDO_CONNECTION->prepare("SELECT id, name, latinName, phone, address, views , kind, sort FROM seller");
 
     $statement->execute();
 

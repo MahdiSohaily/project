@@ -24,6 +24,7 @@ require_once '../../layouts/inventory/sidebar.php';
                     <th class="p-3 text-right">شماره تماس</th>
                     <th class="p-3 text-right">آدرس</th>
                     <th class="p-3 text-right">دسته بندی</th>
+                    <th class="p-3 text-right">ترتیب</th>
                     <th class="p-3 text-right">نمایش</th>
                 </tr>
             </thead>
@@ -36,6 +37,7 @@ require_once '../../layouts/inventory/sidebar.php';
                         <td style="direction: ltr !important;" class="p-3" ondblclick="makeEditable('seller',this, 'phone', <?= $seller['id'] ?>)"><?= htmlspecialchars($seller['phone']) ?></td>
                         <td class="p-3" ondblclick="makeEditable('seller',this, 'address', <?= $seller['id'] ?>)"><?= $seller['address'] ?></td>
                         <td class="p-3" ondblclick="makeEditable('seller',this, 'kind', <?= $seller['id'] ?>)"><?= $seller['kind'] ?></td>
+                        <td class="p-3" ondblclick="makeEditable('seller',this, 'sort', <?= $seller['id'] ?>)"><?= $seller['sort'] ?></td>
                         <td class="p-3">
                             <input type="checkbox" name="view" onclick="updateView('seller',<?= $seller['id'] ?>)" <?= $seller['views'] ? 'checked' : '' ?>>
                         </td>
