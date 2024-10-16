@@ -10,6 +10,7 @@ require_once '../../layouts/callcenter/sidebar.php'; ?>
 <section class="px-5">
     <input class="p-2 my-2 outline-none text-gray-700 border-2 border-gray-700 w-56" type="search"
         onkeyup="convertToPersian(this);displaySellers(this.value)" ;
+        onfocus="this.select()"
         placeholder="جستجو فروشنده ....">
     <table class="w-full">
         <thead id="tableHeading">
@@ -67,7 +68,7 @@ require_once '../../layouts/callcenter/sidebar.php'; ?>
                         onClick="this.select()"
                         value="${INQUIRED_CODS[i]}" 
                         style = "direction:ltr !important"
-                        onchange="updateCode(${i}, this.value)">
+                        onKeyup="convertToEnglish(this);updateCode(${i}, this.value)">
                 </td>`;
         }
 
@@ -107,7 +108,7 @@ require_once '../../layouts/callcenter/sidebar.php'; ?>
                             value="${INQUIRED_PRICES['seller_'+seller.id + '_' + i]?.['price'] ?? 0}" 
                             style = "direction:ltr !important"
                             onFocus="this.select()";
-                            onchange="updatePrice(${seller.id},${i}, this.value)">
+                            onKeyup="updatePrice(${seller.id},${i}, this.value)">
                     </td>`;
                 }
                 contentRow += `
