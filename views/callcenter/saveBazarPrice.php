@@ -8,6 +8,9 @@ require_once '../../layouts/callcenter/sidebar.php'; ?>
 
 <!-- Partners information section -->
 <section class="px-5">
+    <input class="p-2 my-2 outline-none text-gray-700 border-2 border-gray-700 w-56" type="search"
+        onkeyup="convertToPersian(this);displaySellers(this.value)" ;
+        placeholder="جستجو فروشنده ....">
     <table class="w-full">
         <thead id="tableHeading">
         </thead>
@@ -38,6 +41,9 @@ require_once '../../layouts/callcenter/sidebar.php'; ?>
     const INQUIRED_PRICES = {};
 
     function displaySellers(filter = null) {
+        if (filter != null && filter.length < 2 && filter.length != 0) {
+            return false;
+        }
         const container = document.getElementById('sellersContainer');
         const tableHeading = document.getElementById('tableHeading');
 
@@ -49,10 +55,7 @@ require_once '../../layouts/callcenter/sidebar.php'; ?>
         <tr class="bg-gray-800">
                 <td class="text-white text-sm font-semibold p-3 w-8">ردیف</td>
                 <td class="text-white text-sm font-semibold p-3 w-64">
-                    <input class="p-2 w-full outline-none text-gray-700" type="search"
-                    value="${filter ?? ''}"
-                    onChange="displaySellers(this.value)";
-                    placeholder="جستجو فروشنده ....">
+                    اسم فروشنده
                 </td>`;
 
         // Loop through INQUIRED_CODS to add editable columns dynamically
