@@ -68,7 +68,7 @@ require_once '../../layouts/callcenter/sidebar.php'; ?>
                         onClick="this.select()"
                         value="${INQUIRED_CODS[i]}" 
                         style = "direction:ltr !important"
-                        onKeyup="convertToEnglish(this);updateCode(${i}, this.value)">
+                        onKeyup="convertToEnglishAndSanitize(this);updateCode(${i}, this.value)">
                 </td>`;
         }
 
@@ -194,6 +194,65 @@ require_once '../../layouts/callcenter/sidebar.php'; ?>
             saveInquiredPrices();
         }
     });
+
+    function convertToEnglishAndSanitize(element) {
+        const englishCharMap = {
+            ش: "a",
+            ذ: "b",
+            ز: "c",
+            ی: "d",
+            ث: "e",
+            ب: "f",
+            ل: "g",
+            ا: "h",
+            ه: "i",
+            ت: "j",
+            ن: "k",
+            م: "l",
+            پ: "m",
+            د: "n",
+            خ: "o",
+            ح: "p",
+            ض: "q",
+            ق: "r",
+            س: "s",
+            ف: "t",
+            ع: "u",
+            ر: "v",
+            ص: "w",
+            ط: "x",
+            غ: "y",
+            ظ: "z",
+            و: ":",
+            گ: "'",
+            ک: ";",
+            چ: "]",
+            "۱": "1",
+            "۲": "2",
+            "۳": "3",
+            "۴": "4",
+            "۵": "5",
+            "۶": "6",
+            "۷": "7",
+            "۸": "8",
+            "۹": "9",
+            "۰": "0",
+        };
+
+        const customInput = element;
+        let customText = "";
+        let inputText = customInput.value.toLowerCase();
+        inputText = inputText.replace(/[^a-zA-Z0-9]/g, '');
+        for (let i = 0; i < inputText.length; i++) {
+            const char = inputText[i];
+            if (char in englishCharMap) {
+                customText += englishCharMap[char];
+            } else {
+                customText += char;
+            }
+        }
+        customInput.value = customText;
+    }
 
     displaySellers();
 </script>

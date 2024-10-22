@@ -20,29 +20,24 @@ if (isset($_POST['GenerateCompleteFactor'])) {
 
     $customer_id = getCustomerId($customerInfo) ? getCustomerId($customerInfo) : null;
     $success = true; // Initialize success variable
-    
+
     try {
-        PDO_CONNECTION->beginTransaction();
         if (!$customer_id) {
             $customer_id = createCustomer($customerInfo);
         } else {
             updateCustomer($customerInfo, $customer_id);
         }
-        
+
         if ($customer_id == null) {
             throw new Exception("Customer ID is null");
         }
-        
-        $factorNumber = getFactorNumber();
-        registerFactorNumber($factorNumber, $customerInfo);
-        
+
+        $factorNumber = registerFactorNumber($customerInfo);
+
         CreateCompleteBill($factorInfo, $customer_id, $factorNumber);
         CreateBillItems($factorInfo, $factorItems);
         getSimilarGoods($factorItems, $factorInfo->id);
-        PDO_CONNECTION->commit();
     } catch (Exception $e) {
-        // An error occurred, rollback the transaction
-        PDO_CONNECTION->rollback();
         $success = false; // Set success to false if an error occurred
     }
 
@@ -344,60 +339,39 @@ function CreateBillItems($billInfo, $billItems)
     }
 }
 
-function getFactorNumber()
-{
-    try {
-        // Prepare the SQL statement
-        $stmt = PDO_CONNECTION->prepare("SELECT shomare FROM factor.shomarefaktor ORDER BY id DESC LIMIT 1");
-
-        // Execute the statement
-        $stmt->execute();
-
-        // Fetch the result
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        // Check if a row was fetched
-        if ($row) {
-            $shomare = $row['shomare'];
-            return $shomare + 1;
-        } else {
-            return false;
-        }
-    } catch (PDOException $e) {
-        // Handle the exception (log it, return a specific error code, etc.)
-        echo $e->getMessage();
-        return false;
-    }
-}
-
-function registerFactorNumber($factorNumber, $customer)
+function registerFactorNumber($customer)
 {
     try {
         $user_id = $_SESSION['id'];
         $name = $customer->name ?? '';
         $family = $customer->family ?? '';
-
         $fullName = $name . ' ' . $family;
 
-        // Prepare the SQL statement with placeholders
-        $sql = "INSERT INTO factor.shomarefaktor (shomare, kharidar, user)
-                VALUES (:shomare, :kharidar, :user)";
+        // Start a transaction
+        PDO_CONNECTION->beginTransaction();
 
-        // Prepare the statement
-        $stmt = PDO_CONNECTION->prepare($sql);
+        // Lock the table row while fetching the last shomare
+        $stmt = PDO_CONNECTION->prepare("SELECT shomare FROM factor.shomarefaktor ORDER BY id DESC LIMIT 1 FOR UPDATE");
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Bind parameters to the statement
-        $stmt->bindParam(':shomare', $factorNumber);
-        $stmt->bindParam(':kharidar', $fullName);
-        $stmt->bindParam(':user', $user_id);
+        $shomare = $row ? $row['shomare'] + 1 : 1;
 
-        // Execute the statement
-        $success = $stmt->execute();
+        // Prepare the INSERT statement
+        $insertStmt = PDO_CONNECTION->prepare("INSERT INTO factor.shomarefaktor (shomare, kharidar, user) VALUES (:shomare, :kharidar, :user)");
+        $insertStmt->bindParam(":shomare", $shomare, PDO::PARAM_INT);
+        $insertStmt->bindParam(":kharidar", $fullName, PDO::PARAM_STR);
+        $insertStmt->bindParam(":user", $user_id, PDO::PARAM_INT);
 
-        // Check if the execution was successful
-        return $success;
+        // Execute the INSERT statement
+        $insertStmt->execute();
+
+        // Commit the transaction
+        PDO_CONNECTION->commit();
+
+        return $shomare;
     } catch (PDOException $e) {
-        // Handle the exception (log it, return a specific error code, etc.)
+        PDO_CONNECTION->rollBack();
         echo $e->getMessage();
         return false;
     }
