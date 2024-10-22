@@ -13,7 +13,7 @@ require_once '../../layouts/callcenter/sidebar.php'; ?>
         onfocus="this.select()"
         placeholder="جستجو فروشنده ....">
     <table class="w-full">
-        <thead id="tableHeading">
+        <thead id="tableHeading" class="font-medium sticky top-12" style="z-index: 99;">
         </thead>
         <tbody id="sellersContainer">
             <!-- Defined Sellers in the system will be displayed here -->

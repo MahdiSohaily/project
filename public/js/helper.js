@@ -166,7 +166,8 @@ function convertToPersian(element) {
   };
   const customInput = element;
   let customText = "";
-  const inputText = customInput.value.toLowerCase();
+  let inputText = customInput.value.toLowerCase();
+  inputText = inputText.replace(/[^a-zA-Z0-9]/g, "");
   for (let i = 0; i < inputText.length; i++) {
     const char = inputText[i];
     if (char in persianCharMap) {
@@ -224,7 +225,8 @@ function convertToEnglish(element) {
 
   const customInput = element;
   let customText = "";
-  const inputText = customInput.value.toLowerCase();
+  let inputText = customInput.value.toLowerCase();
+  inputText = inputText.replace(/[^a-zA-Z0-9]/g, "");
   for (let i = 0; i < inputText.length; i++) {
     const char = inputText[i];
     if (char in englishCharMap) {
