@@ -2,20 +2,31 @@
 require_once './config/constants.php';
 require_once './database/db_connect.php';
 require_once './utilities/callcenter/DollarRateHelper.php';
-// Allow requests from any origin
+// Handle CORS for all requests
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    // Preflight request handling
+    header("Access-Control-Allow-Origin: *");
+    header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization");
+    header("Access-Control-Allow-Credentials: true");
+    exit(0); // Terminate preflight request
+}
+
+// Allow requests from specific origin
 header("Access-Control-Allow-Origin: *");
 
-// Allow specified HTTP methods
-header("Access-Control-Allow-Methods:POST");
+// Allow POST and GET methods (and OPTIONS for preflight)
+header("Access-Control-Allow-Methods: POST, GET");
 
-// Allow specified headers
-header("Access-Control-Allow-Headers: Content-Type");
+// Allow certain headers from the client
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 // Allow credentials (cookies, authorization headers, etc.)
 header("Access-Control-Allow-Credentials: true");
 
 // Set content type to JSON
-header("Content-Type: application/json"); // Allow requests from any origin
+header("Content-Type: application/json");
+
 
 if (isset($_POST['code'])) {
     //remove all the special characters from the user input
