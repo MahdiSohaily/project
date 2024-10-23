@@ -9,12 +9,15 @@ require_once '../../../config/constants.php';
 require_once '../../../database/db_connect.php';
 require_once '../../../utilities/inventory/ExistingHelper.php';
 
-
 if (isset($_POST['mode'])) {
     $mode = $_POST['mode'];
     if ($mode === 'create') {
-        $sellers = createNewSeller($_POST);
-        echo json_encode($sellers);
+        if (count($_POST) == 3) {
+            echo createBrand($_POST);
+        } else {
+            $sellers = createNewSeller($_POST);
+            echo json_encode($sellers);
+        }
     } else if ($mode === 'update') {
         $brands = getBrands();
         echo json_encode($brands);
@@ -41,6 +44,21 @@ function createNewSeller($data)
     $stmt->bindParam(':kind', $kind);
     $stmt->bindParam(':view', $view);
 
+    if ($stmt->execute()) {
+        return true;
+    }
+
+    return false;
+}
+function createBrand($data)
+{
+    $name = $data['name'];
+    $view = $data['view'] == "on" ? 1 : 0;
+    $sql = "INSERT INTO brand (name, views)
+            VALUES (:name, :view)";
+    $stmt = PDO_CONNECTION->prepare($sql);
+    $stmt->bindParam(":name", $name);
+    $stmt->bindParam(":view", $view);
     if ($stmt->execute()) {
         return true;
     }

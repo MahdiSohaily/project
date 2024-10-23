@@ -13,7 +13,7 @@ require_once '../../layouts/callcenter/sidebar.php'; ?>
         onfocus="this.select()"
         placeholder="جستجو فروشنده ....">
     <table class="w-full">
-        <thead id="tableHeading" class="font-medium sticky top-12" style="z-index: 99;">
+        <thead id="tableHeading" class="font-medium sticky top-12" style="z-index: 9;">
         </thead>
         <tbody id="sellersContainer">
             <!-- Defined Sellers in the system will be displayed here -->
@@ -28,10 +28,10 @@ require_once '../../layouts/callcenter/sidebar.php'; ?>
                 <span class="text-xs bg-black text-white rounded px-2 py-1"> CTRL + SHIFT</span>
                 استفاده نمایید.
             </li>
-            <li class="text-xs font-semibold mb-5"> برای ذخیره سازی قیمت های گرفته شده از کلید های ترکیبی
+            <!-- <li class="text-xs font-semibold mb-5"> برای ذخیره سازی قیمت های گرفته شده از کلید های ترکیبی
                 <span class="text-xs bg-black text-white rounded px-2 py-1"> CTRL + M</span>
                 استفاده نمایید.
-            </li>
+            </li> -->
         </ul>
         <button onclick="saveInquiredPrices()" class="text-sm p-2 bg-sky-600 hover:bg-sky-700 text-white rounded">ثبت قیمت ها</button>
     </article>
@@ -108,7 +108,7 @@ require_once '../../layouts/callcenter/sidebar.php'; ?>
                             value="${INQUIRED_PRICES['seller_'+seller.id + '_' + i]?.['price'] ?? 0}" 
                             style = "direction:ltr !important"
                             onFocus="this.select()";
-                            onKeyup="updatePrice(${seller.id},${i}, this.value)">
+                            onChange="updatePrice(${seller.id},${i}, this.value)">
                     </td>`;
                 }
                 contentRow += `
@@ -189,10 +189,10 @@ require_once '../../layouts/callcenter/sidebar.php'; ?>
             addNewCode();
         }
 
-        if (event.ctrlKey && event.key === 'm') {
+        // if (event.ctrlKey && event.key === 'm') {
 
-            saveInquiredPrices();
-        }
+        //     saveInquiredPrices();
+        // }
     });
 
     function convertToEnglishAndSanitize(element) {

@@ -127,7 +127,7 @@ require_once '../../layouts/inventory/sidebar.php';
 </div>
 
 <div id="brandModal" class="fixed inset-0 bg-gray-800 flex justify-center items-center hidden">
-    <div class="bg-white p-5 rounded shadow">
+    <div class="min-w-96 bg-white p-5 rounded shadow">
         <div class="modal-box">
             <div class="flex justify-between items-center py-5">
                 <h2 class="text-xl font-semibold">ایجاد برند</h2>
@@ -147,6 +147,7 @@ require_once '../../layouts/inventory/sidebar.php';
                         <button type="button" onclick="submitBrandForm()" class="bg-sky-600 text-white rounded-sm py-1 px-3">ذخیره</button>
                     </div>
                 </form>
+                <div class="text-xs font-semibold text-green-700 py-4" id="operationMessage2"></div>
             </div>
         </div>
     </div>
@@ -187,13 +188,14 @@ require_once '../../layouts/inventory/sidebar.php';
     function submitBrandForm() {
         const form = document.getElementById('brandForm');
         const formData = new FormData(form);
+        formData.action = "createBrand";
 
         axios.post(endpoint, formData)
             .then(response => {
                 if (response.data) {
                     const operationMessage = document.getElementById('operationMessage');
                     operationMessage.classList.remove('hidden');
-                    document.getElementById('operationMessage').innerText = 'برند جدید با موفقیت ایجاد شد';
+                    document.getElementById('operationMessage2').innerText = 'برند جدید با موفقیت ایجاد شد';
                     setTimeout(() => {
                         operationMessage.classList.add('hidden');
                         window.location.reload();
