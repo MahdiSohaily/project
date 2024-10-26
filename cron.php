@@ -139,12 +139,12 @@ function validateMessages($messages)
                         if ($data) {
                             foreach ($data as $itemCode => $item) {
                                 if (trim($item['finalPrice']) == 'موجود نیست' || empty($item['finalPrice'])) {
-                                    echo $itemCode . "  قیمت نهایی موجود نیست " . "\n";
+                                    echo $code . "  قیمت نهایی موجود نیست " . "\n";
                                     continue;
                                 }
-                                $template .= $itemCode . $separators[$index] . $item['finalPrice'] . "\n";
-                                $conversation .= $itemCode . $separators[$index] . $item['finalPrice'] . "\n";
-                                saveConversation($sender, $itemCode, $conversation);
+                                $template .= $code . $separators[$index] . $item['finalPrice'] . "\n";
+                                $conversation .= $code . $separators[$index] . $item['finalPrice'] . "\n";
+                                saveConversation($sender, $code, $conversation);
                                 $conversation = '';
                             }
                         }

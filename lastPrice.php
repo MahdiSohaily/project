@@ -22,8 +22,6 @@ if (isset($_POST['code'])) {
     $code = [htmlspecialchars($_POST['code'])];
     $finalResult = getSpecification($code[0]);
     echo json_encode($finalResult);
-} else {
-    echo "Hello world";
 }
 
 function getSpecification($explodedCodes)

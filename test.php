@@ -90,9 +90,9 @@ function validateMessages($messages)
                                     continue;
                                 }
 
-                                $template .= $itemCode . $separators[$index] . $item['finalPrice'] . "\n";
-                                $conversation .= $itemCode . $separators[$index] . $item['finalPrice'] . "\n";
-                                saveConversation($sender, $itemCode, $conversation);
+                                $template .= $code . $separators[$index] . $item['finalPrice'] . "\n";
+                                $conversation .= $code . $separators[$index] . $item['finalPrice'] . "\n";
+                                saveConversation($sender, $code, $conversation);
                                 $conversation = '';
                             }
 
@@ -205,7 +205,7 @@ function getSpecification($completeCode)
 $response = '{
     "1310670940":
         {"info":[
-            {"code":"811613D000\n","message":"58101-3SA26","date":1710235467}],
+            {"code":"581013x\n","message":"58101-3SA26","date":1710235467}],
         "name":["Azizi -Diakopar"],
         "userName":[1310670940],
         "profile":["1310670940_x_4.jpg"]}
