@@ -62,9 +62,10 @@ function setup_loading($customer, $completeCode, $notification = null)
 
     $existing_code = []; // this array will hold the id and partNumber of the existing codes in DB
 
+    $sql = "SELECT id, partnumber FROM yadakshop.nisha WHERE partnumber LIKE :partNumber";
+    $stmt = PDO_CONNECTION->prepare($sql);
+    
     foreach ($explodedCodes as $code) {
-        $sql = "SELECT id, partnumber FROM yadakshop.nisha WHERE partnumber LIKE :partNumber";
-        $stmt = PDO_CONNECTION->prepare($sql);
         $param = $code . '%';
         $stmt->bindParam(':partNumber', $param, PDO::PARAM_STR);
         $stmt->execute();
@@ -117,7 +118,6 @@ function setup_loading($customer, $completeCode, $notification = null)
         }
         return ($sumA > $sumB) ? -1 : 1;
     }
-
 
     foreach ($itemDetails as &$record) {
 

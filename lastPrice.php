@@ -29,14 +29,14 @@ function getSpecification($explodedCodes)
     $explodedCodes = explode("\n", $explodedCodes);
     $nonExistingCodes = [];
 
-    $explodedCodes = array_filter($explodedCodes, function ($code) {
-        return strlen($code) > 6;
-    });
-
     // Cleaning and filtering codes
     $sanitizedCodes = array_map(function ($code) {
         return strtoupper(preg_replace('/[^a-z0-9]/i', '', $code));
     }, $explodedCodes);
+
+    $sanitizedCodes = array_filter($sanitizedCodes, function ($code) {
+        return strlen($code) > 6;
+    });
 
     // Remove duplicate codes
     $explodedCodes = array_unique($sanitizedCodes);
@@ -57,6 +57,17 @@ function getSpecification($explodedCodes)
             $existing_code[$code] = $result;
         } else {
             $nonExistingCodes[] = $code;
+        }
+    }
+
+    $equal = [];
+
+    foreach ($existing_code as $key => $info) {
+        $item = current($info)['partnumber'];
+        if (isset($item) && !empty($item)) {
+            $equal[$key] = $item;
+        } else {
+            $equal[$key] = 'N/A'; // or any other default value you prefer
         }
     }
 
@@ -112,7 +123,6 @@ function getSpecification($explodedCodes)
     }
 
     $goodDetails = $finalGoods;
-
     $finalResult = [];
 
     foreach ($goodDetails as $partNumber => $goodDetail) {
@@ -128,7 +138,11 @@ function getSpecification($explodedCodes)
         $finalResult[$partNumber]['finalPrice'] = getFinalSanitizedPrice($goodDetail['givenPrice'], $goodDetails[$partNumber]['brands']);
     }
 
-    return $finalResult;
+    return [
+        'explodedCodes' => $explodedCodes,
+        'prices' => $finalResult,
+        'equal' => $equal
+    ];
 }
 
 function isInRelation($id)

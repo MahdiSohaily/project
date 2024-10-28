@@ -192,6 +192,16 @@ require_once './components/factor.php';
             totalPrice += payPrice;
             factorInfo.quantity += Number(item.quantity);
 
+            if (!item.hasOwnProperty('actual_price')) {
+                item.actual_price = item.price_per;
+            }
+
+            let border = false;
+
+            if (Number(item.actual_price) !== 0 && Number(item.actual_price) > Number(item.price_per)) {
+                border = true;
+            }
+
             template += `
             <tr id="${item.id}" class="even:bg-gray-100 border-gray-800 add-column" >
                 <td class="py-3 px-4 w-10 relative text-left">
@@ -226,7 +236,7 @@ require_once './components/factor.php';
                     <input name="quantity"  onchange="editCell(this, 'quantity', '${item.id}', '${item.quantity}')" type="number" style="direction:ltr !important;" class="tab-op tab-op-number  p-2 border border-1 w-16" value="${item.quantity}" />
                 </td>
                 <td class="text-center py-3 px-4 w-18" >
-                    <input name="price" onchange="editCell(this, 'price_per', '${item.id}', '${item.price_per}')" type="text" style="direction:ltr !important;" class="tab-op tab-op-number w-18 p-2 border " onkeyup="displayAsMoney(this);convertToEnglish(this)" value="${formatAsMoney(item.price_per)}" />
+                    <input name="price" onchange="editCell(this, 'price_per', '${item.id}', '${item.price_per}')" type="text" style="direction:ltr !important; ${border ? 'border: 2px solid red !important': ''}" class="tab-op tab-op-number w-18 p-2 border" onkeyup="displayAsMoney(this);convertToEnglish(this)" value="${formatAsMoney(item.price_per)}" />
                 </td>
                 <td class="text-center py-3 px-4 ltr">${formatAsMoney(payPrice)}</td>
                 <td class="text-center py-3 px-4 w-18 h-12 font-medium">
@@ -341,6 +351,26 @@ require_once './components/factor.php';
     function editCell(cell, property, itemId, originalValue) {
         const newValue = cell.value;
 
+        if (property == 'price_per') {
+            for (let i = 0; i < factorItems.length; i++) {
+                if (factorItems[i].id == itemId) {
+                    const sanitized = newValue.replaceAll(',', '');
+
+                    if (Number(factorItems[i]['actual_price']) > Number(sanitized)) {
+                        const systemPrice = `\n قیمت سیستم: ${formatAsMoney(factorItems[i]['actual_price'])}`;
+                        const confirmation = confirm('قیمت سیستم بیشتر از مقدار داده شده است آیا تایید میکنید ؟' + systemPrice);
+                        if (!confirmation) {
+                            cell.value = formatAsMoney(originalValue); // Reset to original value if not confirmed
+                            return null;
+                        } else {
+                            break;
+                        }
+                    }
+
+                }
+            }
+        }
+
         // Update the corresponding item in your data structure (factorItems)
         updateItemProperty(itemId, property, newValue, cell);
 
@@ -365,6 +395,7 @@ require_once './components/factor.php';
                 secondToLastTd.innerHTML = formatAsMoney(Number(totalpriceValue) * value); // Replace 'New Value' with the desired content
             }
         }
+        displayBill();
     }
 
     function loadBrands(cell, itemId, value) {
