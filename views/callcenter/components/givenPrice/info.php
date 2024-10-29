@@ -44,10 +44,20 @@
             if (count($goods) > 0) : ?>
              <p class="my-2 font-semibold">قطعات مرتبط: </p>
              <table>
-                 <?php foreach ($goods as $item) :?>
+                 <?php foreach ($goods as $item) : ?>
                      <tr class="text-sm bg-gray-200 odd:bg-orange-200">
-                         <td class="p-2 w-80"> <?= $item['partName'] ?></td>
-                         <td class="p-2 text-left"> <?= $item['partnumber'] ?></td>
+                         <td class="p-2 w-80">
+                             <div class="editable">
+                                 <span class="partname" ondblclick="editPartName(this)"><?= empty($item['partName']) ? 'فاقد نام' : $item['partName'] ?></span>
+                                 <input type="text" class="p-2 outline-none border-2 border-gray-200" value="<?= $item['partName'] ?>"
+                                     onblur="savePartName(this)" onkeydown="checkEnter(event, this)" style="display: none;" data-id="<?= $item['id'] ?>">
+                             </div>
+                         </td>
+                         <td class="p-2 text-left">
+                             <span>
+                                 <?= $item['partnumber'] ?>
+                             </span>
+                         </td>
                      </tr>
                  <?php endforeach; ?>
              </table>
@@ -57,3 +67,44 @@
          </p>
      <?php endif; ?>
  </div>
+ <script>
+     // Show the input box and hide the span on click
+     function editPartName(element) {
+         const input = element.nextElementSibling;
+         element.style.display = 'none';
+         input.style.display = 'inline';
+         input.focus();
+     }
+
+     // Save and switch back to the span on blur
+     function savePartName(input) {
+         const span = input.previousElementSibling;
+         span.textContent = input.value;
+         span.style.display = 'inline';
+         input.style.display = 'none';
+
+         const id = input.getAttribute('data-id');
+
+         const param = new URLSearchParams();
+         param.append('changeName', 'changeName');
+         param.append('id', id);
+         param.append('value', input.value);
+
+         axios.post('../../app/api/callcenter/OrderedPriceApi.php', param)
+             .then((response) => {
+                 form_success.style.bottom = "10px";
+                 setTimeout(() => {
+                     form_success.style.bottom = "-300px";
+                 }, 2000);
+             }).catch((e) => {
+                 console.log(e);
+             });
+     }
+
+     // Handle Enter key to save on pressing Enter
+     function checkEnter(event, input) {
+         if (event.key === 'Enter') {
+             savePartName(input);
+         }
+     }
+ </script>

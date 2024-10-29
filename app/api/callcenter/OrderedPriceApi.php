@@ -330,7 +330,6 @@ function relations($id)
     }
 }
 
-
 function givenPrice($codes, $relation_exist = null)
 {
     $codes = array_filter($codes, function ($item) {
@@ -432,4 +431,21 @@ function isInRelation($id)
         return $result['pattern_id'];
     else
         return false;
+}
+
+if (isset($_POST['changeName'])) {
+    $id = $_POST['id'];
+    $name = $_POST['value'];
+
+    echo json_encode(changeGoodName($id, $name));
+} else {
+    print_r($_POST);
+}
+
+function changeGoodName($id, $name)
+{
+    $stmt = PDO_CONNECTION->prepare("UPDATE nisha SET partName= :name WHERE id= :id");
+    $stmt->bindParam(":name", $name);
+    $stmt->bindParam(":id", $id);
+    return $stmt->execute();
 }

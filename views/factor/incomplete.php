@@ -355,7 +355,6 @@ require_once './components/factor.php';
             for (let i = 0; i < factorItems.length; i++) {
                 if (factorItems[i].id == itemId) {
                     const sanitized = newValue.replaceAll(',', '');
-
                     if (Number(factorItems[i]['actual_price']) > Number(sanitized)) {
                         const systemPrice = `\n قیمت سیستم: ${formatAsMoney(factorItems[i]['actual_price'])}`;
                         const confirmation = confirm('قیمت سیستم بیشتر از مقدار داده شده است آیا تایید میکنید ؟' + systemPrice);
@@ -366,7 +365,6 @@ require_once './components/factor.php';
                             break;
                         }
                     }
-
                 }
             }
         }
@@ -599,12 +597,29 @@ require_once './components/factor.php';
         displayBill();
     }
 
+    function hasLR() {
+        for (item of factorItems) {
+            if (item.partName.includes("(LR)")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     function generateBill(element) {
         // Disable the element to avoid multiple requests
         element.disabled = true;
 
         // Set the date using Moment.js with Persian (Farsi) locale
         factorInfo.date = moment().locale('fa').format('YYYY/MM/DD');
+
+        if (hasLR()) {
+            const proceed = confirm("بعضی اقلام دارای شاخص (LR) هستند. آیا فاکتور را صادر میکنید؟");
+            if (!proceed) {
+                element.disabled = false;
+                return false;
+            }
+        }
 
         if (!checkIfReadyToUpdate('phone')) {
             // Enable the element before returning if validation fails
