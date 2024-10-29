@@ -35,8 +35,18 @@
              <?php foreach ($goods as $item) :
                 ?>
                  <tr class="text-sm bg-gray-200 odd:bg-orange-200">
-                     <td class="p-2 w-80"> <?= $item['partName'] ?></td>
-                     <td class="p-2 text-left"> <?= $item['partnumber'] ?></td>
+                     <td class="p-2 w-80">
+                         <div class="editable">
+                             <span class="partname" ondblclick="editPartName(this)"><?= empty($item['partName']) ? 'فاقد نام' : $item['partName'] ?></span>
+                             <input type="text" class="p-2 outline-none border-2 border-gray-200" value="<?= $item['partName'] ?>"
+                                 onblur="savePartName(this)" onkeydown="checkEnter(event, this)" style="display: none;" data-id="<?= $item['id'] ?>">
+                         </div>
+                     </td>
+                     <td class="p-2 text-left">
+                         <span>
+                             <?= $item['partnumber'] ?>
+                         </span>
+                     </td>
                  </tr>
              <?php endforeach; ?>
          </table>
