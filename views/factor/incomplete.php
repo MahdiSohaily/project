@@ -393,7 +393,6 @@ require_once './components/factor.php';
                 secondToLastTd.innerHTML = formatAsMoney(Number(totalpriceValue) * value); // Replace 'New Value' with the desired content
             }
         }
-        displayBill();
     }
 
     function loadBrands(cell, itemId, value) {
@@ -424,6 +423,7 @@ require_once './components/factor.php';
                             factorItems[i]['partNumber'] = key;
                             factorItems[i]['partName'] = data[key]['partName'];
                             factorItems[i]['price_per'] = data[key]['prices']['اصلی'] ?? 0;
+                            factorItems[i]['actual_price'] = data[key]['prices']['اصلی'] ?? 0;
 
                             const ICN = key.substring(0, 5); // Extracts the first 5 characters
                             const ICN_BIG = key.substring(0, 6); // Extracts the first 6 characters
@@ -552,6 +552,7 @@ require_once './components/factor.php';
         for (let i = 0; i < factorItems.length; i++) {
             if (factorItems[i].id == itemId) {
                 factorItems[i].price_per = price;
+                factorItems[i].actual_price = price;
                 itemFound = true;
                 break;
             }
