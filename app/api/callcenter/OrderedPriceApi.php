@@ -438,8 +438,6 @@ if (isset($_POST['changeName'])) {
     $name = $_POST['value'];
 
     echo json_encode(changeGoodName($id, $name));
-} else {
-    print_r($_POST);
 }
 
 function changeGoodName($id, $name)
