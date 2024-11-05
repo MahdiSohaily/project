@@ -277,6 +277,7 @@ function addRelatedBrands($brands)
         'KOREA STAR' => ['KOREA'],
         'DONI TEC' => ['KOREA'],
         'ATC' => ['KOREA'],
+        'VALEO' => ['KOREA'],
     ];
 
     // Normalize brand names to uppercase
