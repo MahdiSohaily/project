@@ -3,7 +3,7 @@
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: ../../../views/auth/403.php");
     exit;
-} 
+}
 require_once '../../../config/constants.php';
 require_once '../../../database/db_connect.php';
 require_once '../../../utilities/callcenter/DollarRateHelper.php';
@@ -125,6 +125,7 @@ function getDetails($completeCode)
     foreach ($goodDetails as $partNumber => $goodDetail) {
         $brandsPrices[$partNumber]['prices'] = getFinalPriceBrands($goodDetail['finalPrice']);
         $brandsPrices[$partNumber]['partName'] = getItemName($goodDetail['goods'], $brandsPrices[$partNumber]['prices']);
+        $brandsPrices[$partNumber]['original'] = $goodDetail['finalPrice'];
     }
 
     return $brandsPrices;

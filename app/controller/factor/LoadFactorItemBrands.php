@@ -109,12 +109,14 @@ function getDetails($completeCode)
 
 
     $brandsPrices = [];
+    $OriginalPrice = [];
 
     foreach ($goodDetails as $partNumber => $goodDetail) {
         $brandsPrices[$partNumber] = getFinalPriceBrands($goodDetail['finalPrice']);
+        $OriginalPrice[$partNumber] = $goodDetail['finalPrice'];
     }
 
-    return $brandsPrices;
+    return ['brandsPrices' => $brandsPrices, 'OriginalPrice' => $OriginalPrice];
 }
 
 function getFinalPriceBrands($price)

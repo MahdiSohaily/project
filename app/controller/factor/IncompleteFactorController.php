@@ -55,7 +55,9 @@ if (isset($_GET['factor_number'])) {
 
     $codes = implode("\n", array_column(json_decode($billItems, true), 'partNumber'));
 
-    $billItemsBrandAndPrice = json_encode(getDetails($codes));
+    $goodBrandsDetails = getDetails($codes);
+    $billItemsBrandAndPrice = json_encode($goodBrandsDetails['brandsPrices']);
+    $originalPrices = json_encode($goodBrandsDetails['OriginalPrice']);
 } else {
     die("Invalid factor number");
 }

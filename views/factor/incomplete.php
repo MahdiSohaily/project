@@ -158,6 +158,7 @@ require_once './components/factor.php';
     const factorItems = <?= $billItems ?>;
     const ItemsBrands = <?= $billItemsBrandAndPrice ?>;
     const AllBrands = <?= json_encode($brands) ?>;
+    const originalPrices = <?= $originalPrices ?>;
 
     function bootstrap() {
         displayCustomer(customerInfo);
@@ -406,6 +407,10 @@ require_once './components/factor.php';
                 const key = Object.keys(data)[0];
                 if (key) {
                     ItemsBrands[key] = data[key]['prices'];
+                    let originalPrice = data[key]['original'];
+                    if (originalPrice.includes("(LR)")) {
+                        alert('این قطعه دارای شاخص (LR) می باشد.')
+                    }
                     const specificItemsQuantity = {
                         "51712": 2,
                         "54813": 2,
@@ -599,12 +604,17 @@ require_once './components/factor.php';
     }
 
     function hasLR() {
-        for (item of factorItems) {
-            if (item.partName.includes("(LR)")) {
-                return true;
+        let keysWithLR = []; // Array to store keys with "(LR)"
+
+        // Loop through the key-value pairs
+        for (let [key, value] of Object.entries(originalPrices)) {
+            if (typeof value === 'string' && value.includes("(LR)")) {
+                keysWithLR.push(key); // Add key to the array
             }
         }
-        return false;
+
+        // Return the array of keys if any (LR) items are found, or null otherwise
+        return keysWithLR.length > 0 ? keysWithLR : null;
     }
 
     function generateBill(element) {
@@ -614,44 +624,43 @@ require_once './components/factor.php';
         // Set the date using Moment.js with Persian (Farsi) locale
         factorInfo.date = moment().locale('fa').format('YYYY/MM/DD');
 
-        if (hasLR()) {
-            const proceed = confirm("بعضی اقلام دارای شاخص (LR) هستند. آیا فاکتور را صادر میکنید؟");
+        // Check for items with (LR)
+        const keysWithLR = hasLR();
+
+        // If there are items with (LR), show the confirm dialog
+        if (keysWithLR) {
+            // Create a message showing the keys with (LR)
+            const lrItems = `${keysWithLR.join(", ")}`;
+
+            // Show confirm dialog with the keys and the message
+            const proceed = confirm(`${lrItems}\n\nبعضی اقلام دارای شاخص (LR) هستند. آیا فاکتور را صادر میکنید؟`);
+
+            // If the user cancels, enable the element and stop further execution
             if (!proceed) {
                 element.disabled = false;
-                return false;
+                return; // Stop further actions by exiting the function
             }
         }
 
-        if (!checkIfReadyToUpdate('phone')) {
-            // Enable the element before returning if validation fails
+        // Validate phone, name, and address (if applicable)
+        if (!checkIfReadyToUpdate('phone') || !checkIfReadyToUpdate('name') ||
+            (!factorInfo['partner'] && !checkIfReadyToUpdate('address'))) {
             element.disabled = false;
-            return false;
+            return; // Stop further actions if validation fails
         }
 
-        if (!checkIfReadyToUpdate('name')) {
-            // Enable the element before returning if validation fails
-            element.disabled = false;
-            return false;
-        }
-
-        if (!factorInfo['partner']) {
-            if (!checkIfReadyToUpdate('address')) {
-                element.disabled = false;
-                return false;
-            }
-        }
-
+        // Validate factor items (ensure there are items in the invoice)
         if (factorItems.length <= 0) {
             displayModal('فاکتور مشتری خالی بوده نمیتواند.');
-            // Enable the element before returning if factor is empty
             element.disabled = false;
-            return false;
+            return; // Stop further actions if there are no items
         }
 
+        // Validate factor items' correctness
         if (factorItems.length > 0 && !checkIfFactorItemsValid()) {
             displayModal('لطفا موجودیت و صحت برند قطعات را بررسی نمایید.');
             element.disabled = false;
-            return false;
+            return; // Stop further actions if items are invalid
         }
 
         // Prepare parameters for the HTTP request
@@ -675,9 +684,9 @@ require_once './components/factor.php';
                             localStorage.setItem('displayName', customerInfo.displayName);
                             if (factorInfo['partner']) {
                                 window.location.href = './partnerFactor.php?factorNumber=' + factorInfo['id'];
-                                return false;
+                            } else {
+                                window.location.href = './yadakFactor.php?factorNumber=' + factorInfo['id'];
                             }
-                            window.location.href = './yadakFactor.php?factorNumber=' + factorInfo['id'];
                         }
                     }, 1000);
 
@@ -701,6 +710,7 @@ require_once './components/factor.php';
                 element.disabled = false;
             });
     }
+
 
     function insuranceBillDisplay() {
         localStorage.setItem('displayName', customerInfo.displayName);
@@ -791,17 +801,6 @@ require_once './components/factor.php';
             const ItemBrand = brandSection[brandSection.length - 1].trim();
             AllBrands.push('اصلی', 'چین', 'کره', 'متفرقه', 'تایوان', 'شرکتی');
 
-            // if (!AllBrands.includes(ItemBrand.trim())) {
-            //     return false;
-            // }
-
-            // if (ItemBrand === '' || ItemBrand === null) {
-            //     return false;
-            // }
-
-            // if (item.partName === '' || item.price_per === '' || item.quantity === '') {
-            //     return false;
-            // }
             if (brandSection.length < 2) {
                 return false;
             }
