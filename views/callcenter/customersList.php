@@ -13,10 +13,10 @@ $totalPages = ceil($customersCount / $fetchLimit);
 <div class="px-4">
     <div class="w-4/5 mx-auto flex justify-between items-center mb-3">
         <h2 class="text-xl font-semibold">لیست مشتریان</h2>
-        <?php if ($_SESSION['username'] == "mahdi" || $_SESSION['username'] == "niyayesh"): ?>
+        
             <button class="bg-sky-400 rounded text-white p-3 py-2" onclick="sendToContact()">انتقال مخاططبین به حساب گوگل</button>
             <button class="bg-rose-400 rounded text-white p-3 py-2" onclick="getContacts()">بارگیری مخاطبین از حساب گوگل</button>
-        <?php endif; ?>
+       
         <input class="border-2 border-gray-300 focus:border-gray-500 py-2 px-3 text-sm outline-none" type="search" name="search" id="search" placeholder="جستجو....">
     </div>
     <table class="w-4/5 mx-auto">
