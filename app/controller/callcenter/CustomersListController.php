@@ -7,6 +7,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 1; // Get current page from URL p
 $fetchLimit = 200;
 $customers = getCustomers($page, $fetchLimit);
 $customersCount = getCustomerCount();
+$allCustomers = getAllCustomers();
 
 function getCustomers($current_page, $fetchLimit)
 {
@@ -23,4 +24,11 @@ function getCustomerCount()
     $stmt = PDO_CONNECTION->prepare("SELECT COUNT(*) FROM callcenter.customer");
     $stmt->execute();
     return $stmt->fetchColumn();
+}
+
+function getAllCustomers()
+{
+    $stmt = PDO_CONNECTION->prepare("SELECT name, family, phone FROM callcenter.customer WHERE sync = 0");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }

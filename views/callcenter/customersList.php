@@ -13,6 +13,10 @@ $totalPages = ceil($customersCount / $fetchLimit);
 <div class="px-4">
     <div class="w-4/5 mx-auto flex justify-between items-center mb-3">
         <h2 class="text-xl font-semibold">لیست مشتریان</h2>
+        <?php if ($_SESSION['username'] == "mahdi" || $_SESSION['username'] == "niyayesh"): ?>
+            <button class="bg-sky-400 rounded text-white p-3 py-2" onclick="sendToContact()">انتقال مخاططبین به حساب گوگل</button>
+            <button class="bg-rose-400 rounded text-white p-3 py-2" onclick="getContacts()">بارگیری مخاطبین از حساب گوگل</button>
+        <?php endif; ?>
         <input class="border-2 border-gray-300 focus:border-gray-500 py-2 px-3 text-sm outline-none" type="search" name="search" id="search" placeholder="جستجو....">
     </div>
     <table class="w-4/5 mx-auto">
@@ -86,4 +90,53 @@ $totalPages = ceil($customersCount / $fetchLimit);
     }
 
     echo '</div>';
-    require_once './components/footer.php';
+    ?>
+</div>
+<script>
+    const allCustomers = <?= json_encode($allCustomers) ?>;
+
+    function sendToContact() {
+        const param = new URLSearchParams();
+        param.append('contacts', JSON.stringify(allCustomers));
+
+        axios.post('https://contacts.yadak.center/contactsAPI.php', param)
+            .then((response) => {
+                if (response.data.success) {
+                    const data = new URLSearchParams();
+                    data.append('SYNC', 'SYNC');
+                    axios.post('../../app/api/callcenter/CustomersApi.php', data).then((response) => {
+                        window.open('https://contacts.yadak.center/', '_blank');
+                    })
+                }
+            }).catch((error) => {
+                console.log(error);
+            });
+    }
+
+    function getContacts() {
+        const param = new URLSearchParams();
+        param.append('getContacts', 'getContacts');
+
+        const data = axios.post('https://contacts.yadak.center/contactsAPI.php', param).then((response) => {
+
+            const contacts = response.data;
+
+            const data = new URLSearchParams();
+            data.append('sveContacts', JSON.stringify(contacts));
+
+            axios.post('../../app/api/callcenter/CustomersApi.php', data).then((response) => {
+                console.log(response.data);
+
+                if (response.data.success) {
+                    if (response.data.message == "0 contacts saved successfully.") {
+                        alert("Already Upto date")
+                    } else {
+                        alert(response.data.message)
+                    }
+                }
+            })
+        })
+    }
+</script>
+<?php
+require_once './components/footer.php';
