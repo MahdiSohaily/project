@@ -13,10 +13,8 @@ $totalPages = ceil($customersCount / $fetchLimit);
 <div class="px-4">
     <div class="w-4/5 mx-auto flex justify-between items-center mb-3">
         <h2 class="text-xl font-semibold">لیست مشتریان</h2>
-        
-            <button class="bg-sky-400 rounded text-white p-3 py-2" onclick="sendToContact()">انتقال مخاططبین به حساب گوگل</button>
-            <button class="bg-rose-400 rounded text-white p-3 py-2" onclick="getContacts()">بارگیری مخاطبین از حساب گوگل</button>
-       
+        <button class="bg-sky-400 rounded text-white p-3 py-2" onclick="sendToContact()">انتقال مخاططبین به حساب گوگل</button>
+        <button class="bg-rose-400 rounded text-white p-3 py-2" onclick="getContacts()">بارگیری مخاطبین از حساب گوگل</button>
         <input class="border-2 border-gray-300 focus:border-gray-500 py-2 px-3 text-sm outline-none" type="search" name="search" id="search" placeholder="جستجو....">
     </div>
     <table class="w-4/5 mx-auto">
@@ -99,13 +97,14 @@ $totalPages = ceil($customersCount / $fetchLimit);
         const param = new URLSearchParams();
         param.append('contacts', JSON.stringify(allCustomers));
 
-        axios.post('http://contacts.yadak.center/contactsAPI.php', param)
+        axios.post('https://contacts.yadak.center/contactsAPI.php', param)
             .then((response) => {
+                console.log(response.data);
                 if (response.data.success) {
                     const data = new URLSearchParams();
                     data.append('SYNC', 'SYNC');
                     axios.post('../../app/api/callcenter/CustomersApi.php', data).then((response) => {
-                        window.open('http://contacts.yadak.center/', '_blank');
+                        window.open('https://contacts.yadak.center/', '_blank');
                     })
                 }
             }).catch((error) => {
@@ -117,7 +116,7 @@ $totalPages = ceil($customersCount / $fetchLimit);
         const param = new URLSearchParams();
         param.append('getContacts', 'getContacts');
 
-        const data = axios.post('http://contacts.yadak.center/contactsAPI.php', param).then((response) => {
+        const data = axios.post('https://contacts.yadak.center/contactsAPI.php', param).then((response) => {
 
             const contacts = response.data;
 
