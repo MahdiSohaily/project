@@ -99,13 +99,13 @@ $totalPages = ceil($customersCount / $fetchLimit);
         const param = new URLSearchParams();
         param.append('contacts', JSON.stringify(allCustomers));
 
-        axios.post('https://contacts.yadak.center/contactsAPI.php', param)
+        axios.post('http://contacts.yadak.center/contactsAPI.php', param)
             .then((response) => {
                 if (response.data.success) {
                     const data = new URLSearchParams();
                     data.append('SYNC', 'SYNC');
                     axios.post('../../app/api/callcenter/CustomersApi.php', data).then((response) => {
-                        window.open('https://contacts.yadak.center/', '_blank');
+                        window.open('http://contacts.yadak.center/', '_blank');
                     })
                 }
             }).catch((error) => {
@@ -117,7 +117,7 @@ $totalPages = ceil($customersCount / $fetchLimit);
         const param = new URLSearchParams();
         param.append('getContacts', 'getContacts');
 
-        const data = axios.post('https://contacts.yadak.center/contactsAPI.php', param).then((response) => {
+        const data = axios.post('http://contacts.yadak.center/contactsAPI.php', param).then((response) => {
 
             const contacts = response.data;
 
