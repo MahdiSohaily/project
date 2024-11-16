@@ -28,13 +28,12 @@ function getCustomerCount()
 
 function getAllCustomers()
 {
-    $stmt = PDO_CONNECTION->prepare("
-        SELECT name, family, phone 
-        FROM callcenter.customer 
-        WHERE sync = 0 
-        AND (name IS NOT NULL OR family IS NOT NULL)
-        AND phone IS NOT NULL
-    ");
+    $stmt = PDO_CONNECTION->prepare("SELECT name, family, phone 
+                                    FROM callcenter.customer 
+                                    WHERE sync = 0
+                                    AND (name IS NOT NULL AND name <> '')
+                                    AND (family IS NOT NULL AND family <> '')
+                                    AND (phone IS NOT NULL AND phone <> '');");
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
