@@ -186,18 +186,14 @@ function uploadFile($last_id, $file)
         $type = pathinfo($file['name'], PATHINFO_EXTENSION);
 
         if (!in_array($type, $allowed)) {
-            $GLOBALS['type_error'] = true;
+            print_r('عکس مورد نظر باید دارای فورمت jpg باشد.');
         } else {
             $targetDirectory = "../../public/userimg/"; // Directory where you want to store the uploaded files
             $targetFile = $targetDirectory . $last_id . "." . $type;
 
-            // Check if the file already exists
-            if (file_exists($targetFile)) {
-                $GLOBALS['exist_file_error'] = true;
-            } else {
-                if (!move_uploaded_file($file["tmp_name"], $targetFile)) {
-                    $GLOBALS['upload_error'] = true;
-                }
+            // Attempt to move the uploaded file
+            if (!move_uploaded_file($file["tmp_name"], $targetFile)) {
+                $GLOBALS['upload_error'] = true;
             }
         }
     } catch (\Throwable $th) {
@@ -207,22 +203,6 @@ function uploadFile($last_id, $file)
     }
 }
 
-
-// This functions are related to the update user account page
-if (isset($_GET['user'])) {
-    $user_id = $_GET['user'];
-    $user = getUser($user_id);
-    $success = $_GET['success'] ?? false;
-} else {
-}
-
-function getUser(int $id)
-{
-    $sql = "SELECT * FROM yadakshop.users WHERE id = :user_id LIMIT 1";
-    $stmt = PDO_CONNECTION->prepare($sql);
-    $stmt->execute(['user_id' => $id]);
-    return $stmt->fetch(PDO::FETCH_ASSOC);
-}
 
 if (isset($_POST['id']) && !empty($_POST['username'])) {
     $name = trim($_POST['name']);
@@ -261,6 +241,13 @@ if (isset($_POST['id']) && !empty($_POST['username'])) {
                 $stmt->bindParam(':id', $id);
                 $stmt->execute();
             }
+            if ($_FILES['profile']['size'] > 0) {
+                if (uploadFile($id, $_FILES['profile'])) {
+                    $success = true;
+                }
+            } else {
+                $success = true;
+            }
             $result = true;
         } catch (\Throwable $th) {
             echo $th;
@@ -281,4 +268,20 @@ if (isset($_POST['id']) && !empty($_POST['username'])) {
     } catch (\Throwable $th) {
         throw $th;
     }
+}
+
+
+// This functions are related to the update user account page
+if (isset($_GET['user'])) {
+    $user_id = $_GET['user'];
+    $user = getUser($user_id);
+    $success = $_GET['success'] ?? false;
+}
+
+function getUser(int $id)
+{
+    $sql = "SELECT * FROM yadakshop.users WHERE id = :user_id LIMIT 1";
+    $stmt = PDO_CONNECTION->prepare($sql);
+    $stmt->execute(['user_id' => $id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
 }
