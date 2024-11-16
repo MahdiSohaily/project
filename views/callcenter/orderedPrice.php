@@ -89,8 +89,8 @@ if ($isValidCustomer) :
                     </thead>
                     <tbody id="priceReport">
                         <?php
-                        $persianName = '';
                         $isDisplayAllowed = false;
+                        $persianName = '';
                         foreach ($explodedCodes as $code) {
                             $relation_id =  array_key_exists($code, $relation_ids) ? $relation_ids[$code] : 'xxx';
                             $max = 0;
@@ -105,6 +105,8 @@ if ($isValidCustomer) :
                                         if ($value['partName'] != '') {
                                             $persianName = $value['partName'];
                                             break;
+                                        } else {
+                                            $persianName = '';
                                         }
                                     }
                                 }
@@ -286,15 +288,24 @@ if ($isValidCustomer) :
             function copyPriceDetails(element) {
                 // Select all elements with data attributes for names and descriptions
                 const names = document.querySelectorAll('[data-persianName]');
+
+
                 const descriptions = document.querySelectorAll('[data-description]');
                 const final = [];
 
                 // Loop through each name and corresponding description
-                for (let index = 0; index < names.length; index++) {
+                for (let index = 0; index < descriptions.length; index++) {
+                    let persianName = '';
+
                     // Get Persian name and replace brands in the description
-                    const persianName = names[index].getAttribute('data-persianName');
+                    persianName = names[index].getAttribute('data-persianName');
+
+                    if (persianName == '') {
+                        continue;
+                    }
+
                     let description = replaceBrandsWithPersian(descriptions[index].getAttribute('data-description'));
-                    if (description === 'موجود نیست' || description === 'نیاز به بررسی') {
+                    if (description == 'موجود نیست' || description == 'نیاز به بررسی') {
                         description = '-';
                     }
 
