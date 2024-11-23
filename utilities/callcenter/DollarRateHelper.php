@@ -268,7 +268,7 @@ function addRelatedBrands($brands)
         'FAKE GEN' => ['CHINA'],
         'OEMAX' => ['CHINA'],
         'OE MAX' => ['CHINA'],
-        'MAXFIT ' => ['CHINA'],
+        'MAXFIT' => ['CHINA'],
         'FAKE GEN' => ['KOREA'],
         'GEO SUNG' => ['KOREA'],
         'YULIM' => ['KOREA'],
@@ -286,6 +286,7 @@ function addRelatedBrands($brands)
     $brands = array_map('trim', $brands);
 
     foreach ($brands as $brand) {
+        $brand = trim($brand);
         if (isset($brandAssociations[$brand])) {
             $brands = array_merge($brands, $brandAssociations[$brand]);
         }
