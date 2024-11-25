@@ -36,6 +36,20 @@ function displayBill() {
             </td>
             <td class="text-sm">`;
 
+    // Extract the part inside parentheses
+    const input = item.partName;
+    // Extract the part inside parentheses
+    const match = input.match(/\((.*?)\)/);
+    const insideParentheses = match ? match[1] : null;
+
+    // Extract the part after the last dash
+    const afterLastDash = input.split("-").pop().trim();
+
+    // Determine the result
+    const result = insideParentheses
+      ? `${insideParentheses} - ${afterLastDash}`
+      : input;
+
     if (factorType == "partner") {
       template += `<span>${nameParts[0]}
                       ${
@@ -45,7 +59,7 @@ function displayBill() {
                       } 
                  </span>`;
     } else {
-      template += `<span>${item.partName}</span>`;
+      template += `<span>${result}</span>`;
     }
 
     template += `</td> <td class="text-sm border-r border-l-2 border-gray-800">

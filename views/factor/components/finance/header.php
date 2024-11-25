@@ -96,32 +96,49 @@
                 }
             }
 
-            template += `
-                <tr style="padding: 10px !important;" class="even:bg-gray-100">
-                    <td class="text-sm text-center">
-                        <span>${counter}</span>
-                    </td>
-                    <?php if ($factorType): ?>
-                        <td class="text-sm ${specialClass}">
+            <?php if ($factorType == 'partner'): ?>
+                template += `
+                <tr class="even:bg-gray-100">
+                        <td style="padding-block:10px !important;" class="text-sm text-center">
+                            <span>${counter}</span>
+                        </td>
+                        <td style="padding-block:10px !important" class="text-sm ${specialClass}" colspan="2">
                             <span>${nameParts[0]}
                             ${nameParts[1] ? ` - <span class="${excludeClass}">${nameParts[1]}</span>` : ''}
                             </span>
+                            <table style="direction:ltr !important; border:none !important" id="${item.id}_finance" class="float-left">
+                            </table>
+                            <span class="float-left" id="des_${item.id}_finance"></span>
                         </td>
-                    <?php else: ?>
+                        <td style="padding:15px 0 !important; width:10px !important" class="text-sm ${item.quantity != 1 ? 'font-semibold' : ''}">
+                            <span>${item.quantity}</span>
+                        </td>
+                        <td class="text-sm text-center">
+                            <span>${formatAsMoney((Number(item.price_per))/10000)}</span>
+                        </td>
+                    </tr>`;
+            <?php else: ?>
+                template += `
+                    <tr style="padding: 10px !important;" class="even:bg-gray-100">
+                        <td class="text-sm text-center">
+                            <span>${counter}</span>
+                        </td>
                         <td class="text-sm ${specialClass}">
                             <span>${item.partName}</span>
                         </td>
-                    <?php endif; ?>
-                    <td class="text-sm border-r border-l-2 border-gray-800">
-                        <span>${item.quantity}</span>
-                    </td>
-                    <td class="text-sm">
-                        <span>${formatAsMoney(Number(item.price_per))}</span>
-                    </td>
-                    <td class="text-sm">
-                        <span>${formatAsMoney(payPrice)}</span>
-                    </td>
-                </tr> `;
+                        <td class="text-sm border-r border-l-2 border-gray-800">
+                            <span>${item.quantity}</span>
+                        </td>
+                        <td class="text-sm">
+                            <span>${formatAsMoney(Number(item.price_per))}</span>
+                        </td>
+                        <td class="text-sm">
+                            <span>${formatAsMoney(payPrice)}</span>
+                        </td>
+                    </tr> `;
+            <?php endif; ?>
+
+
             counter++;
         }
         finance_bill_body.innerHTML = template;

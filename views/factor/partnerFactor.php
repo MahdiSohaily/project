@@ -108,8 +108,31 @@ require_once '../../layouts/callcenter/sidebar.php';
             </tr>`;
         }
 
+        for (item of preBillItems) {
+            document.getElementById(item.id + '_finance').innerHTML += `
+           <tr>
+                <td style="padding: 3px !important; border: none !important; text-align: center !important; font-size:13px">${item.partNumber}</td>
+                <td style="padding: 3px !important; border: none !important; text-align: center !important;">
+                    <p class="text-xs text-center ${ !specialBrands.includes(item.brandName) ? specialClass : ''}">
+                        ${item.brandName}
+                    </p>
+                </td>
+                <td style="padding: 3px !important; border: none !important; text-align: center !important; font-size:13px">
+                    <p class="text-xs text-center bg-gray-300 px-1 py-1 rounded-sm">
+                        ${item.quantity}
+                    </p>
+                </td>
+                <td style="padding: 3px !important; border: none !important; text-align: center !important; font-size:13px">${item.pos1}</td>
+                <td style="padding: 3px !important; border: none !important; text-align: center !important; font-size:13px">${item.pos2}</td>
+            </tr>`;
+        }
+
         for (item in billItemsDescription) {
             document.getElementById('des_' + item).innerHTML += `<span class="pl-3 text-xs">${billItemsDescription[item]}</span>`;
+        }
+
+        for (item in billItemsDescription) {
+            document.getElementById('des_' + item + '_finance').innerHTML += `<span class="pl-3 text-xs">${billItemsDescription[item]}</span>`;
         }
 
     <?php } else { ?>
