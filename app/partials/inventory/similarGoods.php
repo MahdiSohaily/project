@@ -70,7 +70,20 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber)
 
     $billItemsDescription = [$item->id => []];
 
-    sendSellsReportMessage($selectedGoods, $customer, $factorNumber);
+    if (count($selectedGoods)) {
+        $name = $_SESSION['user']['name'] ?? '';
+        $family = $_SESSION['user']['family'] ?? '';
+        $fullName = $name . ' ' . $family;
+        $template = "{$customer->displayName} {$customer->family} \nکاربر : {$fullName} \nشماره فاکتور : {$factorNumber} \n";
+        sendSellsReportMessage($template);
+
+        foreach ($selectedGoods as $good) {
+            $template = PHP_EOL . $good['partNumber'] . ' ' . $good['brandName'] . ' ' . $good['quantity'] . ' ' . $good['pos1'] . ' ' . $good['pos2'] . PHP_EOL;
+            sendSellsReportMessage($template);
+        }
+        $template = "-----------------------------" . PHP_EOL;
+        sendSellsReportMessage($template);
+    }
 
     if (hasPreSellFactor($billId)) {
         update_pre_bill($billId, json_encode($selectedGoods), json_encode($billItemsDescription));
@@ -79,18 +92,8 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber)
     }
 }
 
-function sendSellsReportMessage($goods, $customer, $factorNumber)
+function sendSellsReportMessage($template)
 {
-    $name = $_SESSION['user']['name'] ?? '';
-    $family = $_SESSION['user']['family'] ?? '';
-    $fullName = $name . ' ' . $family;
-    $template = "{$customer->displayName} {$customer->family} \nکاربر : {$fullName} \nشماره فاکتور : {$factorNumber} \n";
-
-    foreach ($goods as $good) {
-        $template .= PHP_EOL . $good['partNumber'] . ' ' . $good['brandName'] . ' ' . $good['quantity'] . ' ' . $good['pos1'] . ' ' . $good['pos2'] . PHP_EOL;
-        $template .= "-----------------------------" . PHP_EOL;
-    }
-
     // Prepare data for POST request
     $postData = array(
         "sendMessage" => "sellsReport",
