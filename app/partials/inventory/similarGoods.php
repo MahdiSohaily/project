@@ -81,7 +81,10 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber)
 
 function sendSellsReportMessage($goods, $customer, $factorNumber)
 {
-    $template = "{$customer->displayName} {$customer->family} \nکاربر : {$_SESSION['username']} \nشماره فاکتور : {$factorNumber} \n";
+    $name = $_SESSION['user']['name'] ?? '';
+    $family = $_SESSION['user']['family'] ?? '';
+    $fullName = $name . ' ' . $family;
+    $template = "{$customer->displayName} {$customer->family} \nکاربر : {$fullName} \nشماره فاکتور : {$factorNumber} \n";
 
     foreach ($goods as $good) {
         $template .= PHP_EOL . $good['partNumber'] . ' ' . $good['brandName'] . ' ' . $good['quantity'] . ' ' . $good['pos1'] . ' ' . $good['pos2'] . PHP_EOL;

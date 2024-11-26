@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($username_err) && empty($password_err)) {
         try {
             // Prepare a select statement
-            $sql = "SELECT id, username, password, roll, profile FROM users WHERE username = :username";
+            $sql = "SELECT id, username, name, family, password, roll, profile FROM users WHERE username = :username";
 
             // Prepare the SQL statement
             $stmt = PDO_CONNECTION->prepare($sql);
