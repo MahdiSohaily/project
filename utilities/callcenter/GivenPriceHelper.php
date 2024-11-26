@@ -297,7 +297,7 @@ function exist($ids)
                     stock.name AS stockName, IFNULL(SUM(exitrecord.qty), 0) AS total_sold,
                     qtybank.qty - IFNULL(SUM(exitrecord.qty), 0) AS remaining_qty
                 FROM {$stock}.qtybank
-                LEFT JOIN yadakshop.brand ON brand.id = qtybank.brand
+                INNER JOIN yadakshop.brand ON brand.id = qtybank.brand
                 LEFT JOIN yadakshop.stock ON stock.id = qtybank.stock_id
                 LEFT JOIN yadakshop.seller ON seller.id = qtybank.seller
                 LEFT JOIN $stock.exitrecord ON qtybank.id = exitrecord.qtyid";
