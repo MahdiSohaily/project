@@ -1,6 +1,6 @@
 <?php
 
-function getSimilarGoods($factorItems, $billId,)
+function getSimilarGoods($factorItems, $billId, $customer, $factorNumber)
 {
     $selectedGoods = [];
     foreach ($factorItems as $item) {
@@ -70,11 +70,44 @@ function getSimilarGoods($factorItems, $billId,)
 
     $billItemsDescription = [$item->id => []];
 
+    sendSellsReportMessage($selectedGoods, $customer, $factorNumber);
+
     if (hasPreSellFactor($billId)) {
         update_pre_bill($billId, json_encode($selectedGoods), json_encode($billItemsDescription));
     } else {
         save_pre_bill($billId, json_encode($selectedGoods), json_encode($billItemsDescription));
     }
+}
+
+function sendSellsReportMessage($goods, $customer, $factorNumber)
+{
+    $template = "{$customer->displayName} {$customer->family} \nکاربر : {$_SESSION['username']} \nشماره فاکتور : {$factorNumber} \n";
+
+    foreach ($goods as $good) {
+        $template .= PHP_EOL . $good['partNumber'] . ' ' . $good['brandName'] . ' ' . $good['quantity'] . ' ' . $good['pos1'] . ' ' . $good['pos2'] . PHP_EOL;
+        $template .= "-----------------------------" . PHP_EOL;
+    }
+
+    // Prepare data for POST request
+    $postData = array(
+        "sendMessage" => "sellsReport",
+        "message" => $template,
+    );
+
+    // Initialize cURL session
+    $ch = curl_init();
+
+    // Set cURL options
+    curl_setopt($ch, CURLOPT_URL, "http://auto.yadak.center/");
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    // Execute cURL request
+    $result = curl_exec($ch);
+
+    // Close cURL session
+    curl_close($ch);
 }
 
 function getGoodsSpecification($completeCode, $allAllowedBrands)
@@ -335,7 +368,6 @@ function save_pre_bill($billId, $billItems, $billItemsDescription)
         echo json_encode(array('status' => 'error', 'message' => 'An error occurred: ' . $th->getMessage()));
     }
 }
-
 
 function update_pre_bill($billId, $billItems, $billItemsDescription)
 {

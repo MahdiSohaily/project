@@ -17,7 +17,7 @@ function getPurchaseReportById($id)
             LEFT JOIN nisha ON qtybank.codeid = nisha.id
             LEFT JOIN seller ON qtybank.seller = seller.id
             LEFT JOIN stock ON qtybank.stock_id = stock.id
-            LEFT JOIN brand ON qtybank.brand = brand.id
+            INNER JOIN brand ON qtybank.brand = brand.id
             LEFT JOIN $stock.exitrecord ON qtybank.id = exitrecord.qtyid
             WHERE qtybank.id = :id
             GROUP BY qtybank.id, nisha.partnumber, stock.name, stock.id, nisha.id, seller.id, seller.name, brand.id, brand.name, qtybank.des, qtybank.qty, qtybank.is_transfered, qtybank.pos1, qtybank.pos2
@@ -60,7 +60,7 @@ function getPurchaseReport($pattern = null)
             LEFT JOIN nisha ON qtybank.codeid = nisha.id
             LEFT JOIN seller ON qtybank.seller = seller.id
             LEFT JOIN stock ON qtybank.stock_id = stock.id
-            LEFT JOIN brand ON qtybank.brand = brand.id
+            INNER JOIN brand ON qtybank.brand = brand.id
             LEFT JOIN $stock.exitrecord ON qtybank.id = exitrecord.qtyid 
             WHERE qtybank.sold_out = 0 ";
 

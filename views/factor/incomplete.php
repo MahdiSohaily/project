@@ -538,6 +538,7 @@ require_once './components/factor.php';
     }
 
     function appendSufix(itemId, suffix) {
+
         for (let i = 0; i < factorItems.length; i++) {
             if (factorItems[i].id == itemId) {
                 const partName = factorItems[i].partName;
@@ -674,21 +675,23 @@ require_once './components/factor.php';
         axios.post("../../app/api/factor/CompleteFactorApi.php", params)
             .then(function(response) {
                 const data = response.data;
+                console.log(data);
+
                 if (data) {
                     const save_message = document.getElementById('save_message');
                     save_message.classList.remove('hidden');
 
-                    setTimeout(() => {
-                        save_message.classList.add('hidden');
-                        if (factorInfo['id']) {
-                            localStorage.setItem('displayName', customerInfo.displayName);
-                            if (factorInfo['partner']) {
-                                window.location.href = './partnerFactor.php?factorNumber=' + factorInfo['id'];
-                            } else {
-                                window.location.href = './yadakFactor.php?factorNumber=' + factorInfo['id'];
-                            }
-                        }
-                    }, 1000);
+                    // setTimeout(() => {
+                    //     save_message.classList.add('hidden');
+                    //     if (factorInfo['id']) {
+                    //         localStorage.setItem('displayName', customerInfo.displayName);
+                    //         if (factorInfo['partner']) {
+                    //             window.location.href = './partnerFactor.php?factorNumber=' + factorInfo['id'];
+                    //         } else {
+                    //             window.location.href = './yadakFactor.php?factorNumber=' + factorInfo['id'];
+                    //         }
+                    //     }
+                    // }, 1000);
 
                 } else {
                     const save_error_message = document.getElementById('save_error_message');
