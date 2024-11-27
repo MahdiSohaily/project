@@ -16,7 +16,7 @@ require_once '../../layouts/callcenter/sidebar.php';
             <?php if ($_SESSION["financialYear"] == '1403') : ?>
                 <div>
                     <span onclick="createIncompleteBill(null, 0)" class="cursor-pointer  text-white rounded bg-sky-600 hover:bg-sky-500 px-3 py-2 text-xs"> پیش فاکتور مصرف کننده</span>
-                    <span onclick="createIncompleteBill(null, 1)" class="cursor-pointer bg-green-600 hover:bg-green-700 text-white rounded px-3 py-2 text-xs"> پیش فاکتور همکار</span>
+                    <span onclick="createIncompleteBill(null, 1)" class="cursor-pointer bg-green-600 hover:bg-green-700 text-white rounded px-3 py-2 text-xs"> پیش فاکتور همکار </span>
                 </div>
             <?php endif; ?>
         </div>

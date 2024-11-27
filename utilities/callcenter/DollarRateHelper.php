@@ -239,6 +239,8 @@ function addRelatedBrands($brands)
 {
     // Map of brands to their related brands
     $brandAssociations = [
+        'KOREA' => ['YONG', 'YONG HOO', 'OEM', 'ONNURI', 'GY', 'MIDO', 'MIRE', 'CARDEX', 'MANDO', 'OSUNG', 'DONGNAM', 'HYUNDAI BRAKE', 'SAM YUNG', 'BRC', 'GEO SUNG', 'YULIM', 'CARTECH', 'HSC', 'KOREA STAR', 'DONI TEC', 'ATC', 'VALEO', 'MB KOREA'],
+        'CHINA' => ['OEMAX', 'JYR', 'RB2', 'IRAN', 'FAKE MOB', 'FAKE GEN', 'OEMAX', 'OE MAX', 'MAXFIT'],
         'HI Q' => ['HIQ', 'HI'],
         'MOB' => ['MOB', 'GEN'],
         'GEN' => ['MOB', 'GEN'],

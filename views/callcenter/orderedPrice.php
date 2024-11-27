@@ -64,8 +64,10 @@ if ($isValidCustomer) :
                         <textarea style="direction: ltr !important;" onchange="filterCode(this)" id="code" name="code" required class="h-full bg-transparent w-full p-2 text-white placeholder-white outline-none focus:border-white" placeholder="لطفا کد های مورد نظر خود را در خط های مجزا قرار دهید"></textarea>
                     </div>
                     <span class="flex justify-between">
-                        <button type="submit" formaction="../factor/createPreCompleteBill.php" class="inline-flex self-end items-center px-5 py-2 bg-gray-700 font-semibold text-xs text-white hover:bg-sky-700 focus:bg-sky-700 active:bg-sky-900 focus:outline-none"> ایجاد فاکتور
-                        </button>
+                        <div class="flex gap-2 items-center">
+                            <button type="submit" formaction="../factor/createPreCompleteBill.php?partner=0" class="cursor-pointer  text-white rounded bg-sky-600 hover:bg-sky-500 px-3 py-2 text-xs">پیش فاکتور مصرف کننده</button>
+                            <button type="submit" formaction="../factor/createPreCompleteBill.php?partner=1" class="cursor-pointer bg-green-600 hover:bg-green-700 text-white rounded px-3 py-2 text-xs">پیش فاکتور همکار</button>
+                        </div>
                         <button type="type" class="inline-flex self-end p-2 bg-indigo-500 border-indigo-700 font-semibold text-xs text-white hover:bg-indigo-700">
                             جستجو اقلام
                         </button>

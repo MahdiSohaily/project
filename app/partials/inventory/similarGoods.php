@@ -2,6 +2,7 @@
 
 function getSimilarGoods($factorItems, $billId, $customer, $factorNumber)
 {
+
     $selectedGoods = [];
     foreach ($factorItems as $item) {
         $factorItemParts = explode('-', $item->partName);
@@ -29,6 +30,7 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber)
         }
 
         $ALLOWED_BRANDS =  addRelatedBrands($ALLOWED_BRANDS);
+
         $goods = getGoodsSpecification($goodNamePart, $ALLOWED_BRANDS);
 
         $inventoryGoods = isset($goods['goods']) ? $goods['goods'] : [];
@@ -245,6 +247,8 @@ function fetchCodesWithInfo($existingGoods, $allowedBrands, $completeCode)
     foreach ($existingGoods as $key => $code) {
         foreach ($code as $item) {
             if (in_array(trim($item['brandName']), $allowedBrands)) {
+                $item['brandName'] = strtoupper(trim($item['brandName']));
+                $allowedBrands = array_map('strtoupper', $allowedBrands);
                 $item['partNumber'] = $key;
                 if ($key == $completeCode) {
                     $specifiedCode[] = $item;
@@ -281,21 +285,6 @@ function fetchCodesWithInfo($existingGoods, $allowedBrands, $completeCode)
         }
     }
 
-    // usort($specifiedCode, function ($a, $b) {
-    //     // Convert date strings to timestamps for comparison
-    //     return strtotime($a['invoice_date']) - strtotime($b['invoice_date']);
-    // });
-
-    // usort($YadakShopInventory, function ($a, $b) {
-    //     // Convert date strings to timestamps for comparison
-    //     return strtotime($b['invoice_date']) - strtotime($a['invoice_date']);
-    // });
-
-    // usort($otherInventory, function ($a, $b) {
-    //     // Convert date strings to timestamps for comparison
-    //     return strtotime($b['invoice_date']) - strtotime($a['invoice_date']);
-    // });
-
     // Merge inventories
     $CODES_INFORMATION['goods'] = array_merge($specifiedCode, $YadakShopInventory, $otherInventory);
 
@@ -319,7 +308,6 @@ function getTotalQuantity($goods = [], $brandsName = [])
     }
     return $totalQuantity;
 }
-
 
 function addToBillItems($good, $quantity, &$selectedGoods, $index)
 {

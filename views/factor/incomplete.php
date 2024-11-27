@@ -675,7 +675,6 @@ require_once './components/factor.php';
         axios.post("../../app/api/factor/CompleteFactorApi.php", params)
             .then(function(response) {
                 const data = response.data;
-                console.log(data);
 
                 if (data) {
                     const save_message = document.getElementById('save_message');

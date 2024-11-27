@@ -147,7 +147,7 @@ $factorInfo = [
     'withdraw' => 0,
     'total' => 0,
     'date' => $dateTime,
-    'partner' => 1,
+    'partner' => $_GET['partner'],
     'totalInWords' => null
 ];
 
