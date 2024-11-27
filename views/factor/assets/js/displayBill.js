@@ -4,14 +4,14 @@ if (factorInfo.partner !== 0) {
   changeLayout("partner");
 }
 
-function getBillData() {
+function getBillData(type) {
   document.getElementById("billNO_bill").innerHTML = factorInfo.billNO;
-  previewBill();
+  previewBill(type);
   displayCustomer();
   displayBillDetails();
 }
 
-function previewBill() {
+function previewBill(type) {
   let counter = 1;
   let template = ``;
   let totalPrice = 0;
@@ -37,6 +37,20 @@ function previewBill() {
       }
     }
 
+    // Extract the part inside parentheses
+    const input = item.partName;
+    // Extract the part inside parentheses
+    const match = input.match(/\((.*?)\)/);
+    const insideParentheses = match ? match[1] : null;
+
+    // Extract the part after the last dash
+    const afterLastDash = input.split("-").pop().trim();
+
+    // Determine the result
+    const result = insideParentheses
+      ? `${insideParentheses} - ${afterLastDash}`
+      : input;
+
     template += `
             <tr style="padding: 10px !important;" class="even:bg-gray-100">
             <td class="text-sm text-center">
@@ -53,7 +67,8 @@ function previewBill() {
                       } 
                  </span>`;
     } else {
-      template += `<span>${item.partName}</span>`;
+      if (type == "yadak") template += `<span>${result}</span>`;
+      else template += `<span>${item.partName}</span>`;
     }
 
     template += `</td> <td class="text-sm border-r border-l-2 border-gray-800">
@@ -160,7 +175,7 @@ function changeLayout(layout) {
                                                               <span style="direction: ltr !important;">
                                                                   ۰۹۱۲ - ۰۸۱ ۸۳ ۵۵
                                                               </span>`;
-      previewBill();
+      previewBill(layout);
       break;
     case "insurance":
       logo_element.src = insurance_logo;
@@ -170,7 +185,7 @@ function changeLayout(layout) {
       document.getElementById("factor_phone").innerHTML = `<span>
                                                                   ۷۷۵۴۸۹۴۶ - ۰۲۱
                                                               </span>`;
-      previewBill();
+      previewBill(layout);
       break;
     case "partner":
       logo_element.src = partner_logo;
@@ -188,7 +203,7 @@ function changeLayout(layout) {
                                                               <span style="direction: ltr !important;">
                                                                   ۰۲۱ - ۳۳ ۹۸ ۷۲ ۳۴
                                                               </span>`;
-      previewBill();
+      previewBill(layout);
       break;
     case "korea":
       logo_element.src = korea_logo;
@@ -202,7 +217,7 @@ function changeLayout(layout) {
                                                               <span>
                                                                   ۰۹۳۰ - ۳۱۵ ۰۶ ۹۴
                                                               </span>`;
-      previewBill();
+      previewBill(layout);
       break;
   }
 }

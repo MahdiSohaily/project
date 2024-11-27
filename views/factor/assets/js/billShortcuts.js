@@ -8,7 +8,8 @@ function handelShortcuts(event) {
   if (event.keyCode === 120) {
     // Toggle the preview bill and use a callback to get data after the toggle
     togglePreviewBill(function () {
-      getBillData();
+      const type = factorInfo.partner !== 0 ? 'partner': 'yadak';
+      getBillData(type);
       // Get the parent div
       var parentDiv = document.getElementById("bill_body_pdf");
       var previewBill = document.getElementById("previewBill");

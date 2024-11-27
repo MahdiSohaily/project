@@ -45,7 +45,7 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber)
                 break;
             }
 
-            if (in_array($good['brandName'], $ALLOWED_BRANDS)) {
+            if (in_array(strtoupper($good['brandName']), $ALLOWED_BRANDS)) {
                 if ($totalQuantity >= $billItemQuantity && $billItemQuantity > 0) {
                     $sellQuantity = $billItemQuantity;
                     if ($billItemQuantity >= $good['remaining_qty']) {
@@ -80,10 +80,21 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber)
         sendSellsReportMessage($template);
 
         foreach ($selectedGoods as $good) {
-            $template = PHP_EOL . $good['partNumber'] . ' ' . $good['brandName'] . ' ' . $good['quantity'] . ' ' . $good['pos1'] . ' ' . $good['pos2'] . PHP_EOL;
-            sendSellsReportMessage($template);
+            $brand = $good['brandName'];
+            // Determine the color of the dot based on the brand name.
+            $dotColor = ($brand === 'GEN' || $brand === 'MOB') ? '🔷' : '🔶';
+
+            $template = PHP_EOL
+                . $good['partNumber'] . str_pad($good['quantity'], 8, ' ', STR_PAD_RIGHT) // Part number
+                . '<b>' . $brand . '</b> '    // Bold brand name
+                . $dotColor . ' '             // Dot color
+                . str_pad($good['quantity'], 8, ' ', STR_PAD_RIGHT) // Quantity, right-padded to align
+                . $good['pos1'] . ' '         // Position 1
+                . $good['pos2']               // Position 2
+                . PHP_EOL;
+            sendSellsReportMessage($template, 'HTML');
         }
-        $template = "-----------------------------" . PHP_EOL;
+        $template = str_repeat('➖', 8) . PHP_EOL;
         sendSellsReportMessage($template);
     }
 
@@ -94,12 +105,13 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber)
     }
 }
 
-function sendSellsReportMessage($template)
+function sendSellsReportMessage($template, $type = 'normal')
 {
     // Prepare data for POST request
     $postData = array(
         "sendMessage" => "sellsReport",
         "message" => $template,
+        "type" => $type
     );
 
     // Initialize cURL session
@@ -246,7 +258,7 @@ function fetchCodesWithInfo($existingGoods, $allowedBrands, $completeCode)
 
     foreach ($existingGoods as $key => $code) {
         foreach ($code as $item) {
-            if (in_array(trim($item['brandName']), $allowedBrands)) {
+            if (in_array(strtoupper(trim($item['brandName'])), $allowedBrands)) {
                 $item['brandName'] = strtoupper(trim($item['brandName']));
                 $allowedBrands = array_map('strtoupper', $allowedBrands);
                 $item['partNumber'] = $key;

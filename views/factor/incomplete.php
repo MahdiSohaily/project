@@ -227,7 +227,8 @@ require_once './components/factor.php';
                         <span style="font-size:12px" onclick="appendSufix('${item.id}','کره')" class="cursor-pointer text-md text-white bg-gray-600 rounded p-1" title="">کره</span>
                         <span style="font-size:12px" onclick="appendSufix('${item.id}','متفرقه')" class="cursor-pointer text-md text-white bg-gray-600 rounded p-1" title="">متفرقه</span>
                         <span style="font-size:12px" onclick="appendSufix('${item.id}','تایوان')" class="cursor-pointer text-md text-white bg-gray-600 rounded p-1" title="">تایوان</span>
-                        <span style="font-size:12px" onclick="appendSufix('${item.id}','شرکتی')" class="cursor-pointer text-md text-white bg-gray-600 rounded p-1" title="">شرکتی</span>`;
+                        <span style="font-size:12px" onclick="appendSufix('${item.id}','شرکتی')" class="cursor-pointer text-md text-white bg-gray-600 rounded p-1" title="">شرکتی</span>
+                        <span style="font-size:12px" onclick="appendSufix('${item.id}','ترک')" class="cursor-pointer text-md text-white bg-gray-600 rounded p-1" title="">ترک</span>`;
             if (customerInfo.car != '' && customerInfo.car != null) {
                 template += `<span style="font-size:12px" onclick="appendCarSufix('${item.id}','${customerInfo.car}')" class="cursor-pointer text-md text-white bg-gray-600 rounded p-1" title="">${customerInfo.car}</span>`;
             }
@@ -621,6 +622,7 @@ require_once './components/factor.php';
     function generateBill(element) {
         // Disable the element to avoid multiple requests
         element.disabled = true;
+        element.innerHTML = 'در حال پراسس';
 
         // Set the date using Moment.js with Persian (Farsi) locale
         factorInfo.date = moment().locale('fa').format('YYYY/MM/DD');
@@ -675,11 +677,9 @@ require_once './components/factor.php';
         axios.post("../../app/api/factor/CompleteFactorApi.php", params)
             .then(function(response) {
                 const data = response.data;
-
                 if (data) {
                     const save_message = document.getElementById('save_message');
                     save_message.classList.remove('hidden');
-
                     setTimeout(() => {
                         save_message.classList.add('hidden');
                         if (factorInfo['id']) {
@@ -712,7 +712,6 @@ require_once './components/factor.php';
                 element.disabled = false;
             });
     }
-
 
     function insuranceBillDisplay() {
         localStorage.setItem('displayName', customerInfo.displayName);
