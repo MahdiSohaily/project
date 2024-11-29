@@ -1,9 +1,10 @@
 <?php
 
-function getSimilarGoods($factorItems, $billId, $customer, $factorNumber)
+function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $factorType)
 {
-
     $selectedGoods = [];
+    $lowQuantity = [];
+
     foreach ($factorItems as $item) {
         $factorItemParts = explode('-', $item->partName);
 
@@ -12,106 +13,114 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber)
 
         $ALLOWED_BRANDS = [$goodNameBrand];
 
-        if ($goodNameBrand == 'اصلی' || $goodNameBrand == 'GEN' || $goodNameBrand == 'MOB') {
-            $ALLOWED_BRANDS[] = 'GEN';
-            $ALLOWED_BRANDS[] = 'MOB';
+        // Add related brands based on the current brand
+        switch ($goodNameBrand) {
+            case 'اصلی':
+            case 'GEN':
+            case 'MOB':
+                $ALLOWED_BRANDS = array_merge($ALLOWED_BRANDS, ['GEN', 'MOB']);
+                break;
+            case 'شرکتی':
+                $ALLOWED_BRANDS[] = 'IRAN';
+                break;
+            case 'متفرقه':
+            case 'چین':
+                $ALLOWED_BRANDS[] = 'CHINA';
+                break;
+            case 'کره':
+            case 'کره ای':
+                $ALLOWED_BRANDS[] = 'KOREA';
+                break;
         }
 
-        if ($goodNameBrand == 'شرکتی') {
-            $ALLOWED_BRANDS[] = 'IRAN';
-        }
-
-        if ($goodNameBrand == 'متفرقه' || $goodNameBrand == 'چین') {
-            $ALLOWED_BRANDS[] = 'CHINA';
-        }
-
-        if ($goodNameBrand == 'کره' || $goodNameBrand == 'کره ای') {
-            $ALLOWED_BRANDS[] = 'KOREA';
-        }
-
-        $ALLOWED_BRANDS =  addRelatedBrands($ALLOWED_BRANDS);
+        $ALLOWED_BRANDS = addRelatedBrands($ALLOWED_BRANDS);
 
         $goods = getGoodsSpecification($goodNamePart, $ALLOWED_BRANDS);
-
         $inventoryGoods = isset($goods['goods']) ? $goods['goods'] : [];
 
         $billItemQuantity = $item->quantity;
-        $counter = 1;
         $totalQuantity = getTotalQuantity($inventoryGoods, $ALLOWED_BRANDS);
 
-        $index = 0; // Counter to track the current index
         foreach ($inventoryGoods as $good) {
             if ($billItemQuantity == 0) {
                 break;
             }
 
             if (in_array(strtoupper($good['brandName']), $ALLOWED_BRANDS)) {
-                if ($totalQuantity >= $billItemQuantity && $billItemQuantity > 0) {
-                    $sellQuantity = $billItemQuantity;
-                    if ($billItemQuantity >= $good['remaining_qty']) {
-                        $sellQuantity = $good['remaining_qty'];
-                        $billItemQuantity -= $good['remaining_qty'];
-                        addToBillItems($good, $sellQuantity, $selectedGoods, $item->id);
-                    } else {
-                        $sellQuantity = $billItemQuantity;
-                        addToBillItems($good, $sellQuantity, $selectedGoods, $item->id);
-                        break;
-                    }
-                }
-            } else {
-                if ($index === count($inventoryGoods) - 1) {
-                    if ($goodNameBrand == 'اصلی') {
-                        $goodNameBrand = 'GEN یا MOB';
-                    }
+                if ($totalQuantity >= $billItemQuantity) {
+                    $sellQuantity = min($billItemQuantity, $good['remaining_qty']);
+                    $billItemQuantity -= $sellQuantity;
+
+                    addToBillItems($good, $sellQuantity, $selectedGoods, $item->id);
+                } else {
+                    array_push($lowQuantity, [...$good, 'required' => $billItemQuantity - $totalQuantity]);
+                    break;
                 }
             }
-            $counter++;
-            $index++;
         }
     }
 
-    $billItemsDescription = [$item->id => []];
-
-    if (count($selectedGoods)) {
-        $name = $_SESSION['user']['name'] ?? '';
-        $family = $_SESSION['user']['family'] ?? '';
-        $fullName = $name . ' ' . $family;
-        $template = "{$customer->displayName} {$customer->family} \nکاربر : {$fullName} \nشماره فاکتور : {$factorNumber} \n";
-        sendSellsReportMessage($template);
-
-        foreach ($selectedGoods as $good) {
-            $brand = $good['brandName'];
-            // Determine the color of the dot based on the brand name.
-            $dotColor = ($brand === 'GEN' || $brand === 'MOB') ? '🔷' : '🔶';
-
-            $template = PHP_EOL
-                . $good['partNumber'] . str_pad($good['quantity'], 8, ' ', STR_PAD_RIGHT) // Part number
-                . '<b>' . $brand . '</b> '    // Bold brand name
-                . $dotColor . ' '             // Dot color
-                . str_pad($good['quantity'], 8, ' ', STR_PAD_RIGHT) // Quantity, right-padded to align
-                . $good['pos1'] . ' '         // Position 1
-                . $good['pos2']               // Position 2
-                . PHP_EOL;
-            sendSellsReportMessage($template, 'HTML');
-        }
-        $template = str_repeat('➖', 8) . PHP_EOL;
-        sendSellsReportMessage($template);
+    if (!empty($selectedGoods) || !empty($lowQuantity)) {
+        sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, $lowQuantity);
     }
 
     if (hasPreSellFactor($billId)) {
-        update_pre_bill($billId, json_encode($selectedGoods), json_encode($billItemsDescription));
+        update_pre_bill($billId, json_encode($selectedGoods), json_encode([]));
     } else {
-        save_pre_bill($billId, json_encode($selectedGoods), json_encode($billItemsDescription));
+        save_pre_bill($billId, json_encode($selectedGoods), json_encode([]));
     }
 }
 
-function sendSellsReportMessage($template, $type = 'normal')
+function sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, $lowQuantity)
 {
-    // Prepare data for POST request
+    $name = $_SESSION['user']['name'] ?? '';
+    $family = $_SESSION['user']['family'] ?? '';
+    $fullName = $name . ' ' . $family;
+
+    $header = "{$customer->displayName} {$customer->family}\n"
+        . "کاربر : {$fullName}\n"
+        . "شماره فاکتور : {$factorNumber}\n";
+
+    sendSellsReportMessage($header, $factorType);
+
+    foreach ($selectedGoods as $good) {
+        $template = formatGoodMessage($good);
+        sendSellsReportMessage($template, $factorType);
+    }
+
+    foreach ($lowQuantity as $good) {
+        $template = formatGoodMessage($good)
+            . "مقدار مورد نیاز: {$good['required']} ❌❌ \n";
+        sendSellsReportMessage($template, $factorType);
+    }
+
+    $footer = str_repeat('➖', 8) . PHP_EOL;
+    sendSellsReportMessage($footer, $factorType);
+}
+
+function formatGoodMessage($good)
+{
+    $brand = $good['brandName'];
+    $dotColor = ($brand === 'GEN' || $brand === 'MOB') ? '🔷' : '🔶';
+
+    return PHP_EOL
+        . str_pad($good['partNumber'], 12, ' ', STR_PAD_RIGHT) // Align part number
+        . $brand . ' '                // Brand name
+        . $dotColor . ' '             // Dot color
+        . str_pad($good['quantity'], 8, ' ', STR_PAD_RIGHT) // Align quantity
+        . $good['pos1'] . ' '         // Position 1
+        . $good['pos2']               // Position 2
+        . PHP_EOL;
+}
+
+
+function sendSellsReportMessage($template, $type)
+{
+    $typeID = $type == 0 ? 3516 : 3514;
     $postData = array(
         "sendMessage" => "sellsReport",
         "message" => $template,
-        "type" => $type
+        "topic_id" => $typeID
     );
 
     // Initialize cURL session
