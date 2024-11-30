@@ -622,7 +622,7 @@ require_once './components/factor.php';
     function generateBill(element) {
         // Disable the element to avoid multiple requests
         element.disabled = true;
-        element.innerHTML = 'در حال پراسس';
+        element.innerHTML = 'در حال انتظار';
 
         // Set the date using Moment.js with Persian (Farsi) locale
         factorInfo.date = moment().locale('fa').format('YYYY/MM/DD');
@@ -682,17 +682,17 @@ require_once './components/factor.php';
                 if (data) {
                     const save_message = document.getElementById('save_message');
                     save_message.classList.remove('hidden');
-                    // setTimeout(() => {
-                    //     save_message.classList.add('hidden');
-                    //     if (factorInfo['id']) {
-                    //         localStorage.setItem('displayName', customerInfo.displayName);
-                    //         if (factorInfo['partner']) {
-                    //             window.location.href = './partnerFactor.php?factorNumber=' + factorInfo['id'];
-                    //         } else {
-                    //             window.location.href = './yadakFactor.php?factorNumber=' + factorInfo['id'];
-                    //         }
-                    //     }
-                    // }, 1000);
+                    setTimeout(() => {
+                        save_message.classList.add('hidden');
+                        if (factorInfo['id']) {
+                            localStorage.setItem('displayName', customerInfo.displayName);
+                            if (factorInfo['partner']) {
+                                window.location.href = './partnerFactor.php?factorNumber=' + factorInfo['id'];
+                            } else {
+                                window.location.href = './yadakFactor.php?factorNumber=' + factorInfo['id'];
+                            }
+                        }
+                    }, 1000);
 
                 } else {
                     const save_error_message = document.getElementById('save_error_message');
