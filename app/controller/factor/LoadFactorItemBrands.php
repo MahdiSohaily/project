@@ -137,7 +137,7 @@ function getFinalPriceBrands($price)
     // Create a mapping for complex brand names
     $complexBrandMap = [
         'HI' => 'HI Q',
-        'HYUNDAI' => 'HYUNDAI BREAK',
+        'HYUNDAI' => 'HYUNDAI BRAKE',
         'MB' => 'MB KOREA',
         'OE' => 'OE MAX',
         'SAM' => 'SAM YUNG',

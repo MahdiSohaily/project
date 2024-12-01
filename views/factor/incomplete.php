@@ -78,11 +78,47 @@ require_once '../../layouts/callcenter/sidebar.php';
                 <div>
                     <td class="py-2 px-3 text-white bg-gray-800 text-md">ماشین</td>
                     <td class="py-2 px-4">
-                        <input autocomplete="off" onkeyup="updateCustomerInfo(this)" class="w-full p-2 border text-gray-500" placeholder="نوعیت ماشین مشتری را مشخص کنید" type="text" name="car" id="car">
+                        <input autocomplete="off" onkeyup="updateCustomerInfo(this)"
+                            onchange="handleInputChange(event)"
+                            data-old=''
+                            class="w-full p-2 border text-gray-500" placeholder="نوعیت ماشین مشتری را مشخص کنید" type="text" name="car" id="car">
                     </td>
                 </div>
             </div>
         </div>
+        <script>
+            function handleInputChange(event) {
+                const oldValue = event.target.getAttribute('data-old');
+                const inputValue = event.target.value.trim(); // Get and trim the input value
+                event.target.setAttribute('data-old', inputValue);
+
+
+                if (inputValue) {
+                    let found = false; // Flag to track if a match is found
+
+                    for (let item of factorItems) {
+                        if (oldValue != '' && item.partName.includes(oldValue)) {
+                            item.partName = item.partName.replace(oldValue, inputValue);
+                        } else {
+                            const lastDashIndex = item.partName.lastIndexOf('-');
+
+                            if (lastDashIndex !== -1) {
+                                // Insert inputValue before the last '-'
+                                item.partName =
+                                    item.partName.slice(0, lastDashIndex).trim() +
+                                    ` ${inputValue} -` +
+                                    item.partName.slice(lastDashIndex + 1).trim();
+                            } else {
+                                // If no '-' is found, add inputValue at the end
+                                item.partName = `${item.partName} ${inputValue}`;
+                            }
+                        }
+                    }
+                }
+
+                displayBill();
+            }
+        </script>
         <!-- bill body table -->
         <div class="bg-white shadow-md p-2 w-full col-span-3 mb-3">
             <div class=" mx-auto">
@@ -178,6 +214,7 @@ require_once './components/factor.php';
         document.getElementById('family').value = customerInfo.family;
         document.getElementById('phone').value = customerInfo.phone;
         document.getElementById('car').value = customerInfo.car;
+        document.getElementById('car').setAttribute('data-old', customerInfo.car);
         document.getElementById('address').value = customerInfo.address;
     }
 
@@ -677,7 +714,6 @@ require_once './components/factor.php';
         axios.post("../../app/api/factor/CompleteFactorApi.php", params)
             .then(function(response) {
                 const data = response.data;
-                console.log(data); 
 
                 if (data) {
                     const save_message = document.getElementById('save_message');

@@ -11,6 +11,18 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
         $goodNameBrand = trim($factorItemParts[1]);
         $goodNamePart = trim(explode(' ', $factorItemParts[0])[0]);
 
+        if ($goodNameBrand == 'KOREA' || $goodNameBrand == 'CHINA') {
+            $brands = [
+                'KOREA' => ['YONG', 'YONG HOO', 'OEM', 'ONNURI', 'GY', 'MIDO', 'MIRE', 'CARDEX',
+                            'MANDO', 'OSUNG', 'DONGNAM', 'HYUNDAI BRAKE', 'SAM YUNG', 'BRC', 'GEO SUNG',
+                            'YULIM', 'CARTECH', 'HSC', 'KOREA STAR', 'DONI TEC', 'ATC', 'VALEO', 'MB KOREA'],
+                            
+                'CHINA' => ['OEMAX', 'JYR', 'RB2', 'IRAN', 'FAKE MOB', 'FAKE GEN', 'OEMAX', 'OE MAX', 'MAXFIT']
+            ];
+            $ALLOWED_BRANDS = [$goodNameBrand, ...[$brands[$goodNameBrand]]];
+        }
+
+
         $ALLOWED_BRANDS = [$goodNameBrand];
 
         // Add related brands based on the current brand
@@ -36,6 +48,7 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
         $ALLOWED_BRANDS = addRelatedBrands($ALLOWED_BRANDS);
 
         $goods = getGoodsSpecification($goodNamePart, $ALLOWED_BRANDS);
+
         $inventoryGoods = isset($goods['goods']) ? $goods['goods'] : [];
 
         $billItemQuantity = $item->quantity;
@@ -127,7 +140,7 @@ function sendSellsReportMessage($template, $type)
     $ch = curl_init();
 
     // Set cURL options
-    curl_setopt($ch, CURLOPT_URL, "http://auto.yadak.center/");
+    curl_setopt($ch, CURLOPT_URL, "http://sells.yadak.center/");
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -141,13 +154,13 @@ function sendSellsReportMessage($template, $type)
 
 function getGoodsSpecification($completeCode, $allAllowedBrands)
 {
-
     $similarCodes = setup_loading($completeCode);
 
     $relatedGoods =  $similarCodes['existing'] ? current(current($similarCodes['existing'])) : [];
 
     if ($relatedGoods) {
         $stockInfo = $relatedGoods['relation']['stockInfo'];
+
 
         $existingGoods = array_filter($stockInfo, function ($item) {
             return count($item) > 0;
@@ -257,6 +270,9 @@ function resultCustomSort($a, $b)
 
 function fetchCodesWithInfo($existingGoods, $allowedBrands, $completeCode)
 {
+    $allowedBrands = array_map('trim', $allowedBrands);
+    $allowedBrands = array_map('strtoupper', $allowedBrands);
+
     $CODES_INFORMATION = [
         'goods' => [],
         'codes' => []
@@ -267,7 +283,9 @@ function fetchCodesWithInfo($existingGoods, $allowedBrands, $completeCode)
 
     foreach ($existingGoods as $key => $code) {
         foreach ($code as $item) {
-            if (in_array(strtoupper(trim($item['brandName'])), $allowedBrands)) {
+            $processedBrand = strtoupper(trim($item['brandName']));
+
+            if (in_array($processedBrand, $allowedBrands)) {
                 $item['brandName'] = strtoupper(trim($item['brandName']));
                 $allowedBrands = array_map('strtoupper', $allowedBrands);
                 $item['partNumber'] = $key;

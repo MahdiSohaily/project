@@ -37,7 +37,7 @@
                  <tr class="text-sm bg-gray-200 odd:bg-orange-200">
                      <td class="p-2 w-80">
                          <div class="editable w-full">
-                             <span class="partname w-full block" <?= ($_SESSION['username'] == 'mahdi') || ($_SESSION['username'] == 'niyayesh') ? 'ondblclick="editPartName(this)"' : '' ?>>
+                             <span class="partname w-full block" ondblclick="editPartName(this)">
                                  <?= empty($item['partName']) ? 'فاقد نام' : $item['partName'] ?>
                              </span>
                              <input type="text" class="p-2 outline-none border-2 border-gray-200" value="<?= $item['partName'] ?>"
@@ -60,7 +60,7 @@
                      <tr class="text-sm bg-gray-200 odd:bg-orange-200">
                          <td class="p-2 w-80">
                              <div class="editable w-full">
-                                 <span class="partname w-full block" <?= ($_SESSION['username'] == 'mahdi') || ($_SESSION['username'] == 'niyayesh') ? 'ondblclick="editPartName(this)"' : '' ?>>
+                                 <span class="partname w-full block" ondblclick="editPartName(this)">
                                      <?= empty($item['partName']) ? 'فاقد نام' : $item['partName'] ?>
                                  </span>
                                  <input type="text" class="p-2 outline-none border-2 border-gray-200" value="<?= $item['partName'] ?>"
