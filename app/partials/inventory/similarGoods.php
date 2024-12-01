@@ -17,13 +17,13 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
                             'MANDO', 'OSUNG', 'DONGNAM', 'HYUNDAI BRAKE', 'SAM YUNG', 'BRC', 'GEO SUNG',
                             'YULIM', 'CARTECH', 'HSC', 'KOREA STAR', 'DONI TEC', 'ATC', 'VALEO', 'MB KOREA'],
                             
-                'CHINA' => ['OEMAX', 'JYR', 'RB2', 'IRAN', 'FAKE MOB', 'FAKE GEN', 'OEMAX', 'OE MAX', 'MAXFIT']
+                'CHINA' => ['OEMAX', 'JYR', 'RB2','Rb2', 'IRAN', 'FAKE MOB', 'FAKE GEN', 'OEMAX', 'OE MAX', 'MAXFIT']
             ];
-            $ALLOWED_BRANDS = [$goodNameBrand, ...[$brands[$goodNameBrand]]];
+            $ALLOWED_BRANDS = [...$brands[$goodNameBrand], $goodNameBrand];
+        } else {
+
+            $ALLOWED_BRANDS = [$goodNameBrand];
         }
-
-
-        $ALLOWED_BRANDS = [$goodNameBrand];
 
         // Add related brands based on the current brand
         switch ($goodNameBrand) {
@@ -44,7 +44,6 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
                 $ALLOWED_BRANDS[] = 'KOREA';
                 break;
         }
-
         $ALLOWED_BRANDS = addRelatedBrands($ALLOWED_BRANDS);
 
         $goods = getGoodsSpecification($goodNamePart, $ALLOWED_BRANDS);
@@ -73,9 +72,9 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
         }
     }
 
-    if (!empty($selectedGoods) || !empty($lowQuantity)) {
-        sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, $lowQuantity);
-    }
+    // if (!empty($selectedGoods) || !empty($lowQuantity)) {
+    //     sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, $lowQuantity);
+    // }
 
     if (hasPreSellFactor($billId)) {
         update_pre_bill($billId, json_encode($selectedGoods), json_encode([]));
@@ -117,7 +116,7 @@ function formatGoodMessage($good)
     $dotColor = ($brand === 'GEN' || $brand === 'MOB') ? '🔷' : '🔶';
 
     return PHP_EOL
-        . str_pad($good['partNumber'], 12, ' ', STR_PAD_RIGHT) // Align part number
+        . str_pad($good['partNumber'], 18, ' ', STR_PAD_RIGHT) // Align part number
         . $brand . ' '                // Brand name
         . $dotColor . ' '             // Dot color
         . str_pad($good['quantity'], 8, ' ', STR_PAD_RIGHT) // Align quantity
@@ -125,7 +124,6 @@ function formatGoodMessage($good)
         . $good['pos2']               // Position 2
         . PHP_EOL;
 }
-
 
 function sendSellsReportMessage($template, $type)
 {
