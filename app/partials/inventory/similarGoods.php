@@ -13,11 +13,33 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
 
         if ($goodNameBrand == 'KOREA' || $goodNameBrand == 'CHINA') {
             $brands = [
-                'KOREA' => ['YONG', 'YONG HOO', 'OEM', 'ONNURI', 'GY', 'MIDO', 'MIRE', 'CARDEX',
-                            'MANDO', 'OSUNG', 'DONGNAM', 'HYUNDAI BRAKE', 'SAM YUNG', 'BRC', 'GEO SUNG',
-                            'YULIM', 'CARTECH', 'HSC', 'KOREA STAR', 'DONI TEC', 'ATC', 'VALEO', 'MB KOREA'],
-                            
-                'CHINA' => ['OEMAX', 'JYR', 'RB2','Rb2', 'IRAN', 'FAKE MOB', 'FAKE GEN', 'OEMAX', 'OE MAX', 'MAXFIT']
+                'KOREA' => [
+                    'YONG',
+                    'YONG HOO',
+                    'OEM',
+                    'ONNURI',
+                    'GY',
+                    'MIDO',
+                    'MIRE',
+                    'CARDEX',
+                    'MANDO',
+                    'OSUNG',
+                    'DONGNAM',
+                    'HYUNDAI BRAKE',
+                    'SAM YUNG',
+                    'BRC',
+                    'GEO SUNG',
+                    'YULIM',
+                    'CARTECH',
+                    'HSC',
+                    'KOREA STAR',
+                    'DONI TEC',
+                    'ATC',
+                    'VALEO',
+                    'MB KOREA'
+                ],
+
+                'CHINA' => ['OEMAX', 'JYR', 'RB2', 'Rb2', 'IRAN', 'FAKE MOB', 'FAKE GEN', 'OEMAX', 'OE MAX', 'MAXFIT']
             ];
             $ALLOWED_BRANDS = [...$brands[$goodNameBrand], $goodNameBrand];
         } else {
@@ -44,6 +66,7 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
                 $ALLOWED_BRANDS[] = 'KOREA';
                 break;
         }
+
         $ALLOWED_BRANDS = addRelatedBrands($ALLOWED_BRANDS);
 
         $goods = getGoodsSpecification($goodNamePart, $ALLOWED_BRANDS);
@@ -93,21 +116,23 @@ function sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, 
         . "کاربر : {$fullName}\n"
         . "شماره فاکتور : {$factorNumber}\n";
 
-    sendSellsReportMessage($header, $factorType);
+    $destination = $factorNumber % 2 == 0 ? "http://sells.yadak.center/" : "http://sells2.yadak.center/";
+
+    sendSellsReportMessage($header, $factorType, $destination);
 
     foreach ($selectedGoods as $good) {
         $template = formatGoodMessage($good);
-        sendSellsReportMessage($template, $factorType);
+        sendSellsReportMessage($template, $factorType, $destination);
     }
 
     foreach ($lowQuantity as $good) {
         $template = formatGoodMessage($good)
             . "مقدار مورد نیاز: {$good['required']} ❌❌ \n";
-        sendSellsReportMessage($template, $factorType);
+        sendSellsReportMessage($template, $factorType, $destination);
     }
 
     $footer = str_repeat('➖', 8) . PHP_EOL;
-    sendSellsReportMessage($footer, $factorType);
+    sendSellsReportMessage($footer, $factorType, $destination);
 }
 
 function formatGoodMessage($good)
@@ -125,7 +150,7 @@ function formatGoodMessage($good)
         . PHP_EOL;
 }
 
-function sendSellsReportMessage($template, $type)
+function sendSellsReportMessage($template, $type, $destination)
 {
     $typeID = $type == 0 ? 3516 : 3514;
     $postData = array(
@@ -138,7 +163,7 @@ function sendSellsReportMessage($template, $type)
     $ch = curl_init();
 
     // Set cURL options
-    curl_setopt($ch, CURLOPT_URL, "http://sells.yadak.center/");
+    curl_setopt($ch, CURLOPT_URL, $destination);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
