@@ -118,45 +118,21 @@ function sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, 
 
     $destination = $factorNumber % 2 == 0 ? "http://sells.yadak.center/" : "http://sells2.yadak.center/";
 
-    sendSellsReportMessage($header, $factorType, $destination);
+    print_r($destination);
 
-    foreach ($selectedGoods as $good) {
-        $template = formatGoodMessage($good);
-        sendSellsReportMessage($template, $factorType, $destination);
-    }
-
-    foreach ($lowQuantity as $good) {
-        $template = formatGoodMessage($good)
-            . "مقدار مورد نیاز: {$good['required']} ❌❌ \n";
-        sendSellsReportMessage($template, $factorType, $destination);
-    }
-
-    $footer = str_repeat('➖', 8) . PHP_EOL;
-    sendSellsReportMessage($footer, $factorType, $destination);
+    sendSellsReportMessage($header, $factorType, $selectedGoods, $lowQuantity, $destination);
 }
 
-function formatGoodMessage($good)
+function sendSellsReportMessage($header, $factorType, $selectedGoods, $lowQuantity, $destination)
 {
-    $brand = $good['brandName'];
-    $dotColor = ($brand === 'GEN' || $brand === 'MOB') ? '🔷' : '🔶';
+    $typeID = $factorType == 0 ? 3516 : 3514;
 
-    return PHP_EOL
-        . str_pad($good['partNumber'], 18, ' ', STR_PAD_RIGHT) // Align part number
-        . $brand . ' '                // Brand name
-        . $dotColor . ' '             // Dot color
-        . str_pad($good['quantity'], 8, ' ', STR_PAD_RIGHT) // Align quantity
-        . $good['pos1'] . ' '         // Position 1
-        . $good['pos2']               // Position 2
-        . PHP_EOL;
-}
-
-function sendSellsReportMessage($template, $type, $destination)
-{
-    $typeID = $type == 0 ? 3516 : 3514;
     $postData = array(
-        "sendMessage" => "sellsReport",
-        "message" => $template,
-        "topic_id" => $typeID
+        "sendMessage" => "sellsReportTest",
+        "header" => $header,
+        "topic_id" => $typeID,
+        "selectedGoods" => json_encode($selectedGoods),
+        "lowQuantity" => json_encode($lowQuantity),
     );
 
     // Initialize cURL session
@@ -170,6 +146,8 @@ function sendSellsReportMessage($template, $type, $destination)
 
     // Execute cURL request
     $result = curl_exec($ch);
+
+    print_r($result);
 
     // Close cURL session
     curl_close($ch);
