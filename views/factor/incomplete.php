@@ -678,6 +678,7 @@ require_once './components/factor.php';
             // If the user cancels, enable the element and stop further execution
             if (!proceed) {
                 element.disabled = false;
+                element.innerHTML = 'صدور فاکتور';
                 return; // Stop further actions by exiting the function
             }
         }
@@ -686,6 +687,7 @@ require_once './components/factor.php';
         if (!checkIfReadyToUpdate('phone') || !checkIfReadyToUpdate('name') ||
             (!factorInfo['partner'] && !checkIfReadyToUpdate('address'))) {
             element.disabled = false;
+            element.innerHTML = 'صدور فاکتور';
             return; // Stop further actions if validation fails
         }
 
@@ -693,6 +695,7 @@ require_once './components/factor.php';
         if (factorItems.length <= 0) {
             displayModal('فاکتور مشتری خالی بوده نمیتواند.');
             element.disabled = false;
+            element.innerHTML = 'صدور فاکتور';
             return; // Stop further actions if there are no items
         }
 
@@ -700,6 +703,7 @@ require_once './components/factor.php';
         if (factorItems.length > 0 && !checkIfFactorItemsValid()) {
             displayModal('لطفا موجودیت و صحت برند قطعات را بررسی نمایید.');
             element.disabled = false;
+            element.innerHTML = 'صدور فاکتور';
             return; // Stop further actions if items are invalid
         }
 
@@ -714,7 +718,7 @@ require_once './components/factor.php';
         axios.post("../../app/api/factor/CompleteFactorApi.php", params)
             .then(function(response) {
                 const data = response.data;
-                
+
                 if (data) {
                     const save_message = document.getElementById('save_message');
                     save_message.classList.remove('hidden');
@@ -749,6 +753,7 @@ require_once './components/factor.php';
                 displayModal("An error occurred while saving the invoice data. Please try again later.");
                 // Enable the element after error
                 element.disabled = false;
+                element.innerHTML = 'صدور فاکتور';
             });
     }
 

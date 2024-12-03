@@ -72,6 +72,25 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
         $goods = getGoodsSpecification($goodNamePart, $ALLOWED_BRANDS);
 
         $inventoryGoods = isset($goods['goods']) ? $goods['goods'] : [];
+        $relatesCodes = isset($goods['codes']) ? $goods['codes'] : [];
+
+        if (empty($relatesCodes)) {
+            array_push($lowQuantity, [...[
+                'quantityId' => 0,
+                'id' => 0,
+                'goodId' => 0,
+                'partNumber' => $item->partNumber,
+                'stockId' => null,
+                'purchase_Description' => '',
+                'stockName' => '',
+                'brandName' => $goodNameBrand,
+                'sellerName' => '',
+                'quantity' => $item->quantity,
+                'pos1' => '',
+                'pos2' => '',
+            ], 'required' => $item->quantity]);
+            continue;
+        }
 
         $billItemQuantity = $item->quantity;
         $totalQuantity = getTotalQuantity($inventoryGoods, $ALLOWED_BRANDS);
@@ -118,8 +137,6 @@ function sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, 
 
     $destination = $factorNumber % 2 == 0 ? "http://sells.yadak.center/" : "http://sells2.yadak.center/";
 
-    print_r($destination);
-
     sendSellsReportMessage($header, $factorType, $selectedGoods, $lowQuantity, $destination);
 }
 
@@ -146,8 +163,6 @@ function sendSellsReportMessage($header, $factorType, $selectedGoods, $lowQuanti
 
     // Execute cURL request
     $result = curl_exec($ch);
-
-    print_r($result);
 
     // Close cURL session
     curl_close($ch);
