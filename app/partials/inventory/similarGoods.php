@@ -45,7 +45,6 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
             ];
             $ALLOWED_BRANDS = [...$brands[$goodNameBrand], $goodNameBrand];
         } else {
-
             $ALLOWED_BRANDS = [$goodNameBrand];
         }
 
@@ -77,7 +76,7 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
         $relatesCodes = isset($goods['codes']) ? $goods['codes'] : [];
 
         if (empty($relatesCodes)) {
-            array_push($lowQuantity, [...[
+            array_push($lowQuantity, [
                 'quantityId' => 0,
                 'id' => 0,
                 'goodId' => 0,
@@ -90,7 +89,8 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
                 'quantity' => $item->quantity,
                 'pos1' => '',
                 'pos2' => '',
-            ], 'required' => $item->quantity]);
+                'required' => $item->quantity
+            ]);
             continue;
         }
 
