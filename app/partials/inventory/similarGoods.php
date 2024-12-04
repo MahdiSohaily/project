@@ -6,9 +6,11 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
     $lowQuantity = [];
 
     foreach ($factorItems as $item) {
+
+        $brandSeparator = strripos($item->partName, '-');
         $factorItemParts = explode('-', $item->partName);
 
-        $goodNameBrand = trim($factorItemParts[1]);
+        $goodNameBrand = trim(substr($item->partName, $brandSeparator + 1));
         $goodNamePart = trim(explode(' ', $factorItemParts[0])[0]);
 
         if ($goodNameBrand == 'KOREA' || $goodNameBrand == 'CHINA') {
@@ -79,7 +81,7 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
                 'quantityId' => 0,
                 'id' => 0,
                 'goodId' => 0,
-                'partNumber' => $item->partNumber,
+                'partNumber' => $goodNamePart,
                 'stockId' => null,
                 'purchase_Description' => '',
                 'stockName' => '',
@@ -114,9 +116,9 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
         }
     }
 
-    if (!empty($selectedGoods) || !empty($lowQuantity)) {
-        sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, $lowQuantity);
-    }
+    // if (!empty($selectedGoods) || !empty($lowQuantity)) {
+    //     sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, $lowQuantity);
+    // }
 
     if (hasPreSellFactor($billId)) {
         update_pre_bill($billId, json_encode($selectedGoods), json_encode([]));

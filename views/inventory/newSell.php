@@ -312,7 +312,7 @@ require_once '../../layouts/inventory/sidebar.php';
 
         if (billItems.hasOwnProperty(good.quantityId)) {
             // If the item already exists, sum the quantities
-            billItems[good.quantityId].quantity += quantity;
+            billItems[good.quantityId].quantity = Number(billItems[good.quantityId].quantity) + Number(quantity);
         } else {
             // If the item does not exist, add it to billItems
             billItems[good.quantityId] = {
@@ -601,7 +601,7 @@ require_once '../../layouts/inventory/sidebar.php';
 
         if (billItems.hasOwnProperty(quantityId)) {
             // If the item already exists, sum the quantities
-            billItems[quantityId].quantity += sellQuantity;
+            billItems[quantityId].quantity = Number(billItems[quantityId].quantity) + Number(sellQuantity);
         } else {
             // If the item does not exist, add it to billItems
             billItems[quantityId] = {

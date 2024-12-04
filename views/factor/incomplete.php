@@ -722,6 +722,7 @@ require_once './components/factor.php';
                 if (data) {
                     const save_message = document.getElementById('save_message');
                     save_message.classList.remove('hidden');
+                    
                     setTimeout(() => {
                         save_message.classList.add('hidden');
                         if (factorInfo['id']) {

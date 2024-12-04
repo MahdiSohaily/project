@@ -284,8 +284,9 @@ require_once '../../layouts/inventory/sidebar.php';
         }
 
         if (billItems.hasOwnProperty(quantityId)) {
+            
             // If the item already exists, sum the quantities
-            billItems[quantityId].quantity += sellQuantity;
+            billItems[quantityId].quantity = Number(billItems[quantityId].quantity) + Number(sellQuantity);
         } else {
             // If the item does not exist, add it to billItems
             billItems[quantityId] = {
@@ -297,7 +298,7 @@ require_once '../../layouts/inventory/sidebar.php';
                 stockName: stockName,
                 brandName: brandName,
                 sellerName: sellerName,
-                quantity: sellQuantity
+                quantity: Number(sellQuantity)
             };
             if (!billItemOrder.includes(quantityId)) {
                 billItemOrder.push(quantityId);
