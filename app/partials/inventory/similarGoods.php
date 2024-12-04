@@ -116,9 +116,9 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
         }
     }
 
-    // if (!empty($selectedGoods) || !empty($lowQuantity)) {
-    //     sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, $lowQuantity);
-    // }
+    if (!empty($selectedGoods) || !empty($lowQuantity)) {
+        sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, $lowQuantity);
+    }
 
     if (hasPreSellFactor($billId)) {
         update_pre_bill($billId, json_encode($selectedGoods), json_encode([]));
