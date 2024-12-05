@@ -91,8 +91,11 @@ function displayCustomer() {
     customerInfo.displayName + " " + customerInfo.family ?? "";
   document.getElementById("phone_bill").innerHTML = customerInfo.phone;
   if (customerInfo.address) {
-    document.getElementById("userAddress").innerHTML =
-      "نشانی : " + customerInfo.address;
+    document.getElementById("userAddress").innerHTML = customerInfo.address;
+  }
+
+  if (customerInfo.car) {
+    document.getElementById("car_bill").innerHTML = customerInfo.car;
   }
 }
 

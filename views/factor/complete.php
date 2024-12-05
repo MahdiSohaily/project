@@ -84,12 +84,45 @@ require_once '../../layouts/callcenter/sidebar.php'; ?>
                 <div>
                     <td class="py-2 px-3 text-white bg-gray-800 text-md">ماشین</td>
                     <td class="py-2 px-4">
-                        <input autocomplete="off" onkeyup="updateCustomerInfo(this)" class="w-full p-2 border-2 text-gray-800 outline-none focus::border-gray-500" placeholder="نوعیت ماشین مشتری را مشخص کنید" type="text" name="car" id="car">
+                        <input autocomplete="off" onchange="handleInputChange(event)" onkeyup="updateCustomerInfo(this)" class="w-full p-2 border-2 text-gray-800 outline-none focus::border-gray-500" placeholder="نوعیت ماشین مشتری را مشخص کنید" type="text" name="car" id="car">
                     </td>
                 </div>
                 </tbody>
             </div>
         </div>
+        <script>
+            function handleInputChange(event) {
+                const oldValue = event.target.getAttribute('data-old');
+                const inputValue = event.target.value.trim(); // Get and trim the input value
+                event.target.setAttribute('data-old', inputValue);
+
+
+                if (inputValue) {
+                    let found = false; // Flag to track if a match is found
+
+                    for (let item of factorItems) {
+                        if (oldValue != '' && item.partName.includes(oldValue)) {
+                            item.partName = item.partName.replace(oldValue, inputValue);
+                        } else {
+                            const lastDashIndex = item.partName.lastIndexOf('-');
+
+                            if (lastDashIndex !== -1) {
+                                // Insert inputValue before the last '-'
+                                item.partName =
+                                    item.partName.slice(0, lastDashIndex).trim() +
+                                    ` ${inputValue} - ` +
+                                    item.partName.slice(lastDashIndex + 1).trim();
+                            } else {
+                                // If no '-' is found, add inputValue at the end
+                                item.partName = `${item.partName} ${inputValue}`;
+                            }
+                        }
+                    }
+                }
+
+                displayBill();
+            }
+        </script>
         <!-- bill body table -->
         <div class="bg-white rounded-lg shadow-md p-2 w-full col-span-3">
             <div class=" mx-auto">

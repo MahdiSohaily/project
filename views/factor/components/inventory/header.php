@@ -42,7 +42,16 @@
             <span id="phone_inventory"></span>
         </li>
     </ul>
-    <p class="w-1/2" id="userAddress_inventory" style="font-size: 13px;"></p>
+    <ul class="w-1/2">
+        <li class="text-xs">
+            نشانی :
+            <span id="userAddress_inventory"></span>
+        </li>
+        <li class="text-xs">
+            ماشین :
+            <span id="car_inventory"></span>
+        </li>
+    </ul>
     <div class="text-xs flex items-center gap-2">
         <img class="rounded-full w-9 h-9 mt-2" src="<?= $profile ?>" alt="">
         <div>
@@ -137,12 +146,15 @@
         const nameElement = document.getElementById("name_inventory");
         const phoneElement = document.getElementById("phone_inventory");
         const addressElement = document.getElementById("userAddress_inventory");
+        const car_inventory = document.getElementById("car_inventory");
 
         nameElement.innerHTML =
             customerInfo.name + (customerInfo.family ? " " + customerInfo.family : "");
         phoneElement.innerHTML = customerInfo.phone;
         if (customerInfo.address && customerInfo.address != "null")
-            addressElement.innerHTML = "نشانی: " + customerInfo.address;
+            addressElement.innerHTML = customerInfo.address;
+        if (customerInfo.car && customerInfo.car != "null")
+            car_inventory.innerHTML = customerInfo.car;
     }
 
     function displayInventoryBillDetails() {

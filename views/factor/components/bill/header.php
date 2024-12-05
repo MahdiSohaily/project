@@ -30,6 +30,15 @@
             <span id="phone"></span>
         </li>
     </ul>
-    <p class="w-1/2" id="userAddress" style="font-size: 13px;"></p>
+    <ul class="w-1/2">
+        <li class="text-xs">
+            نشانی :
+            <span id="userAddress"></span>
+        </li>
+        <li class="text-xs">
+            ماشین :
+            <span id="user_car"></span>
+        </li>
+    </ul>
     <img id="copy_icon" class="cursor-pointer" src="./assets/img/copy.svg" alt="copy customer info" onclick="copyInfo(this)">
 </div>

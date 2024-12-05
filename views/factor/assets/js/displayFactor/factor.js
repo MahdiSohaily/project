@@ -91,12 +91,16 @@ function displayCustomer() {
   const nameElement = document.getElementById("name");
   const phoneElement = document.getElementById("phone");
   const addressElement = document.getElementById("userAddress");
+  const user_car = document.getElementById("user_car");
 
   nameElement.innerHTML =
     customerInfo.name + (customerInfo.family ? " " + customerInfo.family : "");
   phoneElement.innerHTML = customerInfo.phone;
   if (customerInfo.address && customerInfo.address != "null")
-    addressElement.innerHTML = "نشانی: " + customerInfo.address;
+    addressElement.innerHTML = customerInfo.address;
+
+  if (customerInfo.car && customerInfo.car != "null")
+    user_car.innerHTML = customerInfo.car;
 }
 
 function displayBillDetails() {

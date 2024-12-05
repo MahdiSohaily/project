@@ -46,7 +46,16 @@
             <span id="phone_owner"></span>
         </li>
     </ul>
-    <p class="w-1/2" id="userAddress_owner" style="font-size: 13px;"></p>
+    <ul class="w-1/2">
+        <li class="text-xs">
+            نشانی :
+            <span id="userAddress_owner"></span>
+        </li>
+        <li class="text-xs">
+            ماشین :
+            <span id="car_owner"></span>
+        </li>
+    </ul>
     <div class="text-xs flex items-center gap-2">
         <img class="rounded-full w-9 h-9 mt-2" src="<?= $profile ?>" alt="">
         <p>
@@ -149,12 +158,15 @@
         const nameElement = document.getElementById("name_owner");
         const phoneElement = document.getElementById("phone_owner");
         const addressElement = document.getElementById("userAddress_owner");
+        const car_owner = document.getElementById("car_owner");
 
         nameElement.innerHTML =
             customerInfo.name + (customerInfo.family ? " " + customerInfo.family : "");
         phoneElement.innerHTML = customerInfo.phone;
         if (customerInfo.address && customerInfo.address != "null")
-            addressElement.innerHTML = "نشانی: " + customerInfo.address;
+            addressElement.innerHTML = customerInfo.address;
+        if (customerInfo.car && customerInfo.car != "null")
+            car_owner.innerHTML = customerInfo.car;
     }
 
     function displayOwnerBillDetails() {

@@ -31,7 +31,7 @@
                     <img id="factor_logo" class="logo" src="./assets/img/logo.png" alt="logo of yadakshop">
                 </div>
             </div>
-            <div class="customer_info">
+            <div class="customer_info flex justify-between">
                 <ul>
                     <li class="text-sm">
                         نام :
@@ -42,7 +42,16 @@
                         <span id="phone_bill"></span>
                     </li>
                 </ul>
-                <p class="w-1/2" id="userAddress" style="font-size: 12px;"></p>
+                <ul>
+                    <li class="text-xs">
+                        نشانی :
+                        <span id="userAddress"></span>
+                    </li>
+                    <li class="text-xs">
+                        ماشین :
+                        <span id="car_bill"></span>
+                    </li>
+                </ul>
                 <img id="copy_icon" class="cursor-pointer" src="./assets/img/copy.svg" alt="copy customer info" onclick="copyInfo(this)">
             </div>
             <div class="bill_items">
@@ -171,7 +180,6 @@
             link.click();
         });
     });
-
 </script>
 <style>
     #previewBill {

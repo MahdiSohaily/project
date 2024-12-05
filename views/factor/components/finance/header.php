@@ -39,7 +39,17 @@
             <span id="phone_finance"></span>
         </li>
     </ul>
-    <p class="w-1/2" id="userAddress_finance" style="font-size: 13px;"></p>
+    <ul class="w-1/2">
+        <li class="text-xs">
+            نشانی :
+            <span id="userAddress_finance"></span>
+        </li>
+        <li class="text-xs">
+            ماشین :
+            <span id="car_finance"></span>
+        </li>
+    </ul>
+    <!-- <p class="w-1/2" id="userAddress_finance" style="font-size: 13px;"></p> -->
 
     <div class="text-xs flex items-center gap-2">
         <img class="rounded-full w-9 h-9 mt-2" src="<?= $profile ?>" alt="">
@@ -158,12 +168,16 @@
         const nameElement = document.getElementById("name_finance");
         const phoneElement = document.getElementById("phone_finance");
         const addressElement = document.getElementById("userAddress_finance");
+        const car_finance = document.getElementById("car_finance");
 
         nameElement.innerHTML =
             customerInfo.name + (customerInfo.family ? " " + customerInfo.family : "");
         phoneElement.innerHTML = customerInfo.phone;
         if (customerInfo.address && customerInfo.address != "null")
-            addressElement.innerHTML = "نشانی: " + customerInfo.address;
+            addressElement.innerHTML = customerInfo.address;
+        
+        if (customerInfo.car && customerInfo.car != "null")
+            car_finance.innerHTML = customerInfo.car;
     }
 
     function displayFinanceBillDetails() {
