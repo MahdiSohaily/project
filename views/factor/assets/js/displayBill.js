@@ -5,7 +5,8 @@ if (factorInfo.partner !== 0) {
 }
 
 function getBillData(type) {
-  document.getElementById("billNO_bill").innerHTML = factorInfo.billNO;
+  document.getElementById("billNO_bill").innerHTML =
+    factorInfo.billNO == 0 ? "پیش فاکتور" : factorInfo.billNO;
   previewBill(type);
   displayCustomer();
   displayBillDetails();

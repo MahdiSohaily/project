@@ -44,10 +44,10 @@
             نشانی :
             <span id="userAddress_finance"></span>
         </li>
-        <li class="text-xs">
+        <!-- <li class="text-xs">
             ماشین :
             <span id="car_finance"></span>
-        </li>
+        </li> -->
     </ul>
     <!-- <p class="w-1/2" id="userAddress_finance" style="font-size: 13px;"></p> -->
 
@@ -168,7 +168,7 @@
         const nameElement = document.getElementById("name_finance");
         const phoneElement = document.getElementById("phone_finance");
         const addressElement = document.getElementById("userAddress_finance");
-        const car_finance = document.getElementById("car_finance");
+        // const car_finance = document.getElementById("car_finance");
 
         nameElement.innerHTML =
             customerInfo.name + (customerInfo.family ? " " + customerInfo.family : "");
@@ -176,8 +176,8 @@
         if (customerInfo.address && customerInfo.address != "null")
             addressElement.innerHTML = customerInfo.address;
         
-        if (customerInfo.car && customerInfo.car != "null")
-            car_finance.innerHTML = customerInfo.car;
+        // if (customerInfo.car && customerInfo.car != "null")
+        //     car_finance.innerHTML = customerInfo.car;
     }
 
     function displayFinanceBillDetails() {

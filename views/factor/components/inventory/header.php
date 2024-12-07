@@ -47,10 +47,10 @@
             نشانی :
             <span id="userAddress_inventory"></span>
         </li>
-        <li class="text-xs">
+        <!-- <li class="text-xs">
             ماشین :
             <span id="car_inventory"></span>
-        </li>
+        </li> -->
     </ul>
     <div class="text-xs flex items-center gap-2">
         <img class="rounded-full w-9 h-9 mt-2" src="<?= $profile ?>" alt="">
@@ -146,15 +146,15 @@
         const nameElement = document.getElementById("name_inventory");
         const phoneElement = document.getElementById("phone_inventory");
         const addressElement = document.getElementById("userAddress_inventory");
-        const car_inventory = document.getElementById("car_inventory");
+        // const car_inventory = document.getElementById("car_inventory");
 
         nameElement.innerHTML =
             customerInfo.name + (customerInfo.family ? " " + customerInfo.family : "");
         phoneElement.innerHTML = customerInfo.phone;
         if (customerInfo.address && customerInfo.address != "null")
             addressElement.innerHTML = customerInfo.address;
-        if (customerInfo.car && customerInfo.car != "null")
-            car_inventory.innerHTML = customerInfo.car;
+        // if (customerInfo.car && customerInfo.car != "null")
+        //     car_inventory.innerHTML = customerInfo.car;
     }
 
     function displayInventoryBillDetails() {

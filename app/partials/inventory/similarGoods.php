@@ -78,9 +78,9 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
 
         if (empty($relatesCodes)) {
             array_push($lowQuantity, [...[
-                'quantityId' => 0,
-                'id' => 0,
-                'goodId' => 0,
+                'quantityId' => $item->id,
+                'id' => $item->id,
+                'goodId' => $item->id,
                 'partNumber' => $goodNamePart,
                 'stockId' => null,
                 'purchase_Description' => '',
@@ -110,6 +110,7 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
                     addToBillItems($good, $sellQuantity, $selectedGoods, $item->id);
                 } else {
                     $good['quantity'] = $totalQuantity;
+                    $good['id'] = $item->id;
                     array_push($lowQuantity, [...$good, 'required' => $billItemQuantity - $totalQuantity]);
                     break;
                 }
@@ -117,9 +118,11 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
         }
     }
 
-    if (!empty($selectedGoods) || !empty($lowQuantity)) {
-        sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, $lowQuantity);
-    }
+    // if (!empty($selectedGoods) || !empty($lowQuantity)) {
+    //     sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, $lowQuantity);
+    // }
+
+    $selectedGoods = [...$selectedGoods, ...$lowQuantity];
 
     if (hasPreSellFactor($billId)) {
         update_pre_bill($billId, json_encode($selectedGoods), json_encode([]));

@@ -84,7 +84,7 @@ require_once '../../layouts/callcenter/sidebar.php'; ?>
                 <div>
                     <td class="py-2 px-3 text-white bg-gray-800 text-md">ماشین</td>
                     <td class="py-2 px-4">
-                        <input autocomplete="off" onchange="handleInputChange(event)" onkeyup="updateCustomerInfo(this)" class="w-full p-2 border-2 text-gray-800 outline-none focus::border-gray-500" placeholder="نوعیت ماشین مشتری را مشخص کنید" type="text" name="car" id="car">
+                        <input autocomplete="off" data-old='' onchange="handleInputChange(event)" onkeyup="updateCustomerInfo(this)" class="w-full p-2 border-2 text-gray-800 outline-none focus::border-gray-500" placeholder="نوعیت ماشین مشتری را مشخص کنید" type="text" name="car" id="car">
                     </td>
                 </div>
                 </tbody>
@@ -119,7 +119,7 @@ require_once '../../layouts/callcenter/sidebar.php'; ?>
                         }
                     }
                 }
-
+                updateCompleteFactor();
                 displayBill();
             }
         </script>
@@ -216,6 +216,7 @@ require_once './components/factor.php'; ?>
         document.getElementById('family').value = customerInfo.family;
         document.getElementById('phone').value = customerInfo.phone;
         document.getElementById('car').value = customerInfo.car;
+        document.getElementById('car').setAttribute('data-old', customerInfo.car);
         document.getElementById('address').value = customerInfo.address;
     }
 

@@ -35,10 +35,10 @@
             نشانی :
             <span id="userAddress"></span>
         </li>
-        <li class="text-xs">
+        <!-- <li class="text-xs">
             ماشین :
             <span id="user_car"></span>
-        </li>
+        </li> -->
     </ul>
     <img id="copy_icon" class="cursor-pointer" src="./assets/img/copy.svg" alt="copy customer info" onclick="copyInfo(this)">
 </div>

@@ -51,10 +51,10 @@
             نشانی :
             <span id="userAddress_owner"></span>
         </li>
-        <li class="text-xs">
+        <!-- <li class="text-xs">
             ماشین :
             <span id="car_owner"></span>
-        </li>
+        </li> -->
     </ul>
     <div class="text-xs flex items-center gap-2">
         <img class="rounded-full w-9 h-9 mt-2" src="<?= $profile ?>" alt="">
@@ -158,15 +158,15 @@
         const nameElement = document.getElementById("name_owner");
         const phoneElement = document.getElementById("phone_owner");
         const addressElement = document.getElementById("userAddress_owner");
-        const car_owner = document.getElementById("car_owner");
+        // const car_owner = document.getElementById("car_owner");
 
         nameElement.innerHTML =
             customerInfo.name + (customerInfo.family ? " " + customerInfo.family : "");
         phoneElement.innerHTML = customerInfo.phone;
         if (customerInfo.address && customerInfo.address != "null")
             addressElement.innerHTML = customerInfo.address;
-        if (customerInfo.car && customerInfo.car != "null")
-            car_owner.innerHTML = customerInfo.car;
+        // if (customerInfo.car && customerInfo.car != "null")
+        //     car_owner.innerHTML = customerInfo.car;
     }
 
     function displayOwnerBillDetails() {

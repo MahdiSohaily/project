@@ -91,7 +91,7 @@ function displayCustomer() {
   const nameElement = document.getElementById("name");
   const phoneElement = document.getElementById("phone");
   const addressElement = document.getElementById("userAddress");
-  const user_car = document.getElementById("user_car");
+  // const user_car = document.getElementById("user_car");
 
   nameElement.innerHTML =
     customerInfo.name + (customerInfo.family ? " " + customerInfo.family : "");
@@ -99,8 +99,8 @@ function displayCustomer() {
   if (customerInfo.address && customerInfo.address != "null")
     addressElement.innerHTML = customerInfo.address;
 
-  if (customerInfo.car && customerInfo.car != "null")
-    user_car.innerHTML = customerInfo.car;
+  // if (customerInfo.car && customerInfo.car != "null")
+  //   user_car.innerHTML = customerInfo.car;
 }
 
 function displayBillDetails() {
