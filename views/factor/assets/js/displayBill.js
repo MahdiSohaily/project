@@ -95,9 +95,9 @@ function displayCustomer() {
     document.getElementById("userAddress").innerHTML = customerInfo.address;
   }
 
-  if (customerInfo.car) {
-    document.getElementById("car_bill").innerHTML = customerInfo.car;
-  }
+  // if (customerInfo.car) {
+  //   document.getElementById("car_bill").innerHTML = customerInfo.car;
+  // }
 }
 
 function displayBillDetails() {
