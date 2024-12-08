@@ -119,7 +119,7 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
     }
 
     if (!empty($selectedGoods) || !empty($lowQuantity)) {
-        sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, $lowQuantity);
+        sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, $lowQuantity, $billId);
     }
 
     $selectedGoods = [...$selectedGoods, ...$lowQuantity];
@@ -131,15 +131,25 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
     }
 }
 
-function sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, $lowQuantity)
+function sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, $lowQuantity, $billId)
 {
     $name = $_SESSION['user']['name'] ?? '';
     $family = $_SESSION['user']['family'] ?? '';
     $fullName = $name . ' ' . $family;
 
-    $header = "{$customer->displayName} {$customer->family}\n"
-        . "کاربر : {$fullName}\n"
-        . "شماره فاکتور : {$factorNumber}\n";
+    // Construct the link URL
+    $factorLink = "http://192.168.9.14/YadakShop-APP/views/factor/partnerFactor.php?factorNumber={$billId}";
+
+    // Build the header message
+    $header = sprintf(
+        "%s %s\nکاربر : %s\nشماره فاکتور : <a href='%s'>%s</a>\n",
+        htmlspecialchars($customer->displayName, ENT_QUOTES, 'UTF-8'),
+        htmlspecialchars($customer->family, ENT_QUOTES, 'UTF-8'),
+        htmlspecialchars($fullName, ENT_QUOTES, 'UTF-8'),
+        htmlspecialchars($factorLink, ENT_QUOTES, 'UTF-8'),
+        htmlspecialchars($factorNumber, ENT_QUOTES, 'UTF-8')
+    );
+
 
     $destination = $factorNumber % 2 == 0 ? "http://sells.yadak.center/" : "http://sells2.yadak.center/";
 
