@@ -118,9 +118,9 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
         }
     }
 
-    // if (!empty($selectedGoods) || !empty($lowQuantity)) {
-    //     sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, $lowQuantity);
-    // }
+    if (!empty($selectedGoods) || !empty($lowQuantity)) {
+        sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, $lowQuantity);
+    }
 
     $selectedGoods = [...$selectedGoods, ...$lowQuantity];
 
