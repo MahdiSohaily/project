@@ -87,7 +87,7 @@ require_once '../../layouts/callcenter/sidebar.php';
         let billItemsDescription = <?= json_decode($preSellFactorItemsDescription, true) ?>;
 
         const specialClass = "text-white bg-gray-700 p-1 rounded-sm ";
-        const specialBrands = ['MOB', 'GEN'];
+        const specialBrands = ['MOB', 'GEN', 'اصلی'];
 
         for (item of preBillItems) {
             document.getElementById(item.id).innerHTML += `

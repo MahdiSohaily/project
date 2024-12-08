@@ -94,7 +94,7 @@ if (!file_exists($profile)) {
         let billItemsDescription = <?= json_decode($preSellFactorItemsDescription, true) ?>;
 
         const specialClass = "text-white bg-gray-700 p-1 rounded-sm ";
-        const specialBrands = ['MOB', 'GEN'];
+        const specialBrands = ['MOB', 'GEN', 'اصلی'];
 
         for (item of preBillItems) {
             document.getElementById(item.id).innerHTML += `
@@ -112,11 +112,14 @@ if (!file_exists($profile)) {
                 </td>
                 <td style="padding: 3px !important; border: none !important; text-align: center !important; font-size:13px">${item.pos1}</td>
                 <td style="padding: 3px !important; border: none !important; text-align: center !important; font-size:13px">${item.pos2}</td>
+                <td style="padding: 3px !important; border: none !important; text-align: center !important; font-size:13px">${item.required ? '<svg width="20px" height="20px" viewBox="0 0 72 72" id="emoji" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="color"> <path fill="#ea5a47" d="m58.14 21.78-7.76-8.013-14.29 14.22-14.22-14.22-8.013 8.013 14.36 14.22-14.36 14.22 8.014 8.013 14.22-14.22 14.29 14.22 7.76-8.013-14.22-14.22z"></path> </g> <g id="hair"></g> <g id="skin"></g> <g id="skin-shadow"></g> <g id="line"> <path fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" d="m58.14 21.78-7.76-8.013-14.29 14.22-14.22-14.22-8.013 8.013 14.35 14.22-14.35 14.22 8.014 8.013 14.22-14.22 14.29 14.22 7.76-8.013-14.22-14.22z"></path> </g> </g></svg>' : ''}</td>
+                <td style="padding: 3px !important; border: none !important; text-align: center !important; font-size:13px">${item.required ?? ''}</td>
             </tr>`;
         }
 
         for (item in billItemsDescription) {
-            document.getElementById('des_' + item).innerHTML += `<span class="pl-3 text-xs">${billItemsDescription[item]}</span>`;
+            if (document.getElementById('des_' + item))
+                document.getElementById('des_' + item).innerHTML += `<span class="pl-3 text-xs">${billItemsDescription[item]}</span>`;
         }
 
     <?php } else { ?>

@@ -47,7 +47,7 @@ function displayBill() {
 
     // Determine the result
     const result = insideParentheses
-      ? `${insideParentheses} - ${afterLastDash}`
+      ? `${insideParentheses} ${customerInfo.car} - ${afterLastDash}`
       : input;
 
     if (factorType == "partner") {

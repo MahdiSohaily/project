@@ -49,7 +49,7 @@ function previewBill(type) {
 
     // Determine the result
     const result = insideParentheses
-      ? `${insideParentheses} - ${afterLastDash}`
+      ? `${insideParentheses} ${customerInfo.car} - ${afterLastDash}`
       : input;
 
     template += `
