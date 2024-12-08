@@ -38,7 +38,9 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
                     'DONI TEC',
                     'ATC',
                     'VALEO',
-                    'MB KOREA'
+                    'MB KOREA',
+                    'FAKE MOB',
+                    'FAKE GEN'
                 ],
 
                 'CHINA' => ['OEMAX', 'JYR', 'RB2', 'Rb2', 'IRAN', 'FAKE MOB', 'FAKE GEN', 'OEMAX', 'OE MAX', 'MAXFIT']
