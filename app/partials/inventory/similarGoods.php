@@ -140,8 +140,8 @@ function sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, 
     $fullName = $name . ' ' . $family;
 
     // Construct the link URL
-    $destinationPage = $factorType == 0 ? 'yadakFactor.php' : 'partnerFactor.php';
-    $factorLink = "http://192.168.9.14/YadakShop-APP/views/factor/" . $destinationPage . "?factorNumber=" . $billId;
+    $destinationPage = $factorType == 0 ? 'complete.php' : 'complete.php';
+    $factorLink = "http://192.168.9.14/YadakShop-APP/views/factor/" . $destinationPage . "?factor_number=" . $billId;
     // Build the header message
     $header = sprintf(
         "%s %s\nکاربر : %s\nشماره فاکتور : <a href='%s'>%s</a>\n",
