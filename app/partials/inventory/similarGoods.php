@@ -140,7 +140,7 @@ function sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, 
     $fullName = $name . ' ' . $family;
 
     // Construct the link URL
-    $factorLink = "http://192.168.9.14/YadakShop-APP/views/factor/partnerFactor.php?factorNumber={$billId}";
+    $factorLink = "http://192.168.9.14/YadakShop-APP/views/factor/partnerFactor.php?factorNumber=" . $billId;
 
     // Build the header message
     $header = sprintf(
