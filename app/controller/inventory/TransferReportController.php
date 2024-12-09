@@ -10,7 +10,6 @@ if (isset($_GET['interval'])) {
 $todays_records = getTodayRecords();
 $previous_records = getPreviousRecords();
 
-
 function getTodayRecords()
 {
     global $stock;
@@ -27,7 +26,7 @@ function getTodayRecords()
         nisha.partnumber, brand.name As brand_name, seller.name AS seller_name, getter.name AS getter_name,
         users.name AS user_name, qtybank.stock_id, exitrecord.des
         FROM $stock.transfer_record
-        INNER JOIN $stock.qtybank ON qtybank.id =  transfer_record.affected_record
+        INNER JOIN $stock.qtybank ON qtybank.id =  transfer_record.qtybanck_id
         INNER JOIN nisha ON nisha.id = qtybank.codeid
         INNER JOIN $stock.exitrecord ON exitrecord.id  = transfer_record.exit_id
         LEFT JOIN brand ON brand.id = qtybank.brand
@@ -48,30 +47,36 @@ function getTodayRecords()
 function getPreviousRecords()
 {
     global $stock;
-    // Create a DateTime object for today
-    $today = new DateTime();
 
-    $statement = PDO_CONNECTION->prepare("SELECT transfer_record.*, qtybank.qty AS previous_amount,
-        qtybank.pos1, qtybank.pos2,
-        nisha.partnumber, brand.name As brand_name, seller.name AS seller_name, getter.name AS getter_name,
-        users.name AS user_name, qtybank.stock_id, exitrecord.des
-        FROM $stock.transfer_record
-        INNER JOIN $stock.qtybank ON qtybank.id =  transfer_record.affected_record
+    // Create a DateTime object for the start of today
+    $startOfToday = (new DateTime())->setTime(0, 0, 0)->format('Y-m-d H:i:s');
+
+    $query = "
+        SELECT transfer_record.*, qtybank.qty AS previous_amount,
+            qtybank.pos1, qtybank.pos2,
+            nisha.partnumber, brand.name AS brand_name, seller.name AS seller_name, getter.name AS getter_name,
+            users.name AS user_name, qtybank.stock_id, exitrecord.des
+        FROM {$stock}.transfer_record
+        INNER JOIN {$stock}.qtybank ON qtybank.id = transfer_record.qtybanck_id
         INNER JOIN nisha ON nisha.id = qtybank.codeid
-        INNER JOIN $stock.exitrecord ON exitrecord.id  = transfer_record.exit_id
+        INNER JOIN {$stock}.exitrecord ON exitrecord.id = transfer_record.exit_id
         LEFT JOIN brand ON brand.id = qtybank.brand
         LEFT JOIN seller ON seller.id = qtybank.seller
         LEFT JOIN getter ON getter.id = exitrecord.getter
         INNER JOIN users ON users.id = transfer_record.user_id
-        WHERE DATE(transfer_record.transfer_date) < NOW()
-        ORDER BY transfer_record.transfer_date DESC");
+        WHERE transfer_record.transfer_date < :startOfToday
+        ORDER BY transfer_record.transfer_date DESC";
+
+    $statement = PDO_CONNECTION->prepare($query);
+
+    // Bind the parameter for the start of today
+    $statement->bindValue(':startOfToday', $startOfToday);
 
     $statement->execute();
     $statement->setFetchMode(PDO::FETCH_ASSOC);
-    $display =  $statement->fetchAll();
-    return $display;
-}
 
+    return $statement->fetchAll();
+}
 
 function getStockName($stock_id)
 {

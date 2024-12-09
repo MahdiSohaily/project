@@ -120,9 +120,11 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
         }
     }
 
-    if (!empty($selectedGoods) || !empty($lowQuantity)) {
-        sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, $lowQuantity, $billId);
-    }
+    print_r($selectedGoods);
+
+    // if (!empty($selectedGoods) || !empty($lowQuantity)) {
+    //     sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, $lowQuantity, $billId);
+    // }
 
     $selectedGoods = [...$selectedGoods, ...$lowQuantity];
 
@@ -386,8 +388,26 @@ function addToBillItems($good, $quantity, &$selectedGoods, $index)
 {
     // Check if the item already exists in billItems
     if (array_key_exists($good['goodId'], $selectedGoods)) {
-        // If the item exists, sum the quantities
-        $selectedGoods[$good['goodId']]['quantity'] += $quantity;
+        if ($selectedGoods[$good['goodId']]['brandName'] == $good['brandName']) {
+
+            // If the item exists, sum the quantities
+            $selectedGoods[$good['goodId']]['quantity'] += $quantity;
+        } else {
+            array_push($selectedGoods, [
+                'quantityId' => $good['quantityId'],
+                'id' => $index,
+                'goodId' => $good['goodId'],
+                'partNumber' => $good['partNumber'],
+                'stockId' => $good['stockId'],
+                'purchase_Description' => $good['purchase_Description'],
+                'stockName' => $good['stockName'],
+                'brandName' => $good['brandName'],
+                'sellerName' => $good['seller_name'],
+                'quantity' => $quantity,
+                'pos1' => $good['pos1'],
+                'pos2' => $good['pos2']
+            ]);
+        }
     } else {
         // If the item does not exist, add it to billItems
         $selectedGoods[$good['goodId']] = [

@@ -35,9 +35,10 @@ require_once '../../layouts/inventory/sidebar.php';
                                 <option value="">انتخاب انبار مقصد</option>
                                 <?php
                                 foreach ($stocks as $stock) {
-                                    echo '<option value="' . $stock['id'] . '">' . $stock['name'] . '</option>';
+                                    echo '<option ' . ($stock['id'] == 9 ? "selected" : "") . ' value="' . $stock['id'] . '">' . $stock['name'] . '</option>';
                                 }
                                 ?>
+
                             </select>
                         </td>
                     </tr>
@@ -141,7 +142,7 @@ require_once '../../layouts/inventory/sidebar.php';
     let billItems = {};
 
     let factor_info = {
-        stock: null,
+        stock: 9,
         receiver: null,
         date: null,
         collector: null,
@@ -356,6 +357,8 @@ require_once '../../layouts/inventory/sidebar.php';
     }
 
     function validateFactorInfo(factorInfo) {
+        console.log(factorInfo);
+
         const requiredFields = ['date', 'receiver', 'quantity'];
         for (const field of requiredFields) {
             if (!factorInfo[field]) {
@@ -366,6 +369,8 @@ require_once '../../layouts/inventory/sidebar.php';
     }
 
     function setFactorInfo(property, value) {
+        console.log(property, value);
+
         factor_info[property] = value;
     }
 
@@ -451,6 +456,7 @@ require_once '../../layouts/inventory/sidebar.php';
 
         factor_info = {
             number: null,
+            stock: 9,
             date: ($("#invoice_time").val()),
             client: null,
             pos1: null,
@@ -473,10 +479,8 @@ require_once '../../layouts/inventory/sidebar.php';
         for (item of textarea) {
             item.value = '';
         }
-        const selects = document.getElementsByTagName('select');
-        for (select of selects) {
-            select.value = '';
-        }
+        const selects = document.getElementById('receiver');
+        selects.value = null;
     }
 </script>
 <?php
