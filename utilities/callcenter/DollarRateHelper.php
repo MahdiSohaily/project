@@ -266,6 +266,7 @@ function addRelatedBrands($brands)
         'FAKE MOB' => ['KOREA'],
         'BRC' => ['KOREA'],
         'FAKE GEN' => ['CHINA'],
+        'ICBRI' => ['CHINA'],
         'OEMAX' => ['CHINA'],
         'OE MAX' => ['CHINA'],
         'MAXFIT' => ['CHINA'],

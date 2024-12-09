@@ -115,6 +115,26 @@ if (!file_exists($profile)) {
                 <td style="padding: 3px !important; border: none !important; text-align: center !important; font-size:13px">${item.required ? '<svg width="20px" height="20px" viewBox="0 0 72 72" id="emoji" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="color"> <path fill="#ea5a47" d="m58.14 21.78-7.76-8.013-14.29 14.22-14.22-14.22-8.013 8.013 14.36 14.22-14.36 14.22 8.014 8.013 14.22-14.22 14.29 14.22 7.76-8.013-14.22-14.22z"></path> </g> <g id="hair"></g> <g id="skin"></g> <g id="skin-shadow"></g> <g id="line"> <path fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" d="m58.14 21.78-7.76-8.013-14.29 14.22-14.22-14.22-8.013 8.013 14.35 14.22-14.35 14.22 8.014 8.013 14.22-14.22 14.29 14.22 7.76-8.013-14.22-14.22z"></path> </g> </g></svg>' : ''}</td>
                 <td style="padding: 3px !important; border: none !important; text-align: center !important; font-size:13px">${item.required ?? ''}</td>
             </tr>`;
+            document.getElementById('owner_' + item.id).innerHTML += `
+            <tr>
+                    <td style="padding: 3px !important; border: none !important; text-align: center !important; font-size:13px">${item.partNumber}</td>
+                    <td style="padding: 3px !important; border: none !important; text-align: center !important;">
+                        <p class="text-xs text-center ${ !specialBrands.includes(item.brandName) ? specialClass : ''}">
+                            ${item.brandName}
+                        </p>
+                    </td>
+                    <td style="padding: 3px !important; border: none !important; text-align: center !important; font-size:13px">
+                        <p class="text-xs text-center bg-gray-300 px-1 py-1 rounded-sm">
+                            ${item.quantity}
+                        </p>
+                    </td>
+                    <td style="padding: 3px !important; border: none !important; text-align: center !important; font-size:13px">${item.required ? '<svg width="20px" height="20px" viewBox="0 0 72 72" id="emoji" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="color"> <path fill="#ea5a47" d="m58.14 21.78-7.76-8.013-14.29 14.22-14.22-14.22-8.013 8.013 14.36 14.22-14.36 14.22 8.014 8.013 14.22-14.22 14.29 14.22 7.76-8.013-14.22-14.22z"></path> </g> <g id="hair"></g> <g id="skin"></g> <g id="skin-shadow"></g> <g id="line"> <path fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" d="m58.14 21.78-7.76-8.013-14.29 14.22-14.22-14.22-8.013 8.013 14.35 14.22-14.35 14.22 8.014 8.013 14.22-14.22 14.29 14.22 7.76-8.013-14.22-14.22z"></path> </g> </g></svg>' : ''}</td>
+                    <td style="padding: 3px !important; border: none !important; text-align: center !important; font-size:13px">
+                        <p class="text-xs text-center px-1 py-1 rounded-sm">
+                        ${item.required ?? ''}
+                        </p>
+                    </td>
+                </tr>`;
         }
 
         for (item in billItemsDescription) {

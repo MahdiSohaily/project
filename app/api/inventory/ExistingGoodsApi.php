@@ -46,10 +46,14 @@ if (isset($_POST['searchGoods'])) {
                         } elseif ($stock == 'دوبی') {
                             $theme = 'bg-gray-800';
                         } elseif ($stock == 'انبار 2') {
-                            $theme = 'bg-sky-600"';
+                            $theme = 'bg-sky-600';
                         } elseif ($stock == 'لنتور') {
                             $theme = 'bg-cyan-500';
                         } elseif ($stock == 'چین') {
+                            $theme = 'bg-cyan-500';
+                        } elseif ($stock == 'واردات') {
+                            $theme = 'bg-cyan-500';
+                        } else {
                             $theme = 'bg-cyan-500';
                         }
                         ?>

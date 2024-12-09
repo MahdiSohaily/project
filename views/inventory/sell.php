@@ -4,8 +4,8 @@ $iconUrl = 'purchase.svg';
 require_once './components/header.php';
 require_once '../../app/controller/inventory/SellController.php';
 require_once '../../layouts/inventory/nav.php';
-require_once '../../layouts/inventory/sidebar.php';
-?>
+require_once '../../layouts/inventory/sidebar.php'; ?>
+
 <!-- bill container and information section -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 px-4 mb-16">
     <div class="min-h-screen bg-white shadow rounded-md overflow-hidden">
@@ -51,12 +51,10 @@ require_once '../../layouts/inventory/sidebar.php';
                         </td>
                         <td class="py-2">
                             <select class="border-2 p-2 w-full" name="receiver" id="receiver" onchange="setFactorInfo('receiver',this.value)">
-                                <option value="">انتخاب تحویل گیرنده</option>
                                 <?php
-                                foreach ($receivers as $receiver) {
-                                    echo '<option value="' . $receiver['id'] . '">' . $receiver['name'] . '</option>';
-                                }
-                                ?>
+                                foreach ($receivers as $receiver): ?>
+                                    <option <?= $receiver['id'] == 6 ? 'selected' : ''  ?> value="<?= $receiver['id'] ?>"><?= $receiver['name'] ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </td>
                     </tr>
@@ -126,7 +124,7 @@ require_once '../../layouts/inventory/sidebar.php';
         number: null,
         date: null,
         client: null,
-        receiver: null,
+        receiver: 6,
         collector: null,
         description: null,
         user: <?= $_SESSION['id'] ?>,

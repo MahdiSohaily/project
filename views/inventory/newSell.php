@@ -53,7 +53,6 @@ require_once '../../layouts/inventory/sidebar.php';
                         </td>
                         <td class="py-2">
                             <select class="border-2 p-2 w-full" name="receiver" id="receiver" onchange="setFactorInfo('receiver',this.value)">
-                                <option value="">انتخاب تحویل گیرنده</option>
                                 <?php
                                 foreach ($receivers as $receiver): ?>
                                     <option <?= $receiver['id'] == 6 ? 'selected' : ''  ?> value="<?= $receiver['id'] ?>"><?= $receiver['name'] ?></option>

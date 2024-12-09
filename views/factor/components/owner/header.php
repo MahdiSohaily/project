@@ -120,25 +120,28 @@
             }
 
             template += `
-                <tr style="padding: 10px !important;" class="even:bg-gray-100">
-                    <td class="text-sm text-center">
-                        <span>${counter}</span>
-                    </td>
-                    <td class="text-sm ${specialClass}">
-                        <span>${nameParts[0]}
-                        ${nameParts[1] ? ` - <span class="${excludeClass}">${nameParts[1]}</span>` : ''}
-                        </span>
-                    </td>
-                    <td class="text-sm border-r border-l-2 border-gray-800">
-                        <span>${item.quantity}</span>
-                    </td>
-                    <td class="text-sm">
-                        <span>${formatAsMoney(Number(item.price_per))}</span>
-                    </td>
-                    <td class="text-sm">
-                        <span>${formatAsMoney(payPrice)}</span>
-                    </td>
-                </tr> `;
+                    <tr class="even:bg-gray-100">
+                        <td style="padding-block:10px !important;" class="text-sm text-center">
+                            <span>${counter}</span>
+                        </td>
+                        <td style="padding-block:10px !important" class="text-sm ${specialClass}" colspan="2">
+                            <span>${nameParts[0]}
+                            ${nameParts[1] ? ` - <span class="${excludeClass}">${nameParts[1]}</span>` : ''}
+                            </span>
+                            <table style="direction:ltr !important; border:none !important" id="owner_${item.id}" class="float-left">
+                            </table>
+                            <span class="float-left" id="des_${item.id}"></span>
+                        </td>
+                        <td style="padding:15px 0 !important; width:10px !important" class="text-sm ${item.quantity != 1 ? 'font-semibold' : ''}">
+                            <span>${item.quantity}</span>
+                        </td>
+                        <td class="text-sm text-center">
+                            <span>${formatAsMoney((Number(item.price_per)))}</span>
+                        </td>
+                        <td class="text-sm text-center">
+                            <span>${formatAsMoney((Number(item.price_per)))}</span>
+                        </td>
+                    </tr>`;
             counter++;
         }
         owner_bill_body.innerHTML = template;
