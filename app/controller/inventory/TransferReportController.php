@@ -23,7 +23,7 @@ function getTodayRecords()
     // Format and display the result
     $yesterday = $yesterday->format('Y-m-d') . ' 00:00:00';
 
-    $statement = PDO_CONNECTION->prepare("SELECT transfer_record.*, qtybank.qty AS previous_amount,
+    $statement = PDO_CONNECTION->prepare("SELECT transfer_record.*, qtybank.qty AS previous_amount,  qtybank.pos1, qtybank.pos2,
         nisha.partnumber, brand.name As brand_name, seller.name AS seller_name, getter.name AS getter_name,
         users.name AS user_name, qtybank.stock_id, exitrecord.des
         FROM $stock.transfer_record
@@ -52,6 +52,7 @@ function getPreviousRecords()
     $today = new DateTime();
 
     $statement = PDO_CONNECTION->prepare("SELECT transfer_record.*, qtybank.qty AS previous_amount,
+        qtybank.pos1, qtybank.pos2,
         nisha.partnumber, brand.name As brand_name, seller.name AS seller_name, getter.name AS getter_name,
         users.name AS user_name, qtybank.stock_id, exitrecord.des
         FROM $stock.transfer_record
@@ -81,7 +82,7 @@ function getStockName($stock_id)
     // set the resulting array to associative
     $statement->setFetchMode(PDO::FETCH_ASSOC);
     $result =  $statement->fetch();
-    return $result['name'];
+    return $result['name'] ?? null;
 }
 
 function getSanitizedData($quantity, $id)

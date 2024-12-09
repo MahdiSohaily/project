@@ -149,13 +149,10 @@ require_once '../../layouts/callcenter/sidebar.php';
         }
 
         for (item in billItemsDescription) {
-            if (document.getElementById('des_' + item))
+            if (document.getElementById('des_' + item)) {
                 document.getElementById('des_' + item).innerHTML += `<span class="pl-3 text-xs">${billItemsDescription[item]}</span>`;
-        }
-
-        for (item in billItemsDescription) {
-            if (document.getElementById('des_' + item))
                 document.getElementById('des_' + item + '_finance').innerHTML += `<span class="pl-3 text-xs">${billItemsDescription[item]}</span>`;
+            }
         }
 
     <?php } else { ?>

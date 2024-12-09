@@ -14,6 +14,8 @@ require_once '../../layouts/inventory/sidebar.php'; ?>
                 <th class="p-3 text-white text-sm font-semibold">شماره فنی</th>
                 <th class="p-3 text-white text-sm font-semibold">برند</th>
                 <th class="p-3 text-white text-sm font-semibold">توضیحات</th>
+                <th class="p-3 text-white text-sm font-semibold">راهرو</th>
+                <th class="p-3 text-white text-sm font-semibold">قفسه</th>
                 <th class="p-3 text-white text-sm font-semibold">انبار مبدا</th>
                 <th class="p-3 text-white text-sm font-semibold"> تعداد قبلی</th>
                 <th class="p-3 text-white text-sm font-semibold">انبار مقصد</th>
@@ -30,7 +32,7 @@ require_once '../../layouts/inventory/sidebar.php'; ?>
         </thead>
         <tbody id="resultBox">
             <tr class="bg-cyan-400">
-                <td class="p-3 text-center text-md font-bold" colspan="14">عملیات روزهای امروز</td>
+                <td class="p-3 text-center text-md font-bold" colspan="16">عملیات روزهای امروز</td>
             </tr>
             <?php
             if (count($todays_records)) :
@@ -40,6 +42,8 @@ require_once '../../layouts/inventory/sidebar.php'; ?>
                         <td class="p-2 text-center text-lg text-white font-semibold uppercase bg-sky-500"><?= $result["partnumber"] ?></td>
                         <td class="p-2 text-center text-sm text-white <?= getBrandBackground(strtoupper($result["brand_name"])) ?> font-semibold uppercase"><?= $result["brand_name"] ?></td>
                         <td class="p-2 text-xs text-gray-700 text-center font-semibold"><?= $result["des"] ?></td>
+                        <td class="p-2 text-xs text-gray-700 text-center font-semibold"><?= $result["pos1"] ?></td>
+                        <td class="p-2 text-xs text-gray-700 text-center font-semibold"><?= $result["pos2"] ?></td>
                         <td class="p-2 text-xs text-gray-700 text-center font-semibold"><?= getStockName($result["stock_id"]) ?></td>
                         <td class="p-2 text-center text-sm font-bold bg-yellow-100"><?= $result["prev_quantity"] ?></td>
                         <td class="p-2 text-xs text-gray-700 text-center font-semibold"><?= getStockName($result["stock"]) ?></td>
@@ -60,19 +64,19 @@ require_once '../../layouts/inventory/sidebar.php'; ?>
             <?php endforeach;
             else :
                 echo "<tr class='bg-red-300'>
-                        <td colspan='14'>
+                        <td colspan='16'>
                             <p class='text-center text-white p-3'> موردی پیدا نشد</p>
                         </td>
                     </tr>";
             endif; ?>
             <tr style="background-color: transparent;">
-                <td class="py-4" colspan="14"></td>
+                <td class="py-4" colspan="16"></td>
             </tr>
             <tr style="background-color: transparent;">
-                <td class="py-4" colspan="14"></td>
+                <td class="py-4" colspan="16"></td>
             </tr>
             <tr class="bg-cyan-400">
-                <td class="p-3 text-center text-md font-bold" colspan="14">عملیات روزهای قبل</td>
+                <td class="p-3 text-center text-md font-bold" colspan="16">عملیات روزهای قبل</td>
             </tr>
             <?php
             if (count($previous_records)) :
@@ -82,6 +86,8 @@ require_once '../../layouts/inventory/sidebar.php'; ?>
                         <td class="p-2 text-center text-lg text-white font-semibold uppercase bg-sky-500"><?= $result["partnumber"] ?></td>
                         <td class="p-2 text-center text-sm text-white <?= getBrandBackground(strtoupper($result["brand_name"])) ?> font-semibold uppercase"><?= $result["brand_name"] ?></td>
                         <td class="p-2 text-xs text-gray-700 text-center font-semibold"><?= $result["des"] ?></td>
+                        <td class="p-2 text-xs text-gray-700 text-center font-semibold"><?= $result["pos1"] ?></td>
+                        <td class="p-2 text-xs text-gray-700 text-center font-semibold"><?= $result["pos2"] ?></td>
                         <td class="p-2 text-xs text-gray-700 text-center font-semibold"><?= getStockName($result["stock_id"]) ?></td>
                         <td class="p-2 text-center text-sm font-bold bg-yellow-100"><?= $result["prev_quantity"] ?></td>
                         <td class="p-2 text-xs text-gray-700 text-center font-semibold"><?= getStockName($result["stock"]) ?></td>
@@ -102,7 +108,7 @@ require_once '../../layouts/inventory/sidebar.php'; ?>
             <?php endforeach;
             else :
                 echo "<tr class='bg-red-300'>
-                        <td colspan='14'>
+                        <td colspan='16'>
                             <p class='text-center text-white p-3'> موردی پیدا نشد</p>
                         </td>
                     </tr>";
