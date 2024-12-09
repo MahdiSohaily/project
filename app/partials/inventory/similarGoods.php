@@ -120,11 +120,9 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
         }
     }
 
-    print_r($selectedGoods);
-
-    // if (!empty($selectedGoods) || !empty($lowQuantity)) {
-    //     sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, $lowQuantity, $billId);
-    // }
+    if (!empty($selectedGoods) || !empty($lowQuantity)) {
+        sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, $lowQuantity, $billId);
+    }
 
     $selectedGoods = [...$selectedGoods, ...$lowQuantity];
 
