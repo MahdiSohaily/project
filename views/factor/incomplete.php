@@ -717,11 +717,11 @@ require_once './components/factor.php';
         axios.post("../../app/api/factor/CompleteFactorApi.php", params)
             .then(function(response) {
                 const data = response.data;
+                const factorNumber = data.factorNumber;
 
-                if (data) {
+                if (data.status == 'success') {
                     const save_message = document.getElementById('save_message');
                     save_message.classList.remove('hidden');
-
                     setTimeout(() => {
                         save_message.classList.add('hidden');
                         if (factorInfo['id']) {
@@ -732,8 +732,7 @@ require_once './components/factor.php';
                                 window.location.href = './yadakFactor.php?factorNumber=' + factorInfo['id'];
                             }
                         }
-                    }, 1000);
-
+                    }, 1000)
                 } else {
                     const save_error_message = document.getElementById('save_error_message');
                     save_error_message.classList.remove('hidden');

@@ -36,16 +36,9 @@ if (isset($_POST['GenerateCompleteFactor'])) {
 
         CreateCompleteBill($factorInfo, $customer_id, $factorNumber);
         CreateBillItems($factorInfo, $factorItems);
-        getSimilarGoods($factorItems, $factorInfo->id, $customerInfo, $factorNumber,$factorInfo->partner);
+        getSimilarGoods($factorItems, $factorInfo->id, $customerInfo, $factorNumber, $factorInfo->partner, $factorInfo->totalPrice, $factorInfo->date);
     } catch (Exception $e) {
         $success = false; // Set success to false if an error occurred
-    }
-
-    // Output based on transaction success
-    if ($success) {
-        echo "true";
-    } else {
-        echo "false";
     }
 }
 

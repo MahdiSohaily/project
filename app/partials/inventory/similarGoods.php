@@ -1,6 +1,6 @@
 <?php
 
-function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $factorType)
+function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $factorType, $totalPrice, $date)
 {
     $selectedGoods = [];
     $lowQuantity = [];
@@ -13,7 +13,7 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
         $goodNameBrand = trim(substr($item->partName, $brandSeparator + 1));
         $goodNamePart = trim(explode(' ', $factorItemParts[0])[0]);
 
-        if ($goodNameBrand == 'KOREA' || $goodNameBrand == 'CHINA') {
+        if ($goodNameBrand == 'KOREA' || $goodNameBrand == 'CHINA' || $goodNameBrand == 'HIQ') {
             $brands = [
                 'KOREA' => [
                     'YONG',
@@ -43,7 +43,8 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
                     'FAKE GEN'
                 ],
 
-                'CHINA' => ['OEMAX', 'JYR', 'RB2', 'Rb2', 'IRAN', 'FAKE MOB', 'FAKE GEN', 'OEMAX', 'OE MAX', 'MAXFIT', 'ICBRI']
+                'CHINA' => ['OEMAX', 'JYR', 'RB2', 'Rb2', 'IRAN', 'FAKE MOB', 'FAKE GEN', 'OEMAX', 'OE MAX', 'MAXFIT', 'ICBRI'],
+                'HIQ' => ['HI Q']
             ];
             $ALLOWED_BRANDS = [...$brands[$goodNameBrand], $goodNameBrand];
         } else {
@@ -122,16 +123,58 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
 
     if (!empty($selectedGoods) || !empty($lowQuantity)) {
         sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, $lowQuantity, $billId);
+        (sendPurchaseMessageToCustomer($customer, $factorNumber, $totalPrice, $date));
     }
 
     $selectedGoods = [...$selectedGoods, ...$lowQuantity];
 
     if (hasPreSellFactor($billId)) {
-        update_pre_bill($billId, json_encode($selectedGoods), json_encode([]));
+        update_pre_bill($billId, json_encode($selectedGoods), json_encode([]), $factorNumber);
     } else {
-        save_pre_bill($billId, json_encode($selectedGoods), json_encode([]));
+        save_pre_bill($billId, json_encode($selectedGoods), json_encode([]), $factorNumber);
     }
 }
+
+function sendPurchaseMessageToCustomer($customer, $factorNumber, $totalPrice, $date)
+{
+    $fullName = $customer->name . ' ' . $customer->family;
+    $phone = $customer->phone;
+    $date = explode('/', $date);
+    $current = $date[1] . '/' . $date[2];
+    // Construct the message
+    $message = "$fullName عزیز\n" .
+        "خرید شما با مبلغ $totalPrice ریال در تاریخ $current با موفقیت ثبت شد \n" .
+        "شماره فاکتور : $factorNumber \n" .
+        "یدک شاپ از انتخاب شما سپاسگزار است و خوشحالیم که همراه شما هستیم. \n" .
+        "www.yadak.shop";
+
+    // URL-encode the message
+    $encodedMessage = rawurlencode($message);
+
+    // Construct the full URL
+    $url = "http://192.168.9.16/cgi/WebCGI?1500101=account=test&password=test1028&port=1&destination=" . $phone . "&content=" . $encodedMessage;
+
+    // Initialize cURL
+    $ch = curl_init();
+
+    // Set cURL options
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    // Execute request
+    $response = curl_exec($ch);
+
+    // Check for errors
+    // if ($response === false) {
+    //     echo "cURL Error: " . curl_error($ch);
+    // } else {
+    //     echo "Message sent successfully: " . htmlspecialchars($response);
+    // }
+
+    // Close cURL
+    curl_close($ch);
+}
+
 
 function sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, $lowQuantity, $billId)
 {
@@ -425,7 +468,7 @@ function addToBillItems($good, $quantity, &$selectedGoods, $index)
     }
 }
 
-function save_pre_bill($billId, $billItems, $billItemsDescription)
+function save_pre_bill($billId, $billItems, $billItemsDescription, $factorNumber)
 {
     try {
         // Prepare the SQL statement with correct placeholders
@@ -445,7 +488,7 @@ function save_pre_bill($billId, $billItems, $billItemsDescription)
 
         // Execute the statement and handle the result
         if ($stmt->execute()) {
-            echo json_encode(array('status' => 'create', 'message' => 'Bill saved successfully'));
+            echo json_encode(array('status' => 'success', 'message' => 'Bill saved successfully', 'factorNumber' => $factorNumber));
         } else {
             echo json_encode(array('status' => 'error', 'message' => 'Failed to save bill'));
         }
@@ -454,7 +497,7 @@ function save_pre_bill($billId, $billItems, $billItemsDescription)
     }
 }
 
-function update_pre_bill($billId, $billItems, $billItemsDescription)
+function update_pre_bill($billId, $billItems, $billItemsDescription, $factorNumber)
 {
     try {
         // Prepare the SQL statement with correct placeholders
@@ -473,7 +516,7 @@ function update_pre_bill($billId, $billItems, $billItemsDescription)
 
         // Execute the statement and handle the result
         if ($stmt->execute()) {
-            echo json_encode(array('status' => 'update', 'message' => 'Bill updated successfully'));
+            echo json_encode(array('status' => 'success', 'message' => 'Bill updated successfully', 'factorNumber' => $factorNumber));
         } else {
             echo json_encode(array('status' => 'error', 'message' => 'Failed to update bill'));
         }
