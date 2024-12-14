@@ -512,49 +512,51 @@ require_once '../../layouts/inventory/sidebar.php';
         resultBox.innerHTML = '';
         if (goods.length > 0) {
             for (good of goods) {
-                resultBox.innerHTML += `
-            <div id="${good.quantityId}" class="bg-gray-100 shadow rounded-lg overflow-hidden mb-2 selected_card">
-                <div class="bg-gray-800 rounded-t-md p-2">
-                    <p class="text-left font-semibold text-white text-sm">
-                        ${good.partNumber}
-                    </p>
-                </div>
-                <div>
-                <div class="cardBody">
-                    <table style="direction: ltr !important;" class="w-full border border-x-2 border-gray-800">
-                        <tbody>
-                            <tr>
-                                <td class="p-2 text-center text-gray-800 font-semibold text-sm quantity">${Number(good.remaining_qty)}</td>
-                                <td class="p-2 text-center text-gray-800 font-semibold text-sm brandName">${good.brandName}</td>
-                                <td class="p-2 text-center text-gray-800 font-semibold text-sm sellerName">${good.sellerName}</td>
-                                <td class="px-1 text-center text-gray-800 font-semibold text-xs stockName">
-                                    <p class="${bgColors[good.stockId - 1]} text-white p-2 w-20 rounded text-center">
-                                        ${good.stockName}
-                                    </p>
-                                    <p class="text-xs text-red-500 text-center p-1">${good.quantityDescription}</p>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                    <div class="px-2 py-1 bg-gray-800">
-                        <input class="px-2 py-1 w-20 rounded text-sm text-center font-semibold" placeholder="تعداد" type="number" value="1" min="1" max="${Number(good.remaining_qty)}">
-                        <button onclick="addToFactor(this)"
-                        data-partNumber = "${good.partNumber}"
-                        data-quantityId = "${good.quantityId}"
-                        data-goodId = "${good.goodId}"
-                        data-stockId = "${good.stockId}"
-                        data-stockName = "${good.stockName}"
-                        data-brandName = "${good.brandName}"
-                        data-sellerName = "${good.sellerName}"
-                        data-brandId = "${good.brandId}"
-                        data-sellerId = "${good.sellerId}"
-                        data-quantity = "${Number(good.remaining_qty)}"
-                        class="bg-rose-500 hover:bg-rose-600 text-white px-3 py-1 rounded text-sm">افزودن</button>
+                if (good.sellerName !== 'کاربر دستوری') {
+                    resultBox.innerHTML += `
+                    <div id="${good.quantityId}" class="bg-gray-100 shadow rounded-lg overflow-hidden mb-2 selected_card">
+                        <div class="bg-gray-800 rounded-t-md p-2">
+                            <p class="text-left font-semibold text-white text-sm">
+                                ${good.partNumber}
+                            </p>
+                        </div>
+                        <div>
+                        <div class="cardBody">
+                            <table style="direction: ltr !important;" class="w-full border border-x-2 border-gray-800">
+                                <tbody>
+                                    <tr>
+                                        <td class="p-2 text-center text-gray-800 font-semibold text-sm quantity">${Number(good.remaining_qty)}</td>
+                                        <td class="p-2 text-center text-gray-800 font-semibold text-sm brandName">${good.brandName}</td>
+                                        <td class="p-2 text-center text-gray-800 font-semibold text-sm sellerName">${good.sellerName}</td>
+                                        <td class="px-1 text-center text-gray-800 font-semibold text-xs stockName">
+                                            <p class="${bgColors[good.stockId - 1]} text-white p-2 w-20 rounded text-center">
+                                                ${good.stockName}
+                                            </p>
+                                            <p class="text-xs text-red-500 text-center p-1">${good.quantityDescription}</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                            <div class="px-2 py-1 bg-gray-800">
+                                <input class="px-2 py-1 w-20 rounded text-sm text-center font-semibold" placeholder="تعداد" type="number" value="1" min="1" max="${Number(good.remaining_qty)}">
+                                <button onclick="addToFactor(this)"
+                                data-partNumber = "${good.partNumber}"
+                                data-quantityId = "${good.quantityId}"
+                                data-goodId = "${good.goodId}"
+                                data-stockId = "${good.stockId}"
+                                data-stockName = "${good.stockName}"
+                                data-brandName = "${good.brandName}"
+                                data-sellerName = "${good.sellerName}"
+                                data-brandId = "${good.brandId}"
+                                data-sellerId = "${good.sellerId}"
+                                data-quantity = "${Number(good.remaining_qty)}"
+                                class="bg-rose-500 hover:bg-rose-600 text-white px-3 py-1 rounded text-sm">افزودن</button>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            `;
+                    `;
+                }
             }
 
             const selectedCards = document.querySelectorAll('.selected_card');
@@ -778,7 +780,7 @@ require_once '../../layouts/inventory/sidebar.php';
             number: null,
             date: ($("#invoice_time").val()),
             client: null,
-            receiver: null,
+            receiver: 6,
             collector: null,
             description: null,
             user: <?= $_SESSION['id'] ?>,
@@ -792,10 +794,6 @@ require_once '../../layouts/inventory/sidebar.php';
         const textarea = document.getElementsByTagName('textarea');
         for (item of textarea) {
             item.value = '';
-        }
-        const selects = document.getElementsByTagName('select');
-        for (select of selects) {
-            select.value = '';
         }
     }
 </script>

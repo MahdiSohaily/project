@@ -732,7 +732,7 @@ require_once './components/factor.php';
                                 window.location.href = './yadakFactor.php?factorNumber=' + factorInfo['id'];
                             }
                         }
-                    }, 1000)
+                    }, 1000);
                 } else {
                     const save_error_message = document.getElementById('save_error_message');
                     save_error_message.classList.remove('hidden');
@@ -917,6 +917,7 @@ require_once './components/factor.php';
     }
 
     bootstrap(); // Display the form data after retrieving every initial data
+    
     document.addEventListener("keydown", function(event) {
         // Check if the Ctrl key is pressed and the key is 'S'
         if (event.altKey && (event.key === "s" || event.key === "س")) {

@@ -1,5 +1,7 @@
 <?php
 
+use function PHPSTORM_META\map;
+
 function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $factorType, $totalPrice, $date)
 {
     $selectedGoods = [];
@@ -72,9 +74,12 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
                 break;
         }
 
+        print_r($ALLOWED_BRANDS);
+        
         $ALLOWED_BRANDS = addRelatedBrands($ALLOWED_BRANDS);
 
         $goods = getGoodsSpecification($goodNamePart, $ALLOWED_BRANDS);
+
 
         $inventoryGoods = isset($goods['goods']) ? $goods['goods'] : [];
         $relatesCodes = isset($goods['codes']) ? $goods['codes'] : [];
@@ -121,13 +126,13 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
         }
     }
 
-    if (!empty($selectedGoods) || !empty($lowQuantity)) {
-        sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, $lowQuantity, $billId);
-    }
+    // if (!empty($selectedGoods) || !empty($lowQuantity)) {
+    //     sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, $lowQuantity, $billId);
+    // }
 
-    if ($factorType == 0) {
-        sendPurchaseMessageToCustomer($customer, $factorNumber, $totalPrice, $date);
-    }
+    // if ($factorType == 0) {
+    //     sendPurchaseMessageToCustomer($customer, $factorNumber, $totalPrice, $date);
+    // }
 
     $selectedGoods = [...$selectedGoods, ...$lowQuantity];
 

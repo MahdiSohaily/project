@@ -11,7 +11,6 @@ require_once '../../../utilities/callcenter/GivenPriceHelper.php';
 require_once '../../../app/partials/inventory/similarGoods.php';
 
 
-
 // START ------------------ UPDATE THE COMPLETE BILL -----------------------------
 if (isset($_POST['GenerateCompleteFactor'])) {
     $customerInfo = json_decode($_POST['customerInfo']);

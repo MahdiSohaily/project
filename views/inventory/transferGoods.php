@@ -74,7 +74,7 @@ require_once '../../layouts/inventory/sidebar.php';
                                 <option value="">انتخاب تحویل گیرنده</option>
                                 <?php
                                 foreach ($receivers as $receiver) {
-                                    echo '<option value="' . $receiver['id'] . '">' . $receiver['name'] . '</option>';
+                                    echo '<option ' . ($receiver['id'] == 4 ? "selected" : "") . ' value="' . $receiver['id'] . '">' . $receiver['name'] . '</option>';
                                 }
                                 ?>
                             </select>
@@ -143,7 +143,7 @@ require_once '../../layouts/inventory/sidebar.php';
 
     let factor_info = {
         stock: 9,
-        receiver: null,
+        receiver: 4,
         date: null,
         collector: null,
         pos1: null,
@@ -357,8 +357,6 @@ require_once '../../layouts/inventory/sidebar.php';
     }
 
     function validateFactorInfo(factorInfo) {
-        console.log(factorInfo);
-
         const requiredFields = ['date', 'receiver', 'quantity'];
         for (const field of requiredFields) {
             if (!factorInfo[field]) {
@@ -369,8 +367,6 @@ require_once '../../layouts/inventory/sidebar.php';
     }
 
     function setFactorInfo(property, value) {
-        console.log(property, value);
-
         factor_info[property] = value;
     }
 
@@ -435,7 +431,6 @@ require_once '../../layouts/inventory/sidebar.php';
         params.append('factorInfo', JSON.stringify(factor_info));
         axios.post(saveTransferEndpoint, params)
             .then(function(response) {
-                console.log(response.data);
                 if (response.data == 'success') {
                     document.getElementById('operation_message').classList.remove('hidden');
                     clearPreviousData();
@@ -461,7 +456,7 @@ require_once '../../layouts/inventory/sidebar.php';
             client: null,
             pos1: null,
             pos2: null,
-            receiver: null,
+            receiver: 4,
             collector: null,
             description: null,
             user: <?= $_SESSION['id'] ?>,
@@ -479,8 +474,6 @@ require_once '../../layouts/inventory/sidebar.php';
         for (item of textarea) {
             item.value = '';
         }
-        const selects = document.getElementById('receiver');
-        selects.value = null;
     }
 </script>
 <?php
