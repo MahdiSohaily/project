@@ -1,7 +1,4 @@
 <?php
-
-use function PHPSTORM_META\map;
-
 function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $factorType, $totalPrice, $date)
 {
     $selectedGoods = [];
@@ -73,13 +70,16 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
                 $ALLOWED_BRANDS[] = 'KOREA';
                 break;
         }
-        
-        $ALLOWED_BRANDS = addRelatedBrands($ALLOWED_BRANDS);
 
+        $ALLOWED_BRANDS = addRelatedBrands($ALLOWED_BRANDS);
         $goods = getGoodsSpecification($goodNamePart, $ALLOWED_BRANDS);
 
 
         $inventoryGoods = isset($goods['goods']) ? $goods['goods'] : [];
+        $inventoryGoods = array_filter($inventoryGoods, function ($good) {
+            return $good['seller_name'] !== 'کاربر دستوری';
+        });
+
         $relatesCodes = isset($goods['codes']) ? $goods['codes'] : [];
 
         if (empty($relatesCodes)) {

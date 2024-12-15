@@ -917,7 +917,7 @@ require_once './components/factor.php';
     }
 
     bootstrap(); // Display the form data after retrieving every initial data
-    
+
     document.addEventListener("keydown", function(event) {
         // Check if the Ctrl key is pressed and the key is 'S'
         if (event.altKey && (event.key === "s" || event.key === "س")) {
