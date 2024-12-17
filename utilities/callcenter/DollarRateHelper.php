@@ -270,6 +270,7 @@ function addRelatedBrands($brands)
         'OEMAX' => ['CHINA'],
         'OE MAX' => ['CHINA'],
         'MAXFIT' => ['CHINA'],
+        'HOH' => ['CHINA'],
         'FAKE GEN' => ['KOREA'],
         'GEO SUNG' => ['KOREA'],
         'YULIM' => ['KOREA'],
@@ -280,6 +281,7 @@ function addRelatedBrands($brands)
         'ATC' => ['KOREA'],
         'VALEO' => ['KOREA'],
         'MB KOREA' => ['KOREA'],
+        'IACE' => ['KOREA'],
     ];
 
     // Normalize brand names to uppercase
