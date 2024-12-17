@@ -12,7 +12,7 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
         $goodNameBrand = trim(substr($item->partName, $brandSeparator + 1));
         $goodNamePart = trim(explode(' ', $factorItemParts[0])[0]);
 
-        if ($goodNameBrand == 'KOREA' || $goodNameBrand == 'CHINA' || $goodNameBrand == 'HIQ') {
+        if ($goodNameBrand == 'KOREA' || $goodNameBrand == 'CHINA' || $goodNameBrand == 'HIQ' || $goodNameBrand == 'HI') {
             $brands = [
                 'KOREA' => [
                     'YONG',
@@ -43,7 +43,8 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
                 ],
 
                 'CHINA' => ['OEMAX', 'JYR', 'RB2', 'Rb2', 'IRAN', 'FAKE MOB', 'FAKE GEN', 'OEMAX', 'OE MAX', 'MAXFIT', 'ICBRI'],
-                'HIQ' => ['HI Q']
+                'HIQ' => ['HI Q'],
+                'HI' => ['HI Q'],
             ];
             $ALLOWED_BRANDS = [...$brands[$goodNameBrand], $goodNameBrand];
         } else {
@@ -76,6 +77,7 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
 
 
         $inventoryGoods = isset($goods['goods']) ? $goods['goods'] : [];
+
         $inventoryGoods = array_filter($inventoryGoods, function ($good) {
             return $good['seller_name'] !== 'کاربر دستوری';
         });

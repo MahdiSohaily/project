@@ -718,21 +718,24 @@ require_once './components/factor.php';
             .then(function(response) {
                 const data = response.data;
                 const factorNumber = data.factorNumber;
+                params.append('factorNumber', factorNumber);
+                console.log(data);
+                
 
                 if (data.status == 'success') {
                     const save_message = document.getElementById('save_message');
                     save_message.classList.remove('hidden');
-                    setTimeout(() => {
-                        save_message.classList.add('hidden');
-                        if (factorInfo['id']) {
-                            localStorage.setItem('displayName', customerInfo.displayName);
-                            if (factorInfo['partner']) {
-                                window.location.href = './partnerFactor.php?factorNumber=' + factorInfo['id'];
-                            } else {
-                                window.location.href = './yadakFactor.php?factorNumber=' + factorInfo['id'];
-                            }
-                        }
-                    }, 1000);
+                    // setTimeout(() => {
+                    //     save_message.classList.add('hidden');
+                    //     if (factorInfo['id']) {
+                    //         localStorage.setItem('displayName', customerInfo.displayName);
+                    //         if (factorInfo['partner']) {
+                    //             window.location.href = './partnerFactor.php?factorNumber=' + factorInfo['id'];
+                    //         } else {
+                    //             window.location.href = './yadakFactor.php?factorNumber=' + factorInfo['id'];
+                    //         }
+                    //     }
+                    // }, 1000);
                 } else {
                     const save_error_message = document.getElementById('save_error_message');
                     save_error_message.classList.remove('hidden');
@@ -754,6 +757,12 @@ require_once './components/factor.php';
                 element.disabled = false;
                 element.innerHTML = 'صدور فاکتور';
             });
+    }
+
+    function generateUniqueId() {
+        const array = new Uint8Array(16); // 16 bytes = 128 bits
+        window.crypto.getRandomValues(array);
+        return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
     }
 
     function insuranceBillDisplay() {
