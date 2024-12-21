@@ -720,7 +720,7 @@ require_once './components/factor.php';
                 const factorNumber = data.factorNumber;
                 params.append('factorNumber', factorNumber);
                 console.log(data);
-                
+
 
                 if (data.status == 'success') {
                     const save_message = document.getElementById('save_message');
@@ -774,6 +774,24 @@ require_once './components/factor.php';
     function updateIncompleteFactor() {
         if (factorInfo.date == 'null')
             factorInfo.date = moment().locale('fa').format('YYYY/MM/DD');
+        // Check for items with (LR)
+        const keysWithLR = hasLR();
+
+        // If there are items with (LR), show the confirm dialog
+        if (keysWithLR) {
+            // Create a message showing the keys with (LR)
+            const lrItems = `${keysWithLR.join(", ")}`;
+
+            // Show confirm dialog with the keys and the message
+            const proceed = confirm(`${lrItems}\n\nبعضی اقلام دارای شاخص (LR) هستند. آیا فاکتور را صادر میکنید؟`);
+
+            // If the user cancels, enable the element and stop further execution
+            if (!proceed) {
+                element.disabled = false;
+                element.innerHTML = 'صدور فاکتور';
+                return; // Stop further actions by exiting the function
+            }
+        }
 
         if (!checkIfReadyToUpdate('phone')) {
             return false

@@ -74,7 +74,7 @@ if ($isValidCustomer) :
                     </span>
                 </form>
             </div>
-            <div class="m-2 p-2 bg-gray-700  w-4/12">
+            <div class="m-2 p-2 bg-gray-700  w-4/12 relative">
                 <table style="direction: ltr !important;" class="w-full h-full text-sm p-2">
                     <thead class="font-medium">
                         <tr class="border">
@@ -93,10 +93,12 @@ if ($isValidCustomer) :
                         <?php
                         $isDisplayAllowed = false;
                         $persianName = '';
+                        $codes = null;
                         foreach ($explodedCodes as $code) {
                             $relation_id =  array_key_exists($code, $relation_ids) ? $relation_ids[$code] : 'xxx';
                             $max = 0;
                             $finalPrice = '';
+                            $codes .= $code . PHP_EOL;
                             if (array_key_exists($code, $existing)) {
                                 foreach ($existing[$code] as $item) {
                                     $max += $item['relation']['existingQuantity'];
@@ -172,6 +174,20 @@ if ($isValidCustomer) :
                         ?>
                     </tbody>
                 </table>
+                <form class="h-full flex flex-col gap-2 p-2 absolute top-0" target="_blank" action="./orderedPrice.php" method="post">
+                    <div class="h-full">
+                        <input type="text" name="givenPrice" value="givenPrice" id="form" hidden>
+                        <input type="text" name="user" value="<?= $_SESSION["id"] ?>" hidden>
+                        <input type="text" name="customer" value="1" id="target_customer" hidden>
+                        <textarea style="direction: ltr !important;" onchange="filterCode(this)" id="code" name="code" required class="h-full bg-transparent w-full p-2 text-white placeholder-white outline-none focus:border-white hidden" placeholder="لطفا کد های مورد نظر خود را در خط های مجزا قرار دهید"><?= $codes; ?></textarea>
+                    </div>
+                    <span class="flex justify-between">
+                        <div class="flex gap-2 items-center">
+                            <button type="submit" formaction="../factor/createPreCompleteBill.php?partner=0" class="cursor-pointer  text-white rounded bg-sky-600 hover:bg-sky-500 px-3 py-2 text-xs">مصرف کننده</button>
+                            <button type="submit" formaction="../factor/createPreCompleteBill.php?partner=1" class="cursor-pointer bg-green-600 hover:bg-green-700 text-white rounded px-3 py-2 text-xs">همکار</button>
+                        </div>
+                    </span>
+                </form>
             </div>
             <?php
             if (!$isDisplayAllowed):
