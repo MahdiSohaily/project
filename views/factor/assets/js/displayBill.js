@@ -68,8 +68,11 @@ function previewBill(type) {
                       } 
                  </span>`;
     } else {
-      if (type == "yadak") template += `<span>${result}</span>`;
-      else template += `<span>${item.partName}</span>`;
+      if (type == "yadak" || type == "korea") {
+        template += `<span>${result}</span>`;
+      } else {
+        template += `<span>${item.partName}</span>`;
+      }
     }
 
     template += `</td> <td class="text-sm border-r border-l-2 border-gray-800">
