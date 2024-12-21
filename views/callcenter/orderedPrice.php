@@ -174,8 +174,8 @@ if ($isValidCustomer) :
                         ?>
                     </tbody>
                 </table>
-                <form class="h-full flex flex-col gap-2 p-2 absolute top-0" target="_blank" action="./orderedPrice.php" method="post">
-                    <div class="h-full">
+                <form class="flex flex-col gap-2 p-2 absolute bottom-0" target="_blank" action="./orderedPrice.php" method="post">
+                    <div class="">
                         <input type="text" name="givenPrice" value="givenPrice" id="form" hidden>
                         <input type="text" name="user" value="<?= $_SESSION["id"] ?>" hidden>
                         <input type="text" name="customer" value="1" id="target_customer" hidden>
