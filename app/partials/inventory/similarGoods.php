@@ -12,7 +12,37 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
         $goodNameBrand = trim(substr($item->partName, $brandSeparator + 1));
         $goodNamePart = trim(explode(' ', $factorItemParts[0])[0]);
 
-        if ($goodNameBrand == 'KOREA' || $goodNameBrand == 'CHINA' || $goodNameBrand == 'HIQ' || $goodNameBrand == 'HI') {
+        $ALLOWED_BRANDS = [];
+
+        // Add related brands based on the current brand
+        switch ($goodNameBrand) {
+            case 'اصلی':
+            case 'GEN':
+            case 'MOB':
+                $ALLOWED_BRANDS = array_merge($ALLOWED_BRANDS, ['GEN', 'MOB']);
+                break;
+            case 'شرکتی':
+                $ALLOWED_BRANDS[] = 'IRAN';
+                break;
+            case 'متفرقه':
+            case 'چین':
+                $ALLOWED_BRANDS[] = 'CHINA';
+                break;
+            case 'کره':
+            case 'کره ای':
+                $ALLOWED_BRANDS[] = 'KOREA';
+                break;
+        }
+
+        if ($goodNameBrand == 'HIQ' || $goodNameBrand == 'HI') {
+            $brands = [
+                'HIQ' => ['HI Q'],
+                'HI' => ['HI Q'],
+            ];
+            $ALLOWED_BRANDS = [...$brands[$goodNameBrand], $goodNameBrand];
+        }
+
+        if ($goodNameBrand == 'KOREA' || $goodNameBrand == 'CHINA') {
             $brands = [
                 'KOREA' => [
                     'YONG',
@@ -42,40 +72,27 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
                     'FAKE GEN',
                     'IACE'
                 ],
-
-                'CHINA' => ['OEMAX', 'JYR', 'RB2', 'Rb2', 'IRAN', 'FAKE MOB', 'FAKE GEN', 'OEMAX', 'OE MAX', 'MAXFIT', 'ICBRI', 'HOH'],
-                'HIQ' => ['HI Q'],
-                'HI' => ['HI Q'],
+                'CHINA' => [
+                    'OEMAX',
+                    'JYR',
+                    'RB2',
+                    'Rb2',
+                    'IRAN',
+                    'FAKE MOB',
+                    'FAKE GEN',
+                    'OEMAX',
+                    'OE MAX',
+                    'MAXFIT',
+                    'ICBRI',
+                    'HOH'
+                ],
             ];
             $ALLOWED_BRANDS = [...$brands[$goodNameBrand], $goodNameBrand];
         } else {
-
-            $ALLOWED_BRANDS = [$goodNameBrand];
+            $ALLOWED_BRANDS = addRelatedBrands($ALLOWED_BRANDS);
         }
 
-        // Add related brands based on the current brand
-        switch ($goodNameBrand) {
-            case 'اصلی':
-            case 'GEN':
-            case 'MOB':
-                $ALLOWED_BRANDS = array_merge($ALLOWED_BRANDS, ['GEN', 'MOB']);
-                break;
-            case 'شرکتی':
-                $ALLOWED_BRANDS[] = 'IRAN';
-                break;
-            case 'متفرقه':
-            case 'چین':
-                $ALLOWED_BRANDS[] = 'CHINA';
-                break;
-            case 'کره':
-            case 'کره ای':
-                $ALLOWED_BRANDS[] = 'KOREA';
-                break;
-        }
-
-        $ALLOWED_BRANDS = addRelatedBrands($ALLOWED_BRANDS);
         $goods = getGoodsSpecification($goodNamePart, $ALLOWED_BRANDS);
-
 
         $inventoryGoods = isset($goods['goods']) ? $goods['goods'] : [];
 

@@ -719,8 +719,6 @@ require_once './components/factor.php';
                 const data = response.data;
                 const factorNumber = data.factorNumber;
                 params.append('factorNumber', factorNumber);
-                console.log(data);
-
 
                 if (data.status == 'success') {
                     const save_message = document.getElementById('save_message');

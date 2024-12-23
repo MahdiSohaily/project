@@ -65,6 +65,7 @@ function sendSMS($customer, $factor, $factorItems, $factorNumber)
 
     // Execute cURL request
     $result = curl_exec($ch);
+
     // Close cURL session
     curl_close($ch);
     exit();
@@ -79,7 +80,6 @@ if (isset($_POST['updateCompleteFactor'])) {
     $success = true; // Initialize success variable
 
     try {
-        PDO_CONNECTION->beginTransaction();
 
         if (!$customer_id) {
             $customer_id = createCustomer($customerInfo);
@@ -93,8 +93,6 @@ if (isset($_POST['updateCompleteFactor'])) {
         updateRegisteredFactorNumber($factorInfo->billNO, $customerInfo);
         UpdateCompletedBill($factorInfo, $customer_id);
         CreateBillItems($factorInfo, $factorItems);
-
-        PDO_CONNECTION->commit();
     } catch (Exception $e) {
         // An error occurred, rollback the transaction
         PDO_CONNECTION->rollback();

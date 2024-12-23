@@ -88,7 +88,7 @@ if (!file_exists($profile)) {
     displayOwnerBillDetails();
 
     <?php if ($preSellFactor) { ?>
-        let preBillItems = <?= json_decode($preSellFactorItems, true) ?>;
+        let preBillItems = <?= json_decode($preSellFactorItems, true) ?? [] ?>;
         preBillItems = Object.values(preBillItems);
 
         let billItemsDescription = <?= json_decode($preSellFactorItemsDescription, true) ?>;
