@@ -174,17 +174,17 @@ if ($isValidCustomer) :
                         ?>
                     </tbody>
                 </table>
-                <form class="flex flex-col gap-2 p-2 absolute bottom-0" target="_blank" action="./orderedPrice.php" method="post">
-                    <div class="">
+                <form class="flex flex-col absolute bottom-3 right-3" target="_blank" action="./orderedPrice.php" method="post">
+                    <div class="hidden">
                         <input type="text" name="givenPrice" value="givenPrice" id="form" hidden>
                         <input type="text" name="user" value="<?= $_SESSION["id"] ?>" hidden>
                         <input type="text" name="customer" value="1" id="target_customer" hidden>
                         <textarea style="direction: ltr !important;" onchange="filterCode(this)" id="code" name="code" required class="h-full bg-transparent w-full p-2 text-white placeholder-white outline-none focus:border-white hidden" placeholder="لطفا کد های مورد نظر خود را در خط های مجزا قرار دهید"><?= $codes; ?></textarea>
                     </div>
                     <span class="flex justify-between">
-                        <div class="flex gap-2 items-center">
-                            <button type="submit" formaction="../factor/createPreCompleteBill.php?partner=0" class="cursor-pointer  text-white rounded bg-sky-600 hover:bg-sky-500 px-3 py-2 text-xs">مصرف کننده</button>
-                            <button type="submit" formaction="../factor/createPreCompleteBill.php?partner=1" class="cursor-pointer bg-green-600 hover:bg-green-700 text-white rounded px-3 py-2 text-xs">همکار</button>
+                        <div class="flex gap-1 items-center">
+                            <button type="submit" formaction="../factor/createPreCompleteBill.php?partner=0" class="cursor-pointer  text-white rounded bg-sky-600 hover:bg-sky-500 px-1 py-1 text-xs">مصرف کننده</button>
+                            <button type="submit" formaction="../factor/createPreCompleteBill.php?partner=1" class="cursor-pointer bg-green-600 hover:bg-green-700 text-white rounded px-1 py-1 text-xs">همکار</button>
                         </div>
                     </span>
                 </form>
