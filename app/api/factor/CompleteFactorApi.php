@@ -65,8 +65,6 @@ function sendSMS($customer, $factor, $factorItems, $factorNumber)
 
     // Execute cURL request
     $result = curl_exec($ch);
-    print_r($result);
-
     // Close cURL session
     curl_close($ch);
     exit();
