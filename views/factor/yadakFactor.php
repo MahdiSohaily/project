@@ -88,12 +88,8 @@ if (!file_exists($profile)) {
     displayOwnerBillDetails();
 
     <?php if ($preSellFactor) { ?>
-        // Safely decode PHP variable and convert it into a JSON array
-        let preBillItems = <?= json_encode(json_decode($preSellFactorItems, true) ?? []) ?>;
-
-        // Ensure the resulting JavaScript variable is an array
-        preBillItems = Array.isArray(preBillItems) ? preBillItems : Object.values(preBillItems);
-
+        let preBillItems = <?= json_decode($preSellFactorItems, true) ?? [] ?>;
+        preBillItems = Object.values(preBillItems);
 
         let billItemsDescription = <?= json_decode($preSellFactorItemsDescription, true) ?>;
 

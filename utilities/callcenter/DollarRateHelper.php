@@ -282,6 +282,7 @@ function addRelatedBrands($brands)
         'VALEO' => ['KOREA'],
         'MB KOREA' => ['KOREA'],
         'IACE' => ['KOREA'],
+        'MB' => ['KOREA'],
     ];
 
     // Normalize brand names to uppercase

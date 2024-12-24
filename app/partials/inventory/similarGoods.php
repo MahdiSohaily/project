@@ -70,7 +70,8 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
                     'MB KOREA',
                     'FAKE MOB',
                     'FAKE GEN',
-                    'IACE'
+                    'IACE',
+                    'MB'
                 ],
                 'CHINA' => [
                     'OEMAX',
@@ -148,9 +149,9 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
         sendSalesReport($customer, $factorNumber, $factorType, $selectedGoods, $lowQuantity, $billId);
     }
 
-    if ($factorType == 0) {
-        sendPurchaseMessageToCustomer($customer, $factorNumber, $totalPrice, $date);
-    }
+    // if ($factorType == 0) {
+    //     sendPurchaseMessageToCustomer($customer, $factorNumber, $totalPrice, $date);
+    // }
 
     $selectedGoods = [...$selectedGoods, ...$lowQuantity];
 
