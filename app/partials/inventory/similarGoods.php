@@ -32,6 +32,8 @@ function getSimilarGoods($factorItems, $billId, $customer, $factorNumber, $facto
             case 'کره ای':
                 $ALLOWED_BRANDS[] = 'KOREA';
                 break;
+            default:
+                $ALLOWED_BRANDS[] = $goodNameBrand;
         }
 
         if ($goodNameBrand == 'HIQ' || $goodNameBrand == 'HI') {
